@@ -1,0 +1,92 @@
+name: Proctor RAPID - Fast Proxy Collector
+
+on:
+  schedule:
+    # БЫСТРЫЙ СБОР - каждые 15 минут!
+    - cron: '*/15 * * * *'
+    # АГРЕССИВНАЯ ОЧИСТКА - каждые 30 минут
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  # ⚡ БЫСТРЫЙ СБОР И ПРОВЕРКА - каждые 15 минут
+  rapid-collect:
+    name: ⚡ Rapid Collect & Verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama
+    
+    - name: Create directories
+      run: |
+        mkdir -p core data logs
+    
+    - name: Run RAPID proxy collection
+      run: python rapid_main.py
+      continue-on-error: true
+    
+    - name: Commit results
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git pull --rebase origin main || true
+        git add data/*.txt data/*.json 2>/dev/null || true
+        if git diff --staged --quiet; then
+          echo "ℹ️ No changes"
+        else
+          git commit -m "⚡ Rapid update: $(date +'%H:%M')"
+          git push --force
+        fi
+
+  # 🧹 АГРЕССИВНАЯ ОЧИСТКА - каждые 30 минут
+  rapid-clean:
+    name: 🧹 Aggressive Cleanup
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install aiohttp aiohttp-socks requests fake-useragent colorama
+    
+    - name: Run aggressive cleanup
+      run: python rapid_clean.py
+      continue-on-error: true
+    
+    - name: Commit cleanup results
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git pull --rebase origin main || true
+        git add data/*.txt data/*.json 2>/dev/null || true
+        if git diff --staged --quiet; then
+          echo "ℹ️ No changes"
+        else
+          git commit -m "🧹 Cleanup: $(date +'%H:%M')"
+          git push --force
+        fi
