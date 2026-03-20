@@ -31,10 +31,18 @@
       "latency": 670.91,
       "ru_access": false,
       "us_access": false
+    },
+    "8.212.177.126:8080": {
+      "first_seen": "2026-03-20T22:53:29.623821",
+      "last_seen": "2026-03-20T22:53:29.623821",
+      "working": true,
+      "latency": 1106.52,
+      "ru_access": false,
+      "us_access": false
     }
   },
   "stats": {
-    "total_seen": 20,
-    "last_update": "2026-03-20T22:52:07.207107"
+    "total_seen": 21,
+    "last_update": "2026-03-20T22:53:29.623821"
   }
 }
