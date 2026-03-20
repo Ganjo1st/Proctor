@@ -1,4 +1,4 @@
-# core/rapid_checker.py - СУПЕР-БЫСТРАЯ ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА
+# core/rapid_checker.py - СУПЕР-БЫСТРАЯ ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА С РЕГИОНАМИ
 import aiohttp
 import asyncio
 from aiohttp_socks import ProxyConnector, ProxyType
@@ -6,25 +6,33 @@ from typing import List, Dict
 import time
 
 class RapidChecker:
-    """Максимально быстрая параллельная проверка прокси"""
+    """Максимально быстрая параллельная проверка прокси с определением региона"""
     
     def __init__(self):
-        # Только самые быстрые сайты
-        self.test_urls = [
-            'http://httpbin.org/ip',
-            'https://cloudflare.com/cdn-cgi/trace',
+        # Российские сайты
+        self.ru_sites = [
+            'https://yandex.ru',
+            'https://vk.com',
+        ]
+        
+        # Американские/западные сайты
+        self.us_sites = [
+            'https://www.google.com',
+            'https://www.github.com',
         ]
         
         # 1.5 секунды на прокси - жёсткий таймаут!
         self.timeout = aiohttp.ClientTimeout(total=1.5)
-        self.max_concurrent = 500  # 500 прокси одновременно!
+        self.max_concurrent = 500
     
     async def check_one(self, proxy: str) -> Dict:
-        """Мгновенная проверка одного прокси"""
+        """Мгновенная проверка одного прокси с определением региона"""
         result = {
             'proxy': proxy,
             'working': False,
             'latency': 9999,
+            'ru_access': False,
+            'us_access': False,
             'checked_at': time.time()
         }
         
@@ -44,24 +52,36 @@ class RapidChecker:
                 connector=connector, 
                 timeout=self.timeout
             ) as session:
-                # Пробуем первый URL
+                # Базовая проверка
                 try:
-                    async with session.get(self.test_urls[0]) as resp:
+                    async with session.get('http://httpbin.org/ip') as resp:
                         if resp.status == 200:
                             result['working'] = True
                             result['latency'] = round((time.time() - start) * 1000, 2)
+                        else:
                             return result
                 except:
-                    pass
+                    return result
                 
-                # Пробуем второй URL
-                try:
-                    async with session.get(self.test_urls[1]) as resp:
-                        if resp.status == 200:
-                            result['working'] = True
-                            result['latency'] = round((time.time() - start) * 1000, 2)
-                except:
-                    pass
+                # Проверка РФ
+                for site in self.ru_sites:
+                    try:
+                        async with session.get(site, timeout=1) as resp:
+                            if resp.status == 200:
+                                result['ru_access'] = True
+                                break
+                    except:
+                        continue
+                
+                # Проверка США
+                for site in self.us_sites:
+                    try:
+                        async with session.get(site, timeout=1) as resp:
+                            if resp.status == 200:
+                                result['us_access'] = True
+                                break
+                    except:
+                        continue
                         
         except:
             pass
@@ -69,7 +89,7 @@ class RapidChecker:
         return result
     
     async def check_all(self, proxy_list: List[str]) -> List[Dict]:
-        """МАССИВНАЯ ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА - ВСЕ СРАЗУ"""
+        """Массовая параллельная проверка"""
         if not proxy_list:
             return []
         
@@ -78,14 +98,16 @@ class RapidChecker:
         
         start = time.time()
         
-        # СОЗДАЁМ ВСЕ ЗАДАЧИ ПАРАЛЛЕЛЬНО
         tasks = [self.check_one(proxy) for proxy in proxy_list]
         results = await asyncio.gather(*tasks)
         
         elapsed = time.time() - start
         working = [r for r in results if r['working']]
+        ru = [r for r in working if r['ru_access']]
+        us = [r for r in working if r['us_access']]
         
-        print(f"✅ ЗА {elapsed:.1f} СЕК: {len(working)}/{len(proxy_list)} рабочих")
+        print(f"✅ ЗА {elapsed:.1f} СЕК: {len(working)}/500 рабочих")
+        print(f"   🇷🇺 РФ: {len(ru)} | 🇺🇸 США: {len(us)} | 🌍 Глобальных: {len([r for r in working if r['ru_access'] and r['us_access']])}")
         print(f"   Скорость: {len(proxy_list)/elapsed:.0f} прокси/сек\n")
         
         return results
