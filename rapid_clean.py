@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # rapid_clean.py - АГРЕССИВНАЯ ОЧИСТКА МЁРТВЫХ ПРОКСИ
 
-import asyncio
 import sys
 import os
-import time
+import asyncio
 from datetime import datetime
 from colorama import init, Fore, Style
 
@@ -27,7 +26,7 @@ class RapidCleaner:
         print(f"""
 {Fore.CYAN}╔══════════════════════════════════════════════════════════╗
 ║{Fore.YELLOW}         PROCTOR RAPID - АГРЕССИВНАЯ ОЧИСТКА            {Fore.CYAN}║
-║{Fore.WHITE}         Удаление прокси, не работающих > 30 мин        {Fore.CYAN}║
+║{Fore.WHITE}         Удаление прокси, не работающих сейчас          {Fore.CYAN}║
 ║{Fore.GREEN}         {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                    {Fore.CYAN}║
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
         """)
@@ -54,11 +53,9 @@ class RapidCleaner:
         for result in results:
             if result['working']:
                 alive += 1
-                # Обновляем запись
                 self.db.add_proxy(result['proxy'], result)
             else:
                 dead += 1
-                # Удаляем из базы
                 if result['proxy'] in self.db.db['proxies']:
                     del self.db.db['proxies'][result['proxy']]
         
@@ -69,6 +66,11 @@ class RapidCleaner:
         print(f"  🟢 Живых: {alive}")
         print(f"  🔴 Мёртвых удалено: {dead}")
         print(f"  📦 Осталось в базе: {stats['all']}")
+        
+        if stats['all'] > 0:
+            print(f"\n{Fore.GREEN}🔥 БЫСТРЫЕ ПРОКСИ:{Style.RESET_ALL}")
+            for i, proxy in enumerate(stats['fast'][:5]):
+                print(f"  {i+1}. {proxy}")
 
 if __name__ == "__main__":
     cleaner = RapidCleaner()
