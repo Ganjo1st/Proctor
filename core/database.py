@@ -1,11 +1,11 @@
-# core/database.py - УПРАВЛЕНИЕ БАЗОЙ ПРОКСИ
+# core/database.py - УПРАВЛЕНИЕ БАЗОЙ ПРОКСИ С РАСПРЕДЕЛЕНИЕМ ПО РЕГИОНАМ
 import json
 import os
 from datetime import datetime, timedelta
 from typing import List, Dict
 
 class ProxyDatabase:
-    """Управление базой прокси с автоочисткой"""
+    """Управление базой прокси с региональным распределением"""
     
     def __init__(self, data_dir: str = 'data'):
         self.data_dir = data_dir
@@ -35,16 +35,22 @@ class ProxyDatabase:
         
         if proxy in self.db['proxies']:
             # Обновляем
-            self.db['proxies'][proxy]['last_seen'] = now
-            self.db['proxies'][proxy]['working'] = proxy_data.get('working', False)
-            self.db['proxies'][proxy]['latency'] = proxy_data.get('latency', 9999)
+            self.db['proxies'][proxy].update({
+                'last_seen': now,
+                'working': proxy_data.get('working', False),
+                'latency': proxy_data.get('latency', 9999),
+                'ru_access': proxy_data.get('ru_access', False),
+                'us_access': proxy_data.get('us_access', False)
+            })
         else:
             # Добавляем
             self.db['proxies'][proxy] = {
                 'first_seen': now,
                 'last_seen': now,
                 'working': proxy_data.get('working', False),
-                'latency': proxy_data.get('latency', 9999)
+                'latency': proxy_data.get('latency', 9999),
+                'ru_access': proxy_data.get('ru_access', False),
+                'us_access': proxy_data.get('us_access', False)
             }
             self.db['stats']['total_seen'] += 1
         
@@ -52,32 +58,66 @@ class ProxyDatabase:
         self.save_db()
     
     def export_to_txt(self) -> Dict[str, List[str]]:
-        """Экспорт в текстовые файлы"""
-        working = [p for p, d in self.db['proxies'].items() if d['working']]
+        """Экспорт в текстовые файлы по регионам"""
+        all_proxies = []
+        ru_proxies = []
+        us_proxies = []
+        global_proxies = []
+        
+        for proxy, data in self.db['proxies'].items():
+            if data['working']:
+                all_proxies.append(proxy)
+                
+                if data.get('ru_access') and data.get('us_access'):
+                    global_proxies.append(proxy)
+                elif data.get('ru_access'):
+                    ru_proxies.append(proxy)
+                elif data.get('us_access'):
+                    us_proxies.append(proxy)
         
         # Сортируем по скорости
-        working.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        all_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        ru_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        us_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        global_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
         
         # Сохраняем
         with open(os.path.join(self.data_dir, 'proxies_all.txt'), 'w') as f:
-            f.write('\n'.join(working))
+            f.write('\n'.join(all_proxies))
+        
+        with open(os.path.join(self.data_dir, 'proxies_russia.txt'), 'w') as f:
+            f.write('\n'.join(ru_proxies))
+        
+        with open(os.path.join(self.data_dir, 'proxies_usa.txt'), 'w') as f:
+            f.write('\n'.join(us_proxies))
+        
+        with open(os.path.join(self.data_dir, 'proxies_global.txt'), 'w') as f:
+            f.write('\n'.join(global_proxies))
         
         with open(os.path.join(self.data_dir, 'proxies_fast.txt'), 'w') as f:
-            f.write('\n'.join(working[:20]))
+            f.write('\n'.join(all_proxies[:20]))
         
         return {
-            'all': len(working),
-            'fast': working[:20]
+            'all': len(all_proxies),
+            'ru': len(ru_proxies),
+            'us': len(us_proxies),
+            'global': len(global_proxies)
         }
     
     def get_stats(self) -> Dict:
         """Статистика"""
         total = len(self.db['proxies'])
         working = sum(1 for p in self.db['proxies'].values() if p['working'])
+        ru = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('ru_access'))
+        us = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('us_access'))
+        global_ = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('ru_access') and p.get('us_access'))
         
         return {
             'total_in_db': total,
             'working_now': working,
+            'russian': ru,
+            'american': us,
+            'global': global_,
             'last_update': self.db['stats'].get('last_update'),
             'total_seen': self.db['stats'].get('total_seen', 0)
         }
