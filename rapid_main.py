@@ -22,7 +22,7 @@ class RapidCollector:
         self.db = ProxyDatabase()
         self.scraper = RapidScraper()
         self.checker = RapidChecker()
-        self.BATCH_SIZE = 500  # Проверяем по 500 за раз!
+        self.BATCH_SIZE = 500
     
     def run(self):
         """Основной цикл"""
@@ -34,14 +34,12 @@ class RapidCollector:
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
         """)
         
-        # ШАГ 1: БЫСТРЫЙ СБОР
         raw_proxies = self.scraper.get_all()
         
         if not raw_proxies:
             print(f"{Fore.RED}❌ Нет прокси для проверки{Style.RESET_ALL}")
             return
         
-        # ШАГ 2: БЕРЁМ ТОЛЬКО НОВЫЕ
         existing = set(self.db.db['proxies'].keys())
         new_proxies = [p for p in raw_proxies if p not in existing]
         
@@ -51,37 +49,50 @@ class RapidCollector:
             print(f"{Fore.YELLOW}⚠️ Нет новых прокси{Style.RESET_ALL}")
             stats = self.db.get_stats()
             print(f"\n📊 ТЕКУЩАЯ СТАТИСТИКА:")
-            print(f"  Всего в базе: {stats['total_in_db']}")
-            print(f"  Рабочих: {stats['working_now']}")
+            print(f"  🇷🇺 Российских: {stats['russian']}")
+            print(f"  🇺🇸 Американских: {stats['american']}")
+            print(f"  🌍 Глобальных: {stats['global']}")
+            print(f"  📦 Всего рабочих: {stats['working_now']}")
             return
         
-        # ШАГ 3: БЕРЁМ ПЕРВЫЕ 500
         to_check = new_proxies[:self.BATCH_SIZE]
         
-        # ШАГ 4: ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         results = loop.run_until_complete(self.checker.check_all(to_check))
         loop.close()
         
-        # ШАГ 5: СОХРАНЯЕМ РАБОЧИЕ
         working_count = 0
+        ru_count = 0
+        us_count = 0
+        global_count = 0
+        
         for result in results:
             if result['working']:
-                self.db.add_proxy(result['proxy'], result)
                 working_count += 1
+                self.db.add_proxy(result['proxy'], result)
+                if result['ru_access']:
+                    ru_count += 1
+                if result['us_access']:
+                    us_count += 1
+                if result['ru_access'] and result['us_access']:
+                    global_count += 1
         
-        # ШАГ 6: ЭКСПОРТ
         stats = self.db.export_to_txt()
         
         print(f"{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
         print(f"  ✨ Новых рабочих: {working_count}")
+        print(f"  🇷🇺 Российских: {ru_count}")
+        print(f"  🇺🇸 Американских: {us_count}")
+        print(f"  🌍 Глобальных: {global_count}")
         print(f"  📊 Всего в базе: {stats['all']}")
         
         if stats['all'] > 0:
-            print(f"\n{Fore.GREEN}🔥 ПРИМЕРЫ РАБОЧИХ ПРОКСИ:{Style.RESET_ALL}")
-            for i, proxy in enumerate(stats['fast'][:5]):
-                print(f"  {i+1}. {proxy}")
+            print(f"\n{Fore.GREEN}📁 ФАЙЛЫ С ПРОКСИ:{Style.RESET_ALL}")
+            print(f"  🇷🇺 Россия: https://raw.githubusercontent.com/Ganjo1st/Proctor/main/data/proxies_russia.txt")
+            print(f"  🇺🇸 США: https://raw.githubusercontent.com/Ganjo1st/Proctor/main/data/proxies_usa.txt")
+            print(f"  🌍 Глобальные: https://raw.githubusercontent.com/Ganjo1st/Proctor/main/data/proxies_global.txt")
+            print(f"  📦 Все: https://raw.githubusercontent.com/Ganjo1st/Proctor/main/data/proxies_all.txt")
 
 if __name__ == "__main__":
     collector = RapidCollector()
