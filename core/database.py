@@ -121,3 +121,7 @@ class ProxyDatabase:
             'last_update': self.db['stats'].get('last_update'),
             'total_seen': self.db['stats'].get('total_seen', 0)
         }
+    
+    def get_proxy_history(self, proxy: str) -> Dict:
+        """История конкретного прокси"""
+        return self.db['proxies'].get(proxy, {})
