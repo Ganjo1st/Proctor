@@ -11,10 +11,18 @@
       "last_seen": "2026-03-20T16:44:33.884011",
       "working": true,
       "latency": 1516.44
+    },
+    "47.89.184.18:3128": {
+      "first_seen": "2026-03-20T16:56:27.687022",
+      "last_seen": "2026-03-20T16:56:27.687022",
+      "working": true,
+      "latency": 226.11,
+      "ru_access": false,
+      "us_access": false
     }
   },
   "stats": {
-    "total_seen": 2,
-    "last_update": "2026-03-20T16:44:33.884011"
+    "total_seen": 3,
+    "last_update": "2026-03-20T16:56:27.687022"
   }
 }
