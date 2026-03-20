@@ -36,17 +36,17 @@ def main():
         print(f"\n{Fore.YELLOW}⚠️ Нет рабочих прокси для отчёта{Style.RESET_ALL}")
         return
     
+    # Создаём папку для отчётов
+    os.makedirs('reports', exist_ok=True)
+    
     # Создаём отчёт
     report = ExcelReport(db)
     filename = f"reports/proxy_report_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
     
-    # Создаём папку для отчётов
-    os.makedirs('reports', exist_ok=True)
-    
     report.create_report(filename)
     
     print(f"\n{Fore.GREEN}✅ Отчёт создан: {filename}{Style.RESET_ALL}")
-    print(f"   Открыть: https://github.com/Ganjo1st/Proctor/blob/main/{filename}")
+    print(f"   Прямая ссылка: https://github.com/Ganjo1st/Proctor/blob/main/{filename}")
 
 if __name__ == "__main__":
     main()
