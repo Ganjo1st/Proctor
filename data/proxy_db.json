@@ -2,63 +2,47 @@
   "proxies": {
     "16.78.119.130:443": {
       "first_seen": "2026-03-20T16:44:33.883772",
-      "last_seen": "2026-03-20T18:44:51.103810",
+      "last_seen": "2026-03-20T19:29:46.918779",
       "working": true,
-      "latency": 842.79,
+      "latency": 942.39,
       "ru_access": false,
       "us_access": false
     },
     "20.111.54.16:8123": {
       "first_seen": "2026-03-20T16:59:59.414588",
-      "last_seen": "2026-03-20T18:44:51.104112",
+      "last_seen": "2026-03-20T19:29:46.919018",
       "working": true,
-      "latency": 621.26,
+      "latency": 568.23,
       "ru_access": false,
       "us_access": false
     },
     "167.103.34.108:8800": {
       "first_seen": "2026-03-20T17:23:40.516988",
-      "last_seen": "2026-03-20T18:44:51.104704",
+      "last_seen": "2026-03-20T19:29:46.919472",
       "working": true,
-      "latency": 889.5,
+      "latency": 1014.51,
       "ru_access": false,
       "us_access": true
     },
     "20.24.43.214:80": {
       "first_seen": "2026-03-20T18:31:47.862603",
-      "last_seen": "2026-03-20T18:44:51.105001",
+      "last_seen": "2026-03-20T19:29:46.919789",
       "working": true,
-      "latency": 972.46,
-      "ru_access": false,
-      "us_access": false
-    },
-    "152.70.137.18:8888": {
-      "first_seen": "2026-03-20T18:52:05.795928",
-      "last_seen": "2026-03-20T18:52:05.795928",
-      "working": true,
-      "latency": 325.09,
-      "ru_access": false,
-      "us_access": false
-    },
-    "187.102.219.32:999": {
-      "first_seen": "2026-03-20T18:52:05.796211",
-      "last_seen": "2026-03-20T18:52:05.796211",
-      "working": true,
-      "latency": 1098.75,
+      "latency": 1113.33,
       "ru_access": false,
       "us_access": false
     },
     "20.210.113.32:8123": {
       "first_seen": "2026-03-20T18:52:05.796623",
-      "last_seen": "2026-03-20T18:52:05.796623",
+      "last_seen": "2026-03-20T19:29:46.920063",
       "working": true,
-      "latency": 702.9,
+      "latency": 1010.94,
       "ru_access": false,
       "us_access": false
     }
   },
   "stats": {
     "total_seen": 12,
-    "last_update": "2026-03-20T18:52:05.796623"
+    "last_update": "2026-03-20T19:29:46.920063"
   }
 }
