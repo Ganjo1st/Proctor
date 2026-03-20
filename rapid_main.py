@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # rapid_main.py - СУПЕР-БЫСТРЫЙ СБОР И ПРОВЕРКА
 
-import asyncio
 import sys
 import os
-import json
+import asyncio
 from datetime import datetime
 from colorama import init, Fore, Style
 
@@ -42,8 +41,7 @@ class RapidCollector:
             print(f"{Fore.RED}❌ Нет прокси для проверки{Style.RESET_ALL}")
             return
         
-        # ШАГ 2: БЕРЁМ ТОЛЬКО СВЕЖИЕ (не проверенные за последний час)
-        now = time.time()
+        # ШАГ 2: БЕРЁМ ТОЛЬКО НОВЫЕ
         existing = set(self.db.db['proxies'].keys())
         new_proxies = [p for p in raw_proxies if p not in existing]
         
@@ -51,12 +49,16 @@ class RapidCollector:
         
         if not new_proxies:
             print(f"{Fore.YELLOW}⚠️ Нет новых прокси{Style.RESET_ALL}")
+            stats = self.db.get_stats()
+            print(f"\n📊 ТЕКУЩАЯ СТАТИСТИКА:")
+            print(f"  Всего в базе: {stats['total_in_db']}")
+            print(f"  Рабочих: {stats['working_now']}")
             return
         
         # ШАГ 3: БЕРЁМ ПЕРВЫЕ 500
         to_check = new_proxies[:self.BATCH_SIZE]
         
-        # ШАГ 4: ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА (ВСЕ СРАЗУ!)
+        # ШАГ 4: ПАРАЛЛЕЛЬНАЯ ПРОВЕРКА
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         results = loop.run_until_complete(self.checker.check_all(to_check))
@@ -78,10 +80,9 @@ class RapidCollector:
         
         if stats['all'] > 0:
             print(f"\n{Fore.GREEN}🔥 ПРИМЕРЫ РАБОЧИХ ПРОКСИ:{Style.RESET_ALL}")
-            for i, proxy in enumerate(stats['all'][:5]):
+            for i, proxy in enumerate(stats['fast'][:5]):
                 print(f"  {i+1}. {proxy}")
 
 if __name__ == "__main__":
-    import time
     collector = RapidCollector()
     collector.run()
