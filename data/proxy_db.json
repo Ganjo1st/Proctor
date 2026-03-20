@@ -2,55 +2,47 @@
   "proxies": {
     "20.111.54.16:8123": {
       "first_seen": "2026-03-20T16:59:59.414588",
-      "last_seen": "2026-03-20T23:17:47.349600",
+      "last_seen": "2026-03-20T23:48:37.029653",
       "working": true,
-      "latency": 561.78,
+      "latency": 1069.1,
       "ru_access": false,
       "us_access": false
     },
     "167.103.34.108:8800": {
       "first_seen": "2026-03-20T17:23:40.516988",
-      "last_seen": "2026-03-20T23:17:47.349935",
+      "last_seen": "2026-03-20T23:48:37.030150",
       "working": true,
-      "latency": 1208.89,
+      "latency": 988.19,
       "ru_access": false,
       "us_access": false
     },
     "20.24.43.214:80": {
       "first_seen": "2026-03-20T18:31:47.862603",
-      "last_seen": "2026-03-20T23:17:47.350376",
+      "last_seen": "2026-03-20T23:48:37.030556",
       "working": true,
-      "latency": 1001.18,
+      "latency": 1077.59,
       "ru_access": false,
       "us_access": false
     },
     "20.210.113.32:8123": {
       "first_seen": "2026-03-20T18:52:05.796623",
-      "last_seen": "2026-03-20T23:17:47.350692",
+      "last_seen": "2026-03-20T23:48:37.030922",
       "working": true,
-      "latency": 680.77,
+      "latency": 750.92,
       "ru_access": false,
       "us_access": false
     },
-    "38.34.183.224:8448": {
-      "first_seen": "2026-03-20T23:20:59.960821",
-      "last_seen": "2026-03-20T23:20:59.960821",
-      "working": true,
-      "latency": 596.6,
-      "ru_access": false,
-      "us_access": true
-    },
     "38.34.183.222:8453": {
       "first_seen": "2026-03-20T23:20:59.961074",
-      "last_seen": "2026-03-20T23:20:59.961074",
+      "last_seen": "2026-03-20T23:48:37.031204",
       "working": true,
-      "latency": 390.08,
+      "latency": 869.34,
       "ru_access": false,
-      "us_access": true
+      "us_access": false
     }
   },
   "stats": {
     "total_seen": 23,
-    "last_update": "2026-03-20T23:20:59.961074"
+    "last_update": "2026-03-20T23:48:37.031204"
   }
 }
