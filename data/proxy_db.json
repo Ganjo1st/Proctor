@@ -63,10 +63,18 @@
       "latency": 501.52,
       "ru_access": false,
       "us_access": false
+    },
+    "103.113.70.189:1081": {
+      "first_seen": "2026-03-21T14:52:43.469739",
+      "last_seen": "2026-03-21T14:52:43.469739",
+      "working": true,
+      "latency": 986.48,
+      "ru_access": false,
+      "us_access": true
     }
   },
   "stats": {
-    "total_seen": 73,
-    "last_update": "2026-03-21T14:49:09.154992"
+    "total_seen": 74,
+    "last_update": "2026-03-21T14:52:43.469739"
   }
 }
