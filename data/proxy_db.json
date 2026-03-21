@@ -2,55 +2,55 @@
   "proxies": {
     "20.111.54.16:8123": {
       "first_seen": "2026-03-20T16:59:59.414588",
-      "last_seen": "2026-03-21T08:53:52.962589",
+      "last_seen": "2026-03-21T09:20:23.356878",
       "working": true,
-      "latency": 1262.67,
+      "latency": 575.78,
       "ru_access": false,
       "us_access": false
     },
     "167.103.34.108:8800": {
       "first_seen": "2026-03-20T17:23:40.516988",
-      "last_seen": "2026-03-21T08:53:52.962944",
+      "last_seen": "2026-03-21T09:20:23.357267",
       "working": true,
-      "latency": 944.14,
+      "latency": 1407.19,
       "ru_access": false,
       "us_access": false
     },
     "20.210.113.32:8123": {
       "first_seen": "2026-03-20T18:52:05.796623",
-      "last_seen": "2026-03-21T08:53:52.963505",
+      "last_seen": "2026-03-21T09:20:23.357737",
       "working": true,
-      "latency": 680.53,
+      "latency": 674.87,
       "ru_access": false,
       "us_access": false
     },
     "147.161.210.140:8800": {
       "first_seen": "2026-03-20T23:49:37.840125",
-      "last_seen": "2026-03-21T08:53:52.963841",
+      "last_seen": "2026-03-21T09:20:23.358113",
       "working": true,
-      "latency": 554.39,
+      "latency": 549.84,
       "ru_access": false,
       "us_access": true
     },
     "167.103.31.122:8800": {
       "first_seen": "2026-03-21T04:52:56.059208",
-      "last_seen": "2026-03-21T08:53:52.964131",
+      "last_seen": "2026-03-21T09:20:23.358678",
       "working": true,
-      "latency": 1128.73,
+      "latency": 1026.1,
       "ru_access": false,
       "us_access": false
     },
     "120.92.212.16:7890": {
       "first_seen": "2026-03-21T06:06:51.179539",
-      "last_seen": "2026-03-21T08:53:52.964427",
+      "last_seen": "2026-03-21T09:20:23.359002",
       "working": true,
-      "latency": 1121.57,
+      "latency": 920.79,
       "ru_access": false,
       "us_access": false
     }
   },
   "stats": {
     "total_seen": 55,
-    "last_update": "2026-03-21T08:53:52.964427"
+    "last_update": "2026-03-21T09:20:23.359002"
   }
 }
