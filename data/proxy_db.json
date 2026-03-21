@@ -212,10 +212,28 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "83.219.250.8:62920": {
+      "first_seen": "2026-03-21T19:48:58.499295",
+      "last_seen": "2026-03-21T19:48:58.499295",
+      "working": true,
+      "latency": 926.26,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "210.223.44.230:3128": {
+      "first_seen": "2026-03-21T19:48:58.499762",
+      "last_seen": "2026-03-21T19:48:58.499762",
+      "working": true,
+      "latency": 732.25,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 101,
-    "last_update": "2026-03-21T19:33:29.320559"
+    "total_seen": 103,
+    "last_update": "2026-03-21T19:48:58.499762"
   }
 }
