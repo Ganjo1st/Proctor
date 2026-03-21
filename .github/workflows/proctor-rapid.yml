@@ -38,8 +38,9 @@ jobs:
           echo "ℹ️ No changes"
         else
           git commit -m "⚡ Rapid update: $(date +'%H:%M')"
-          git pull --rebase origin main || true
-          git push --force
+          git fetch origin main
+          git rebase origin/main
+          git push origin main
         fi
 
   rapid-clean:
@@ -63,13 +64,14 @@ jobs:
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git pull --rebase origin main || true
         git add data/*.txt data/*.json 2>/dev/null || true
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
           git commit -m "🧹 Cleanup: $(date +'%H:%M')"
-          git push --force
+          git fetch origin main
+          git rebase origin/main
+          git push origin main
         fi
 
   rapid-report:
@@ -96,11 +98,12 @@ jobs:
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git pull --rebase origin main || true
         git add reports/*.xlsx 2>/dev/null || true
         if git diff --staged --quiet; then
           echo "ℹ️ No new report"
         else
           git commit -m "📊 Report: $(date +'%Y-%m-%d %H:%M')"
-          git push --force
+          git fetch origin main
+          git rebase origin/main
+          git push origin main
         fi
