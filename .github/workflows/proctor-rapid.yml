@@ -5,7 +5,7 @@ on:
     - cron: '*/8 * * * *'       # Сбор каждые 8 минут
     - cron: '*/15 * * * *'      # Очистка каждые 15 минут
     - cron: '0 */6 * * *'       # Отчёт каждые 6 часов
-  workflow_dispatch:            # ← ЭТО ВКЛЮЧАЕТ КНОПКУ РУЧНОГО ЗАПУСКА!
+  workflow_dispatch:
 
 jobs:
   smart-collect:
@@ -20,10 +20,10 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install dependencies
+    - name: Install ALL dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama
+        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Create directories
       run: mkdir -p core data logs reports
     - name: Run SMART collection
