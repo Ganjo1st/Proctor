@@ -1,15 +1,15 @@
-name: Proctor RAPID - Fast Proxy Collector
+name: Proctor SMART - Intelligent Proxy Collector
 
 on:
   schedule:
-    - cron: '*/15 * * * *'      # Сбор каждые 15 минут
-    - cron: '*/30 * * * *'      # Очистка каждые 30 минут
+    - cron: '*/8 * * * *'       # Сбор каждые 8 минут
+    - cron: '*/15 * * * *'      # Очистка каждые 15 минут
     - cron: '0 */6 * * *'       # Отчёт каждые 6 часов
   workflow_dispatch:
 
 jobs:
-  rapid-collect:
-    name: ⚡ Rapid Collect & Verify
+  smart-collect:
+    name: 🧠 Smart Collect & Verify
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,7 +26,7 @@ jobs:
         pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama
     - name: Create directories
       run: mkdir -p core data logs reports
-    - name: Run RAPID collection
+    - name: Run SMART collection
       run: python rapid_main.py
       continue-on-error: true
     - name: Commit results
@@ -37,16 +37,16 @@ jobs:
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
-          git commit -m "⚡ Rapid update: $(date +'%H:%M')"
+          git commit -m "🧠 Smart update: $(date +'%H:%M')"
           git fetch origin main
           git rebase origin/main
           git push origin main
         fi
 
-  rapid-clean:
-    name: 🧹 Aggressive Cleanup
+  smart-clean:
+    name: 🧹 Smart Cleanup
     runs-on: ubuntu-latest
-    if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     steps:
@@ -74,7 +74,7 @@ jobs:
           git push origin main
         fi
 
-  rapid-report:
+  smart-report:
     name: 📊 Generate Excel Report
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 */6 * * *' || github.event_name == 'workflow_dispatch'
@@ -85,9 +85,8 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install ALL dependencies
+    - name: Install dependencies
       run: |
-        pip install --upgrade pip
         pip install pandas openpyxl colorama
     - name: Create directories
       run: mkdir -p reports
