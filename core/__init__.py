@@ -5,14 +5,12 @@ from core.smart_scraper import SmartScraper
 from core.rapid_checker import RapidChecker
 from core.database import ProxyDatabase
 from core.excel_report import ExcelReport
-from core.source_finder import SourceFinder
-from core.history_tracker import HistoryTracker
+from core.notifier import TelegramNotifier
 
 __all__ = [
     'SmartScraper',
-    'RapidChecker', 
+    'RapidChecker',
     'ProxyDatabase',
     'ExcelReport',
-    'SourceFinder',
-    'HistoryTracker'
+    'TelegramNotifier'
 ]
