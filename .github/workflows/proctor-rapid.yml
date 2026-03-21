@@ -2,15 +2,18 @@ name: Proctor SMART - Intelligent Proxy Collector
 
 on:
   schedule:
-    - cron: '*/8 * * * *'       # Сбор каждые 8 минут
-    - cron: '*/15 * * * *'      # Очистка каждые 15 минут
-    - cron: '0 */6 * * *'       # Отчёт каждые 6 часов
+    - cron: '*/5 * * * *'       # Сбор новых прокси - каждые 5 минут
+    - cron: '*/8 * * * *'       # Удаление нерабочих - каждые 8 минут
+    - cron: '*/30 * * * *'      # Поиск новых источников - каждые 30 минут
+    - cron: '0 */6 * * *'       # Отчёт - каждые 6 часов
   workflow_dispatch:
 
 jobs:
+  # 🔍 СБОР НОВЫХ ПРОКСИ - каждые 5 минут
   smart-collect:
-    name: 🧠 Smart Collect & Verify
+    name: 🔍 Collect New Proxies
     runs-on: ubuntu-latest
+    if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     steps:
@@ -20,7 +23,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install ALL dependencies
+    - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
@@ -37,16 +40,17 @@ jobs:
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
-          git commit -m "🧠 Smart update: $(date +'%H:%M')"
+          git commit -m "🔍 Collect: $(date +'%H:%M')"
           git fetch origin main
           git rebase origin/main
           git push origin main
         fi
 
+  # 🧹 УДАЛЕНИЕ НЕРАБОЧИХ - каждые 8 минут
   smart-clean:
-    name: 🧹 Smart Cleanup
+    name: 🧹 Remove Dead Proxies
     runs-on: ubuntu-latest
-    if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '*/8 * * * *' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     steps:
@@ -74,6 +78,41 @@ jobs:
           git push origin main
         fi
 
+  # 🔎 ПОИСК НОВЫХ ИСТОЧНИКОВ - каждые 30 минут
+  smart-find-sources:
+    name: 🔎 Find New Sources
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 lxml fake-useragent colorama
+    - name: Create directories
+      run: mkdir -p core data
+    - name: Find new sources
+      run: python find_sources.py
+      continue-on-error: true
+    - name: Commit sources
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git add data/sources.json 2>/dev/null || true
+        if git diff --staged --quiet; then
+          echo "ℹ️ No new sources"
+        else
+          git commit -m "🔎 New sources: $(date +'%H:%M')"
+          git fetch origin main
+          git rebase origin/main
+          git push origin main
+        fi
+
+  # 📊 ЕЖЕДНЕВНЫЙ ОТЧЁТ - каждые 6 часов
   smart-report:
     name: 📊 Generate Excel Report
     runs-on: ubuntu-latest
@@ -85,7 +124,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install ALL dependencies
+    - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
