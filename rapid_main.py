@@ -12,16 +12,18 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from core.smart_scraper import SmartScraper
 from core.rapid_checker import RapidChecker
 from core.database import ProxyDatabase
+from core.notifier import TelegramNotifier
 
 init(autoreset=True)
 
 class RapidCollector:
-    """Умный сбор и проверка прокси"""
+    """Умный сбор и проверка прокси с уведомлениями"""
     
     def __init__(self):
         self.db = ProxyDatabase()
         self.scraper = SmartScraper()
         self.checker = RapidChecker()
+        self.notifier = TelegramNotifier()
         self.BATCH_SIZE = 500
     
     def run(self):
@@ -33,6 +35,9 @@ class RapidCollector:
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
         """)
         
+        # Получаем статистику ДО обновления
+        old_stats = self.db.get_stats()
+        
         # ШАГ 1: УМНЫЙ СБОР
         raw_proxies = self.scraper.get_all_proxies()
         
@@ -40,47 +45,42 @@ class RapidCollector:
             print(f"{Fore.RED}❌ Нет прокси для проверки{Style.RESET_ALL}")
             return
         
-        # ШАГ 2: БЕРЁМ ТОЛЬКО НОВЫЕ (не в базе)
+        # ШАГ 2: БЕРЁМ ТОЛЬКО НОВЫЕ
         existing = set(self.db.db['proxies'].keys())
         new_proxies = [p for p in raw_proxies if p not in existing]
         
         print(f"📊 Новых прокси: {len(new_proxies)} из {len(raw_proxies)}")
         
-        if not new_proxies:
-            print(f"{Fore.YELLOW}⚠️ Нет новых прокси{Style.RESET_ALL}")
-            self.show_stats()
-            return
-        
-        # ШАГ 3: ПРОВЕРКА ТОЛЬКО НОВЫХ (если они из непроверенных источников)
-        to_check = new_proxies[:self.BATCH_SIZE]
-        
-        # Проверка только если есть непроверенные
-        if any('proxymania' not in p for p in to_check):
+        new_working = 0
+        if new_proxies:
+            to_check = new_proxies[:self.BATCH_SIZE]
+            
+            # Проверка
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             results = loop.run_until_complete(self.checker.check_all(to_check))
             loop.close()
-        else:
-            # Прокси с proxymania уже проверены, добавляем сразу
-            results = [{'proxy': p, 'working': True, 'latency': 0} for p in to_check]
+            
+            # Сохраняем рабочие
+            for result in results:
+                if result['working']:
+                    self.db.add_proxy(result['proxy'], result)
+                    new_working += 1
         
-        # ШАГ 4: СОХРАНЯЕМ РАБОЧИЕ
-        added = 0
-        for result in results:
-            if result['working']:
-                # Для proxymania ставим задержку 0 (не проверяем)
-                if 'proxymania' in result['proxy']:
-                    result['latency'] = 50  # Условная хорошая скорость
-                self.db.add_proxy(result['proxy'], result)
-                added += 1
-        
-        # ШАГ 5: ЭКСПОРТ
+        # ШАГ 3: ЭКСПОРТ
         stats = self.db.export_to_txt()
+        new_stats = self.db.get_stats()
         
         print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
-        print(f"  ✨ Добавлено: {added}")
+        print(f"  ✨ Добавлено новых рабочих: {new_working}")
         print(f"  📊 Всего рабочих: {stats['all']}")
-        self.show_stats()
+        
+        # ШАГ 4: ОТПРАВКА УВЕДОМЛЕНИЯ В TELEGRAM
+        if new_working > 0:
+            if self.notifier.send_stats(new_stats, new_working):
+                print(f"  🤖 Уведомление отправлено в Telegram")
+            else:
+                print(f"  ⚠️ Не удалось отправить уведомление (бот не настроен)")
         
         # Показываем примеры
         if stats['all'] > 0:
@@ -89,14 +89,6 @@ class RapidCollector:
                 proxies = f.read().splitlines()[:5]
                 for p in proxies:
                     print(f"  {p}")
-    
-    def show_stats(self):
-        """Показать текущую статистику"""
-        stats = self.db.get_stats()
-        print(f"\n{Fore.CYAN}📊 СТАТИСТИКА БАЗЫ:{Style.RESET_ALL}")
-        print(f"  Всего в базе: {stats['total_in_db']}")
-        print(f"  Рабочих: {stats['working_now']}")
-        print(f"  🇷🇺 РФ: {stats['russian']} | 🇺🇸 США: {stats['american']} | 🌍 Глобальных: {stats['global']}")
 
 if __name__ == "__main__":
     collector = RapidCollector()
