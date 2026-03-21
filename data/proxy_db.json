@@ -2,55 +2,55 @@
   "proxies": {
     "20.111.54.16:8123": {
       "first_seen": "2026-03-20T16:59:59.414588",
-      "last_seen": "2026-03-21T03:19:13.017776",
+      "last_seen": "2026-03-21T04:50:38.656889",
       "working": true,
-      "latency": 508.3,
+      "latency": 729.12,
       "ru_access": false,
       "us_access": false
     },
     "167.103.34.108:8800": {
       "first_seen": "2026-03-20T17:23:40.516988",
-      "last_seen": "2026-03-21T03:19:13.018218",
+      "last_seen": "2026-03-21T04:50:38.657263",
       "working": true,
-      "latency": 952.77,
+      "latency": 947.29,
       "ru_access": false,
       "us_access": false
     },
     "20.24.43.214:80": {
       "first_seen": "2026-03-20T18:31:47.862603",
-      "last_seen": "2026-03-21T03:19:13.018670",
+      "last_seen": "2026-03-21T04:50:38.657721",
       "working": true,
-      "latency": 1116.46,
+      "latency": 954.62,
       "ru_access": false,
       "us_access": false
     },
     "20.210.113.32:8123": {
       "first_seen": "2026-03-20T18:52:05.796623",
-      "last_seen": "2026-03-21T03:19:13.019046",
+      "last_seen": "2026-03-21T04:50:38.658110",
       "working": true,
-      "latency": 811.0,
+      "latency": 692.39,
       "ru_access": false,
       "us_access": false
     },
     "147.161.210.140:8800": {
       "first_seen": "2026-03-20T23:49:37.840125",
-      "last_seen": "2026-03-21T03:19:13.019345",
+      "last_seen": "2026-03-21T04:50:38.658425",
       "working": true,
-      "latency": 643.25,
+      "latency": 784.52,
       "ru_access": false,
       "us_access": true
     },
     "174.138.24.77:1080": {
       "first_seen": "2026-03-21T01:00:53.024426",
-      "last_seen": "2026-03-21T03:19:13.019648",
+      "last_seen": "2026-03-21T04:50:38.658712",
       "working": true,
-      "latency": 1035.03,
+      "latency": 819.35,
       "ru_access": false,
       "us_access": true
     }
   },
   "stats": {
     "total_seen": 40,
-    "last_update": "2026-03-21T03:19:13.019648"
+    "last_update": "2026-03-21T04:50:38.658712"
   }
 }
