@@ -392,10 +392,28 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "197.164.101.13:1976": {
+      "first_seen": "2026-03-21T22:59:03.129995",
+      "last_seen": "2026-03-21T22:59:03.129995",
+      "working": true,
+      "latency": 1899.76,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "85.132.37.9:1313": {
+      "first_seen": "2026-03-21T22:59:03.130676",
+      "last_seen": "2026-03-21T22:59:03.130676",
+      "working": true,
+      "latency": 995.12,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 121,
-    "last_update": "2026-03-21T22:43:01.801161"
+    "total_seen": 123,
+    "last_update": "2026-03-21T22:59:03.130676"
   }
 }
