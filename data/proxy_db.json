@@ -47,10 +47,26 @@
       "latency": 346.64,
       "ru_access": false,
       "us_access": false
+    },
+    "13.230.49.39:8080": {
+      "first_seen": "2026-03-21T12:23:32.044974",
+      "last_seen": "2026-03-21T12:23:32.044974",
+      "working": true,
+      "latency": 540.8,
+      "ru_access": false,
+      "us_access": false
+    },
+    "183.249.5.117:22222": {
+      "first_seen": "2026-03-21T12:23:32.045314",
+      "last_seen": "2026-03-21T12:23:32.045314",
+      "working": true,
+      "latency": 1380.36,
+      "ru_access": false,
+      "us_access": false
     }
   },
   "stats": {
-    "total_seen": 66,
-    "last_update": "2026-03-21T12:22:01.961113"
+    "total_seen": 68,
+    "last_update": "2026-03-21T12:23:32.045314"
   }
 }
