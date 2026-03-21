@@ -55,10 +55,18 @@
       "latency": 844.54,
       "ru_access": false,
       "us_access": false
+    },
+    "217.160.224.54:8118": {
+      "first_seen": "2026-03-21T15:18:06.767787",
+      "last_seen": "2026-03-21T15:18:06.767787",
+      "working": true,
+      "latency": 1232.39,
+      "ru_access": false,
+      "us_access": false
     }
   },
   "stats": {
-    "total_seen": 74,
-    "last_update": "2026-03-21T15:15:10.138522"
+    "total_seen": 75,
+    "last_update": "2026-03-21T15:18:06.767787"
   }
 }
