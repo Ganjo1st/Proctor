@@ -644,10 +644,28 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "104.168.93.120:8080": {
+      "first_seen": "2026-03-22T13:30:42.519802",
+      "last_seen": "2026-03-22T13:30:42.519802",
+      "working": true,
+      "latency": 210.99,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "222.184.48.242:22222": {
+      "first_seen": "2026-03-22T13:30:42.520761",
+      "last_seen": "2026-03-22T13:30:42.520761",
+      "working": true,
+      "latency": 1939.78,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 149,
-    "last_update": "2026-03-22T12:39:25.251148"
+    "total_seen": 151,
+    "last_update": "2026-03-22T13:30:42.520761"
   }
 }
