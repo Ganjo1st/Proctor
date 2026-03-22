@@ -635,10 +635,19 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "204.199.140.28:999": {
+      "first_seen": "2026-03-22T12:39:25.251148",
+      "last_seen": "2026-03-22T12:39:25.251148",
+      "working": true,
+      "latency": 757.55,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 148,
-    "last_update": "2026-03-22T11:56:44.192178"
+    "total_seen": 149,
+    "last_update": "2026-03-22T12:39:25.251148"
   }
 }
