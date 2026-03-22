@@ -914,10 +914,19 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "185.114.73.2:1080": {
+      "first_seen": "2026-03-22T20:45:10.582446",
+      "last_seen": "2026-03-22T20:45:10.582446",
+      "working": true,
+      "latency": 434.36,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 179,
-    "last_update": "2026-03-22T20:13:16.900805"
+    "total_seen": 180,
+    "last_update": "2026-03-22T20:45:10.582446"
   }
 }
