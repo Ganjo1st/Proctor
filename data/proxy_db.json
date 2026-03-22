@@ -851,10 +851,28 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "38.34.179.46:8453": {
+      "first_seen": "2026-03-22T19:15:48.737399",
+      "last_seen": "2026-03-22T19:15:48.737399",
+      "working": true,
+      "latency": 566.82,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "38.145.208.197:8445": {
+      "first_seen": "2026-03-22T19:15:48.738577",
+      "last_seen": "2026-03-22T19:15:48.738577",
+      "working": true,
+      "latency": 531.8,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 172,
-    "last_update": "2026-03-22T18:01:49.894826"
+    "total_seen": 174,
+    "last_update": "2026-03-22T19:15:48.738577"
   }
 }
