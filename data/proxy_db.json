@@ -518,10 +518,64 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "34.96.238.40:8080": {
+      "first_seen": "2026-03-22T08:53:27.675098",
+      "last_seen": "2026-03-22T08:53:27.675098",
+      "working": true,
+      "latency": 944.2,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "137.220.150.170:6005": {
+      "first_seen": "2026-03-22T08:53:27.675879",
+      "last_seen": "2026-03-22T08:53:27.675879",
+      "working": true,
+      "latency": 1226.03,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "38.145.208.204:8444": {
+      "first_seen": "2026-03-22T08:53:27.676850",
+      "last_seen": "2026-03-22T08:53:27.676850",
+      "working": true,
+      "latency": 392.46,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "177.93.45.90:999": {
+      "first_seen": "2026-03-22T08:53:27.677750",
+      "last_seen": "2026-03-22T08:53:27.677750",
+      "working": true,
+      "latency": 442.11,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "185.21.252.234:3128": {
+      "first_seen": "2026-03-22T08:53:27.678509",
+      "last_seen": "2026-03-22T08:53:27.678509",
+      "working": true,
+      "latency": 1633.05,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "212.67.31.235:8080": {
+      "first_seen": "2026-03-22T08:53:27.679270",
+      "last_seen": "2026-03-22T08:53:27.679270",
+      "working": true,
+      "latency": 1053.63,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 135,
-    "last_update": "2026-03-22T07:23:44.112346"
+    "total_seen": 141,
+    "last_update": "2026-03-22T08:53:27.679270"
   }
 }
