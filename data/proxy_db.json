@@ -581,10 +581,19 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "45.151.183.183:1080": {
+      "first_seen": "2026-03-22T10:02:52.170611",
+      "last_seen": "2026-03-22T10:02:52.170611",
+      "working": true,
+      "latency": 701.08,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 142,
-    "last_update": "2026-03-22T09:50:38.710837"
+    "total_seen": 143,
+    "last_update": "2026-03-22T10:02:52.170611"
   }
 }
