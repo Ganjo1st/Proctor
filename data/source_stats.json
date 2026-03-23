@@ -1,44 +1,44 @@
 {
   "proxymania": {
     "success_rate": 15.0,
-    "checks": 68,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.056083"
+    "last_success": "2026-03-23T06:53:15.024596"
   },
   "thespeedx_http": {
-    "success_rate": 2919.1764705882347,
-    "checks": 68,
+    "success_rate": 2923.478260869565,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.105793"
+    "last_success": "2026-03-23T06:53:15.111978"
   },
   "thespeedx_socks4": {
-    "success_rate": 2556.7205882352946,
-    "checks": 68,
+    "success_rate": 2559.9855072463774,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.116359"
+    "last_success": "2026-03-23T06:53:15.138619"
   },
   "thespeedx_socks5": {
-    "success_rate": 1895.0441176470588,
-    "checks": 68,
+    "success_rate": 1898.7101449275362,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.125872"
+    "last_success": "2026-03-23T06:53:15.161549"
   },
   "jetkai_http": {
     "success_rate": 1801.0,
-    "checks": 68,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.134860"
+    "last_success": "2026-03-23T06:53:15.183841"
   },
   "ru_scrape": {
-    "success_rate": 14.411764705882353,
-    "checks": 68,
+    "success_rate": 14.333333333333334,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.477588"
+    "last_success": "2026-03-23T06:53:15.912152"
   },
   "us_scrape": {
-    "success_rate": 94.08823529411765,
-    "checks": 68,
+    "success_rate": 94.04347826086956,
+    "checks": 69,
     "enabled": true,
-    "last_success": "2026-03-23T05:47:43.672186"
+    "last_success": "2026-03-23T06:53:16.402061"
   }
 }
