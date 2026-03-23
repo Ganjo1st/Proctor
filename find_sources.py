@@ -1,67 +1,59 @@
 #!/usr/bin/env python3
-# find_sources.py - ПОИСК НОВЫХ ИСТОЧНИКОВ ПРОКСИ С АНАЛИТИКОЙ
+# find_sources.py - ДИАГНОСТИКА И ПОИСК НОВЫХ ИСТОЧНИКОВ
 
 import sys
 import os
-import json
+import requests
 from datetime import datetime
 from colorama import init, Fore, Style
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from core.source_finder import SourceFinder
+from core.smart_scraper import SmartScraper
 from core.source_stats import SourceStats
-from core.history_tracker import HistoryTracker
 
 init(autoreset=True)
 
 def main():
     print(f"""
 {Fore.CYAN}╔══════════════════════════════════════════════════════════╗
-║{Fore.YELLOW}         PROCTOR SMART - ПОИСК ИСТОЧНИКОВ               {Fore.CYAN}║
-║{Fore.WHITE}         Автоматический поиск + аналитика эффективности {Fore.CYAN}║
+║{Fore.YELLOW}         PROCTOR SMART - ДИАГНОСТИКА ИСТОЧНИКОВ         {Fore.CYAN}║
+║{Fore.WHITE}         Проверка актуальности всех источников          {Fore.CYAN}║
 ║{Fore.GREEN}         {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                    {Fore.CYAN}║
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
     """)
     
-    finder = SourceFinder()
-    source_stats = SourceStats()
-    tracker = HistoryTracker()
+    scraper = SmartScraper()
     
-    # Статистика текущих источников
-    current_stats = source_stats.get_stats()
-    print(f"\n{Fore.CYAN}📊 СТАТИСТИКА ИЗВЕСТНЫХ ИСТОЧНИКОВ:{Style.RESET_ALL}")
-    print(f"  📦 Всего источников: {current_stats['total_sources']}")
-    print(f"  🟢 Активных: {current_stats['active_sources']}")
-    print(f"  🔴 Отключено: {current_stats['total_sources'] - current_stats['active_sources']}")
+    print(f"\n{Fore.CYAN}🔍 ПРОВЕРКА АКТУАЛЬНОСТИ ИСТОЧНИКОВ:{Style.RESET_ALL}")
+    print("─" * 60)
     
-    # Поиск новых источников
-    new_sources = finder.find_new_sources()
-    
-    if new_sources:
-        print(f"\n{Fore.GREEN}✨ НАЙДЕНЫ НОВЫЕ ИСТОЧНИКИ:{Style.RESET_ALL}")
-        for src in new_sources[:10]:
-            print(f"  🔗 {src['url'][:70]}")
-            print(f"     📊 {src['proxies']} прокси, пример: {src['sample'][:2] if src['sample'] else 'нет'}")
+    for name, source in scraper.sources.items():
+        print(f"\n{Fore.YELLOW}📡 {name}:{Style.RESET_ALL}")
+        print(f"   URL: {source['url'][:70]}...")
+        
+        try:
+            response = requests.get(source['url'], timeout=10)
+            print(f"   Статус: {response.status_code}")
             
-            # Сохраняем в историю
-            tracker.add_source_event(src['url'], 'found', src['proxies'])
-            source_stats.update(src['url'], src['proxies'])
-    else:
-        print(f"\n{Fore.YELLOW}⚠️ Новых источников не найдено{Style.RESET_ALL}")
+            if response.status_code == 200:
+                text = response.text[:500]
+                # Проверяем наличие прокси
+                import re
+                ip_port_pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
+                found = re.findall(ip_port_pattern, text)
+                print(f"   Прокси в ответе: {len(found)}")
+                
+                # Первые 3 прокси для примера
+                if found:
+                    print(f"   Примеры: {', '.join(found[:3])}")
+            else:
+                print(f"   {Fore.RED}❌ ИСТОЧНИК НЕДОСТУПЕН{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"   {Fore.RED}❌ ОШИБКА: {e}{Style.RESET_ALL}")
     
-    # Показываем неактивные источники
-    inactive = [name for name, s in source_stats.stats.items() if not s.get('enabled', True)]
-    if inactive:
-        print(f"\n{Fore.RED}🔴 НЕАКТИВНЫЕ ИСТОЧНИКИ (автоотключены):{Style.RESET_ALL}")
-        for name in inactive[:10]:
-            s = source_stats.stats[name]
-            print(f"  📍 {name[:60]}... (успех: {s['success_rate']:.1f}/проверку)")
-    
-    # Сохраняем статистику
-    source_stats.save()
-    
-    print(f"\n{Fore.GREEN}✅ Поиск завершён{Style.RESET_ALL}")
+    print("\n" + "─" * 60)
+    print(f"\n{Fore.GREEN}✅ Диагностика завершена{Style.RESET_ALL}")
 
 if __name__ == "__main__":
     main()
