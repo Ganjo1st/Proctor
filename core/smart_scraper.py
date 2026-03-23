@@ -1,4 +1,36 @@
-# core/smart_scraper.py - УМНЫЙ СБОР С АВТООТКЛЮЧЕНИЕМ ИСТОЧНИКОВ
+    def get_all_proxies_with_sources(self) -> List[tuple]:
+        """Сбор прокси с указанием источника"""
+        print("\n🧠 УМНЫЙ СБОР ПРОКСИ (с источниками)")
+        print("─" * 60)
+        
+        all_proxies = []
+        
+        for name, source in self.sources.items():
+            if not source['enabled']:
+                print(f"  ⏭️ {name} - ОТКЛЮЧЁН")
+                continue
+            
+            print(f"  🔍 {name}...", end=' ')
+            
+            if source['type'] == 'html':
+                proxies = self.fetch_from_html(source['url'])
+            else:
+                proxies = self.fetch_from_text(source['url'])
+            
+            self.update_source_stats(name, len(proxies))
+            
+            # Добавляем каждую прокси с именем источника
+            for proxy in proxies:
+                all_proxies.append((proxy, name))
+            
+            status = f"✅ {len(proxies)}" if proxies else "❌ 0"
+            print(status)
+        
+        print("─" * 60)
+        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
+        print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}\n")
+        
+        return all_proxies# core/smart_scraper.py - УМНЫЙ СБОР С АВТООТКЛЮЧЕНИЕМ ИСТОЧНИКОВ
 import requests
 import re
 import json
