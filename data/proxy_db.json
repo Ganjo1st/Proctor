@@ -1031,10 +1031,19 @@
       "ru_access": false,
       "us_access": false,
       "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
+    },
+    "104.129.202.127:10810": {
+      "first_seen": "2026-03-23T11:27:22.797343",
+      "last_seen": "2026-03-23T11:27:22.797343",
+      "working": true,
+      "latency": 329.74,
+      "ru_access": false,
+      "us_access": false,
+      "source": "\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043d"
     }
   },
   "stats": {
-    "total_seen": 192,
-    "last_update": "2026-03-23T08:39:09.759060"
+    "total_seen": 193,
+    "last_update": "2026-03-23T11:27:22.797343"
   }
 }
