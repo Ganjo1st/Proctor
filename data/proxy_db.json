@@ -1172,10 +1172,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "38.34.179.75:8453": {
+      "first_seen": "2026-03-24T23:02:39.530764",
+      "last_seen": "2026-03-24T23:02:39.530764",
+      "working": true,
+      "latency": 1143.96,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 204,
-    "last_update": "2026-03-24T22:36:44.264016"
+    "total_seen": 205,
+    "last_update": "2026-03-24T23:02:39.530764"
   }
 }
