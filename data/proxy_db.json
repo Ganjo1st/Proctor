@@ -1076,10 +1076,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "137.220.150.152:6005": {
+      "first_seen": "2026-03-24T16:46:32.858120",
+      "last_seen": "2026-03-24T16:46:32.858120",
+      "working": true,
+      "latency": 1529.99,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 196,
-    "last_update": "2026-03-24T16:41:27.506511"
+    "total_seen": 197,
+    "last_update": "2026-03-24T16:46:32.858120"
   }
 }
