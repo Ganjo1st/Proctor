@@ -6,7 +6,7 @@ import os
 from fake_useragent import UserAgent
 from typing import List, Set, Dict, Tuple
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class SmartScraper:
     """Умный сбор прокси с оценкой эффективности источников"""
@@ -142,7 +142,7 @@ class SmartScraper:
             if not table:
                 return proxies
             
-            rows = table.find_all('tr')[1:]
+            rows = table.find_all('tr')[1:]  # Пропускаем заголовок
             for row in rows:
                 cols = row.find_all('td')
                 if len(cols) >= 2:
@@ -150,7 +150,7 @@ class SmartScraper:
                     if ':' in proxy_text:
                         proxies.add(proxy_text)
             
-        except Exception as e:
+        except Exception:
             pass
         
         return proxies
@@ -168,7 +168,7 @@ class SmartScraper:
             found = re.findall(ip_port_pattern, text)
             proxies.update(found)
             
-        except:
+        except Exception:
             pass
         
         return proxies
