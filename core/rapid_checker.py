@@ -4,7 +4,7 @@ import asyncio
 from aiohttp_socks import ProxyConnector, ProxyType
 from typing import List, Dict
 import time
-from colorama import Fore, Style  # ← ДОЛЖНО БЫТЬ!
+from colorama import Fore, Style
 
 class RapidChecker:
     """Проверка прокси с точным гео-определением"""
@@ -14,12 +14,9 @@ class RapidChecker:
         self.timeout = aiohttp.ClientTimeout(total=3)
         self.max_concurrent = 500
         
-        # Множественные методы определения гео
-        self.geo_methods = [
-            self._check_by_country_api,
-            self._check_by_site_access,
-            self._check_by_ip_api
-        ]
+        # Сайты для проверки доступности
+        self.ru_sites = ['https://yandex.ru', 'https://vk.com', 'https://mail.ru']
+        self.us_sites = ['https://www.google.com', 'https://www.github.com', 'https://www.microsoft.com']
     
     async def check_one(self, proxy: str) -> Dict:
         """Проверка с определением страны и региона"""
@@ -58,109 +55,55 @@ class RapidChecker:
                 except:
                     return result
                 
-                # МНОГОКРАТНОЕ ГЕО-ОПРЕДЕЛЕНИЕ
-                for method in self.geo_methods:
-                    geo_result = await method(session, ip)
-                    if geo_result:
-                        result.update(geo_result)
-                        if result['country_code']:
-                            break
+                # Определение страны через IP-API
+                try:
+                    async with session.get(f'http://ip-api.com/json/{ip}', timeout=2) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            if data.get('status') == 'success':
+                                result['country'] = data.get('country')
+                                result['country_code'] = data.get('countryCode')
+                except:
+                    pass
                 
-                # Определяем регион на основе страны
-                result['region'] = self._country_to_region(result.get('country_code'))
+                # Проверка доступа к российским сайтам
+                for site in self.ru_sites:
+                    try:
+                        async with session.get(site, timeout=2) as resp:
+                            if resp.status == 200:
+                                result['ru_access'] = True
+                                break
+                    except:
+                        continue
                 
-                # Дополнительная проверка доступности РФ/США сайтов
-                result['ru_access'] = await self._check_ru_access(session)
-                result['us_access'] = await self._check_us_access(session)
+                # Проверка доступа к американским сайтам
+                for site in self.us_sites:
+                    try:
+                        async with session.get(site, timeout=2) as resp:
+                            if resp.status == 200:
+                                result['us_access'] = True
+                                break
+                    except:
+                        continue
+                
+                # Определяем регион
+                if result['ru_access'] and result['us_access']:
+                    result['region'] = 'global'
+                elif result['ru_access']:
+                    result['region'] = 'ru'
+                elif result['us_access']:
+                    result['region'] = 'us'
+                elif result['country_code'] == 'RU':
+                    result['region'] = 'ru'
+                elif result['country_code'] == 'US':
+                    result['region'] = 'us'
+                elif result['country_code'] in ['GB', 'DE', 'FR', 'IT', 'ES']:
+                    result['region'] = 'eu'
                         
         except Exception as e:
             pass
         
         return result
-    
-    async def _check_by_country_api(self, session, ip: str) -> Dict:
-        """Определение страны через country.is API"""
-        try:
-            async with session.get(f'http://country.is/{ip}', timeout=2) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    return {
-                        'country': data.get('country'),
-                        'country_code': data.get('country_code')
-                    }
-        except:
-            pass
-        return None
-    
-    async def _check_by_ip_api(self, session, ip: str) -> Dict:
-        """Определение через ip-api.com"""
-        try:
-            async with session.get(f'http://ip-api.com/json/{ip}', timeout=2) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    if data.get('status') == 'success':
-                        return {
-                            'country': data.get('country'),
-                            'country_code': data.get('countryCode')
-                        }
-        except:
-            pass
-        return None
-    
-    async def _check_by_site_access(self, session, ip: str) -> Dict:
-        """Определение региона по доступности локальных сайтов"""
-        # Пробуем определить по доступности российских сайтов
-        try:
-            async with session.get('https://yandex.ru', timeout=2) as resp:
-                if resp.status == 200:
-                    return {'country_code': 'RU', 'country': 'Russia'}
-        except:
-            pass
-        
-        try:
-            async with session.get('https://www.google.com', timeout=2) as resp:
-                if resp.status == 200:
-                    return {'country_code': 'US', 'country': 'United States'}
-        except:
-            pass
-        
-        return None
-    
-    async def _check_ru_access(self, session) -> bool:
-        """Проверка доступа к российским сайтам"""
-        ru_sites = ['https://yandex.ru', 'https://vk.com', 'https://mail.ru']
-        for site in ru_sites:
-            try:
-                async with session.get(site, timeout=2) as resp:
-                    if resp.status == 200:
-                        return True
-            except:
-                continue
-        return False
-    
-    async def _check_us_access(self, session) -> bool:
-        """Проверка доступа к американским сайтам"""
-        us_sites = ['https://www.google.com', 'https://www.github.com', 'https://www.microsoft.com']
-        for site in us_sites:
-            try:
-                async with session.get(site, timeout=2) as resp:
-                    if resp.status == 200:
-                        return True
-            except:
-                continue
-        return False
-    
-    def _country_to_region(self, country_code: str) -> str:
-        """Преобразование кода страны в регион"""
-        if country_code == 'RU':
-            return 'ru'
-        elif country_code == 'US':
-            return 'us'
-        elif country_code in ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'PL', 'UA']:
-            return 'eu'
-        elif country_code:
-            return 'other'
-        return 'unknown'
     
     async def check_all(self, proxy_list: List[str]) -> List[Dict]:
         """Массовая параллельная проверка"""
@@ -176,13 +119,11 @@ class RapidChecker:
         elapsed = time.time() - start
         working = [r for r in results if r['working']]
         
-        # Статистика по странам
-        countries = {}
-        for r in working:
-            cc = r.get('country_code', 'unknown')
-            countries[cc] = countries.get(cc, 0) + 1
+        # Статистика по регионам
+        ru = sum(1 for r in working if r['ru_access'])
+        us = sum(1 for r in working if r['us_access'])
         
         print(f"✅ ЗА {elapsed:.1f} СЕК: {len(working)}/{len(proxy_list)} рабочих")
-        print(f"   🌍 Страны: {', '.join([f'{k}:{v}' for k, v in list(countries.items())[:5]])}")
+        print(f"   🇷🇺 РФ доступ: {ru} | 🇺🇸 США доступ: {us}\n")
         
         return results
