@@ -1124,10 +1124,22 @@
       "country": "Russia",
       "country_code": "RU",
       "region": "global"
+    },
+    "38.146.28.249:40000": {
+      "first_seen": "2026-03-24T20:54:42.949738",
+      "last_seen": "2026-03-24T20:54:42.949738",
+      "working": true,
+      "latency": 1049.54,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 200,
-    "last_update": "2026-03-24T20:05:58.685726"
+    "total_seen": 201,
+    "last_update": "2026-03-24T20:54:42.949738"
   }
 }
