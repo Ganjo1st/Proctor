@@ -1064,10 +1064,22 @@
       "country": "South Korea",
       "country_code": "KR",
       "region": "us"
+    },
+    "193.181.35.87:8118": {
+      "first_seen": "2026-03-24T16:41:27.506511",
+      "last_seen": "2026-03-24T16:41:27.506511",
+      "working": true,
+      "latency": 775.97,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 195,
-    "last_update": "2026-03-24T16:40:38.749635"
+    "total_seen": 196,
+    "last_update": "2026-03-24T16:41:27.506511"
   }
 }
