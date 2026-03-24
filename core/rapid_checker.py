@@ -4,6 +4,7 @@ import asyncio
 from aiohttp_socks import ProxyConnector, ProxyType
 from typing import List, Dict
 import time
+from colorama import Fore, Style  # ← ДОЛЖНО БЫТЬ!
 
 class RapidChecker:
     """Проверка прокси с точным гео-определением"""
