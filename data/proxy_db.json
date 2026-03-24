@@ -1088,10 +1088,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "167.103.115.102:8800": {
+      "first_seen": "2026-03-24T17:37:29.763003",
+      "last_seen": "2026-03-24T17:37:29.763003",
+      "working": true,
+      "latency": 942.24,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Singapore",
+      "country_code": "SG",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 197,
-    "last_update": "2026-03-24T16:46:32.858120"
+    "total_seen": 198,
+    "last_update": "2026-03-24T17:37:29.763003"
   }
 }
