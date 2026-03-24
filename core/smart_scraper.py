@@ -1,42 +1,10 @@
-    def get_all_proxies_with_sources(self) -> List[tuple]:
-        """Сбор прокси с указанием источника"""
-        print("\n🧠 УМНЫЙ СБОР ПРОКСИ (с источниками)")
-        print("─" * 60)
-        
-        all_proxies = []
-        
-        for name, source in self.sources.items():
-            if not source['enabled']:
-                print(f"  ⏭️ {name} - ОТКЛЮЧЁН")
-                continue
-            
-            print(f"  🔍 {name}...", end=' ')
-            
-            if source['type'] == 'html':
-                proxies = self.fetch_from_html(source['url'])
-            else:
-                proxies = self.fetch_from_text(source['url'])
-            
-            self.update_source_stats(name, len(proxies))
-            
-            # Добавляем каждую прокси с именем источника
-            for proxy in proxies:
-                all_proxies.append((proxy, name))
-            
-            status = f"✅ {len(proxies)}" if proxies else "❌ 0"
-            print(status)
-        
-        print("─" * 60)
-        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
-        print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}\n")
-        
-        return all_proxies# core/smart_scraper.py - УМНЫЙ СБОР С АВТООТКЛЮЧЕНИЕМ ИСТОЧНИКОВ
+# core/smart_scraper.py - УМНЫЙ СБОР С АВТООТКЛЮЧЕНИЕМ ИСТОЧНИКОВ
 import requests
 import re
 import json
 import os
 from fake_useragent import UserAgent
-from typing import List, Set, Dict
+from typing import List, Set, Dict, Tuple
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
@@ -145,7 +113,7 @@ class SmartScraper:
         source = self.sources[source_name]
         source['checks'] += 1
         
-        # Обновляем успешность (сколько прокси нашли)
+        # Обновляем успешность
         old_rate = source['success_rate']
         new_rate = (old_rate * (source['checks'] - 1) + found_count) / source['checks']
         source['success_rate'] = new_rate
@@ -153,7 +121,7 @@ class SmartScraper:
         if found_count > 0:
             source['last_success'] = datetime.now().isoformat()
         
-        # Отключаем источник, если за 5 проверок не дал >1 рабочего прокси
+        # Отключаем источник, если за 5 проверок не дал >1 прокси
         if source['checks'] >= 5 and source['success_rate'] < 1.0:
             if source['enabled']:
                 print(f"  ⚠️ Источник {source_name} отключён (мало прокси: {source['success_rate']:.1f}/проверку)")
@@ -170,27 +138,20 @@ class SmartScraper:
                 return proxies
             
             soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Ищем таблицу с прокси
             table = soup.find('table')
             if not table:
                 return proxies
             
-            rows = table.find_all('tr')[1:]  # Пропускаем заголовок
+            rows = table.find_all('tr')[1:]
             for row in rows:
                 cols = row.find_all('td')
                 if len(cols) >= 2:
-                    # Прокси в формате IP:PORT
                     proxy_text = cols[0].get_text(strip=True)
                     if ':' in proxy_text:
                         proxies.add(proxy_text)
-                        # Добавляем также вариант с http://
-                        proxies.add(proxy_text)
-            
-            print(f"  ✅ Найдено {len(proxies)} прокси из HTML")
             
         except Exception as e:
-            print(f"  ❌ Ошибка парсинга HTML: {e}")
+            pass
         
         return proxies
     
@@ -213,15 +174,20 @@ class SmartScraper:
         return proxies
     
     def get_all_proxies(self) -> List[str]:
-        """Сбор прокси с оценкой эффективности источников"""
-        print("\n🧠 УМНЫЙ СБОР ПРОКСИ (с автоотключением источников)")
+        """Сбор всех прокси (только адреса)"""
+        proxies_with_sources = self.get_all_proxies_with_sources()
+        return [p for p, _ in proxies_with_sources]
+    
+    def get_all_proxies_with_sources(self) -> List[Tuple[str, str]]:
+        """Сбор прокси с указанием источника"""
+        print("\n🧠 УМНЫЙ СБОР ПРОКСИ (с источниками)")
         print("─" * 60)
         
-        all_proxies = set()
+        all_proxies = []
         
         for name, source in self.sources.items():
             if not source['enabled']:
-                print(f"  ⏭️ {name} - ОТКЛЮЧЁН (мало прокси)")
+                print(f"  ⏭️ {name} - ОТКЛЮЧЁН")
                 continue
             
             print(f"  🔍 {name}...", end=' ')
@@ -232,7 +198,9 @@ class SmartScraper:
                 proxies = self.fetch_from_text(source['url'])
             
             self.update_source_stats(name, len(proxies))
-            all_proxies.update(proxies)
+            
+            for proxy in proxies:
+                all_proxies.append((proxy, name))
             
             status = f"✅ {len(proxies)}" if proxies else "❌ 0"
             print(status)
@@ -241,4 +209,4 @@ class SmartScraper:
         print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
         print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}\n")
         
-        return list(all_proxies)
+        return all_proxies
