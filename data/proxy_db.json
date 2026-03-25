@@ -1364,10 +1364,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "36.94.232.177:3113": {
+      "first_seen": "2026-03-25T19:27:12.105867",
+      "last_seen": "2026-03-25T19:27:12.105867",
+      "working": true,
+      "latency": 1028.93,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Indonesia",
+      "country_code": "ID",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 220,
-    "last_update": "2026-03-25T17:30:55.566914"
+    "total_seen": 221,
+    "last_update": "2026-03-25T19:27:12.105867"
   }
 }
