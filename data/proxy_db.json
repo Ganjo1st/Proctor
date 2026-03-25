@@ -1424,10 +1424,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "49.156.44.114:8080": {
+      "first_seen": "2026-03-25T22:32:37.506015",
+      "last_seen": "2026-03-25T22:32:37.506015",
+      "working": true,
+      "latency": 985.02,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "Cambodia",
+      "country_code": "KH",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 225,
-    "last_update": "2026-03-25T21:57:34.314107"
+    "total_seen": 226,
+    "last_update": "2026-03-25T22:32:37.506015"
   }
 }
