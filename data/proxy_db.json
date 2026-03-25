@@ -1340,10 +1340,22 @@
       "country": "Singapore",
       "country_code": "SG",
       "region": "unknown"
+    },
+    "38.34.179.12:8452": {
+      "first_seen": "2026-03-25T16:04:06.962264",
+      "last_seen": "2026-03-25T16:04:06.962264",
+      "working": true,
+      "latency": 420.35,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
     }
   },
   "stats": {
-    "total_seen": 218,
-    "last_update": "2026-03-25T15:03:33.760895"
+    "total_seen": 219,
+    "last_update": "2026-03-25T16:04:06.962264"
   }
 }
