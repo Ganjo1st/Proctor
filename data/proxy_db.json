@@ -1376,10 +1376,22 @@
       "country": "Indonesia",
       "country_code": "ID",
       "region": "us"
+    },
+    "45.136.130.191:8453": {
+      "first_seen": "2026-03-25T20:00:17.256075",
+      "last_seen": "2026-03-25T20:00:17.256075",
+      "working": true,
+      "latency": 1446.16,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 221,
-    "last_update": "2026-03-25T19:27:12.105867"
+    "total_seen": 222,
+    "last_update": "2026-03-25T20:00:17.256075"
   }
 }
