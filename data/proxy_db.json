@@ -1268,10 +1268,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "8.209.255.13:3128": {
+      "first_seen": "2026-03-25T09:28:50.827009",
+      "last_seen": "2026-03-25T09:28:50.827009",
+      "working": true,
+      "latency": 641.47,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Japan",
+      "country_code": "JP",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 212,
-    "last_update": "2026-03-25T08:30:03.195111"
+    "total_seen": 213,
+    "last_update": "2026-03-25T09:28:50.827009"
   }
 }
