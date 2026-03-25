@@ -1196,10 +1196,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "38.145.208.215:8452": {
+      "first_seen": "2026-03-25T00:00:10.707262",
+      "last_seen": "2026-03-25T00:00:10.707262",
+      "working": true,
+      "latency": 241.92,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
     }
   },
   "stats": {
-    "total_seen": 206,
-    "last_update": "2026-03-24T23:40:53.423463"
+    "total_seen": 207,
+    "last_update": "2026-03-25T00:00:10.707262"
   }
 }
