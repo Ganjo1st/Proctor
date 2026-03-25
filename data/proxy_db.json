@@ -1244,10 +1244,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "193.233.22.29:10808": {
+      "first_seen": "2026-03-25T07:41:10.935540",
+      "last_seen": "2026-03-25T07:41:10.935540",
+      "working": true,
+      "latency": 118.41,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
     }
   },
   "stats": {
-    "total_seen": 210,
-    "last_update": "2026-03-25T06:44:14.267925"
+    "total_seen": 211,
+    "last_update": "2026-03-25T07:41:10.935540"
   }
 }
