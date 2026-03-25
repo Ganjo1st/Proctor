@@ -1448,10 +1448,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "116.171.106.15:3443": {
+      "first_seen": "2026-03-25T23:48:17.544173",
+      "last_seen": "2026-03-25T23:48:17.544173",
+      "working": true,
+      "latency": 1686.94,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 227,
-    "last_update": "2026-03-25T23:05:47.676255"
+    "total_seen": 228,
+    "last_update": "2026-03-25T23:48:17.544173"
   }
 }
