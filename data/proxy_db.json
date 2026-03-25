@@ -1220,10 +1220,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "201.150.116.3:999": {
+      "first_seen": "2026-03-25T04:34:24.480794",
+      "last_seen": "2026-03-25T04:34:24.480794",
+      "working": true,
+      "latency": 2513.48,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 208,
-    "last_update": "2026-03-25T02:34:17.290449"
+    "total_seen": 209,
+    "last_update": "2026-03-25T04:34:24.480794"
   }
 }
