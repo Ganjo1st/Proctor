@@ -1412,10 +1412,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "38.34.179.199:8448": {
+      "first_seen": "2026-03-25T21:57:34.314107",
+      "last_seen": "2026-03-25T21:57:34.314107",
+      "working": true,
+      "latency": 2226.15,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 224,
-    "last_update": "2026-03-25T21:23:43.415133"
+    "total_seen": 225,
+    "last_update": "2026-03-25T21:57:34.314107"
   }
 }
