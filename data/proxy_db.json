@@ -1208,10 +1208,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "global"
+    },
+    "45.5.119.70:999": {
+      "first_seen": "2026-03-25T02:34:17.290449",
+      "last_seen": "2026-03-25T02:34:17.290449",
+      "working": true,
+      "latency": 2394.82,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 207,
-    "last_update": "2026-03-25T00:00:10.707262"
+    "total_seen": 208,
+    "last_update": "2026-03-25T02:34:17.290449"
   }
 }
