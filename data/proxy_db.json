@@ -1292,10 +1292,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "38.34.183.234:8450": {
+      "first_seen": "2026-03-25T11:53:33.402360",
+      "last_seen": "2026-03-25T11:53:33.402360",
+      "working": true,
+      "latency": 1564.55,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 214,
-    "last_update": "2026-03-25T11:08:23.244743"
+    "total_seen": 215,
+    "last_update": "2026-03-25T11:53:33.402360"
   }
 }
