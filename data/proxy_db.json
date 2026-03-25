@@ -1256,10 +1256,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "global"
+    },
+    "200.174.198.32:8888": {
+      "first_seen": "2026-03-25T08:30:03.195111",
+      "last_seen": "2026-03-25T08:30:03.195111",
+      "working": true,
+      "latency": 2057.3,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 211,
-    "last_update": "2026-03-25T07:41:10.935540"
+    "total_seen": 212,
+    "last_update": "2026-03-25T08:30:03.195111"
   }
 }
