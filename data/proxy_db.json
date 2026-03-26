@@ -1508,10 +1508,22 @@
       "country": "Netherlands",
       "country_code": "NL",
       "region": "unknown"
+    },
+    "188.132.249.234:8080": {
+      "first_seen": "2026-03-26T08:35:18.755915",
+      "last_seen": "2026-03-26T08:35:18.755915",
+      "working": true,
+      "latency": 2483.19,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 232,
-    "last_update": "2026-03-26T07:46:08.731851"
+    "total_seen": 233,
+    "last_update": "2026-03-26T08:35:18.755915"
   }
 }
