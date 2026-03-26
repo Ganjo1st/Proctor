@@ -1568,10 +1568,22 @@
       "country": "Russia",
       "country_code": "RU",
       "region": "ru"
+    },
+    "160.191.63.29:8080": {
+      "first_seen": "2026-03-26T14:58:10.982818",
+      "last_seen": "2026-03-26T14:58:10.982818",
+      "working": true,
+      "latency": 2171.61,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 237,
-    "last_update": "2026-03-26T14:57:03.984102"
+    "total_seen": 238,
+    "last_update": "2026-03-26T14:58:10.982818"
   }
 }
