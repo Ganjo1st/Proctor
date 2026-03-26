@@ -78,6 +78,13 @@ class SmartScraper:
             }
         }
         
+        # API-источники
+        self.api_sources = [
+            ('proxyscrape_api', 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all'),
+            ('pubproxy', 'https://pubproxy.com/api/proxy?limit=30&format=txt&http=true&https=true'),
+            ('proxyscan', 'https://www.proxyscan.io/download?type=http'),
+        ]
+        
         # Файл для сохранения статистики источников
         self.stats_file = 'data/source_stats.json'
         self.load_stats()
@@ -198,16 +205,10 @@ class SmartScraper:
     
     async def get_api_proxies(self) -> List[Tuple[str, str]]:
         """Сбор прокси из API-источников"""
-        api_sources = [
-            ('proxyscrape', 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all'),
-            ('pubproxy', 'https://pubproxy.com/api/proxy?limit=30&format=txt&http=true&https=true'),
-            ('proxyscan', 'https://www.proxyscan.io/download?type=http'),
-        ]
-        
         all_proxies = []
         print("\n  🌐 API-источники:")
         
-        for name, url in api_sources:
+        for name, url in self.api_sources:
             print(f"    🔍 {name}...", end=' ')
             proxies = await self.fetch_from_api_async(url, name)
             for proxy in proxies:
@@ -260,6 +261,6 @@ class SmartScraper:
         print("─" * 60)
         print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
         print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}")
-        print(f"   API-источников: 3\n")
+        print(f"   API-источников: {len(self.api_sources)}\n")
         
         return all_proxies
