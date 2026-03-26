@@ -1,4 +1,4 @@
-# core/rapid_checker.py - УСИЛЕННОЕ ГЕО-ОПРЕДЕЛЕНИЕ
+# core/rapid_checker.py - ПРОВЕРКА С ГЕО-ОПРЕДЕЛЕНИЕМ
 import aiohttp
 import asyncio
 from aiohttp_socks import ProxyConnector, ProxyType
@@ -100,7 +100,7 @@ class RapidChecker:
                 elif result['country_code'] in ['GB', 'DE', 'FR', 'IT', 'ES']:
                     result['region'] = 'eu'
                         
-        except Exception as e:
+        except Exception:
             pass
         
         return result
