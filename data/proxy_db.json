@@ -827,10 +827,58 @@
       "country": "Japan",
       "country_code": "JP",
       "region": "us"
+    },
+    "163.5.128.37:14270": {
+      "first_seen": "2026-03-26T23:28:37.555577",
+      "last_seen": "2026-03-26T23:28:37.555577",
+      "working": true,
+      "latency": 678.82,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "150.107.140.238:3128": {
+      "first_seen": "2026-03-26T23:28:37.556882",
+      "last_seen": "2026-03-26T23:28:37.556882",
+      "working": true,
+      "latency": 1976.51,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Indonesia",
+      "country_code": "ID",
+      "region": "us"
+    },
+    "38.145.208.244:8448": {
+      "first_seen": "2026-03-26T23:28:37.558118",
+      "last_seen": "2026-03-26T23:28:37.558118",
+      "working": true,
+      "latency": 198.44,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "167.103.144.127:8800": {
+      "first_seen": "2026-03-26T23:28:37.559337",
+      "last_seen": "2026-03-26T23:28:37.559337",
+      "working": true,
+      "latency": 724.85,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Australia",
+      "country_code": "AU",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 283,
-    "last_update": "2026-03-26T22:53:06.002454"
+    "total_seen": 287,
+    "last_update": "2026-03-26T23:28:37.559337"
   }
 }
