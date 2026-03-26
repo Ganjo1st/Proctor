@@ -61,7 +61,7 @@ jobs:
     - name: Install ALL dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama
+        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Run cleanup
       run: python rapid_clean.py
       continue-on-error: true
