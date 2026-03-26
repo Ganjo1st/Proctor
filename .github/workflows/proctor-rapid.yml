@@ -26,7 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
+        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Create directories
       run: mkdir -p core data logs reports
     - name: Run SMART collection
@@ -61,7 +61,7 @@ jobs:
     - name: Install ALL dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
+        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Run cleanup
       run: python rapid_clean.py
       continue-on-error: true
@@ -94,7 +94,7 @@ jobs:
     - name: Install ALL dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama
+        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama
     - name: Create directories
       run: mkdir -p core data
     - name: Find new sources
@@ -129,7 +129,7 @@ jobs:
     - name: Install ALL dependencies
       run: |
         pip install --upgrade pip
-        pip install aiohttp aiohttp-socks requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
+        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Create directories
       run: mkdir -p core data logs reports
     - name: Generate single report
@@ -139,7 +139,6 @@ jobs:
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
-        # Перезаписываем один файл отчёта
         git add reports/proxy_report.xlsx 2>/dev/null || true
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
