@@ -1,15 +1,19 @@
 {
   "proxymania": {
-    "success_rate": 0.022727272727272728,
-    "checks": 132,
+    "success_rate": 0.014925373134328358,
+    "checks": 134,
     "enabled": false,
-    "last_success": null
+    "last_success": null,
+    "last_seen": "2026-03-26T17:22:48.708556",
+    "total_found": 2
   },
   "thespeedx_http": {
-    "success_rate": 0.007692307692307693,
-    "checks": 130,
+    "success_rate": 0.022556390977443608,
+    "checks": 133,
     "enabled": false,
-    "last_success": null
+    "last_success": null,
+    "last_seen": "2026-03-26T17:22:48.710926",
+    "total_found": 3
   },
   "thespeedx_socks4": {
     "success_rate": 0.007692307692307693,

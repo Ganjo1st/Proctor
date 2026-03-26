@@ -407,10 +407,70 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "106.75.15.167:7890": {
+      "first_seen": "2026-03-26T17:22:48.706930",
+      "last_seen": "2026-03-26T17:22:48.706930",
+      "working": true,
+      "latency": 992.76,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "89.208.106.138:10808": {
+      "first_seen": "2026-03-26T17:22:48.707950",
+      "last_seen": "2026-03-26T17:22:48.707950",
+      "working": true,
+      "latency": 618.41,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "global"
+    },
+    "54.36.117.30:3128": {
+      "first_seen": "2026-03-26T17:22:48.708767",
+      "last_seen": "2026-03-26T17:22:48.708767",
+      "working": true,
+      "latency": 673.7,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Germany",
+      "country_code": "DE",
+      "region": "global"
+    },
+    "38.145.208.242:8451": {
+      "first_seen": "2026-03-26T17:22:48.709528",
+      "last_seen": "2026-03-26T17:22:48.709528",
+      "working": true,
+      "latency": 1962.5,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "201.182.85.12:999": {
+      "first_seen": "2026-03-26T17:22:48.710316",
+      "last_seen": "2026-03-26T17:22:48.710316",
+      "working": true,
+      "latency": 2105.99,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 248,
-    "last_update": "2026-03-26T17:05:06.378832"
+    "total_seen": 253,
+    "last_update": "2026-03-26T17:22:48.710316"
   }
 }
