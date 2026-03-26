@@ -45,11 +45,9 @@ class SourceStats:
         stats['checks'] += 1
         stats['total_found'] = stats.get('total_found', 0) + found_count
         
-        # Обновляем процент успеха
         if stats['checks'] > 0:
             stats['success_rate'] = stats['total_found'] / stats['checks']
         
-        # Автоотключение: если за 5 проверок не нашли >1 прокси
         if stats['checks'] >= 5 and stats['success_rate'] < 1.0:
             if stats['enabled']:
                 print(f"  ⚠️ Источник {source_name} ОТКЛЮЧЁН (мало прокси: {stats['success_rate']:.1f}/проверку)")
@@ -58,11 +56,9 @@ class SourceStats:
         self.save()
     
     def get_active_sources(self) -> list:
-        """Получение списка активных источников"""
         return [name for name, s in self.stats.items() if s.get('enabled', True)]
     
     def get_stats(self) -> dict:
-        """Получение всей статистики"""
         return {
             'total_sources': len(self.stats),
             'active_sources': len(self.get_active_sources()),
