@@ -1496,10 +1496,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "52.142.253.29:80": {
+      "first_seen": "2026-03-26T07:46:08.731851",
+      "last_seen": "2026-03-26T07:46:08.731851",
+      "working": true,
+      "latency": 1120.24,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Netherlands",
+      "country_code": "NL",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 231,
-    "last_update": "2026-03-26T05:26:52.971949"
+    "total_seen": 232,
+    "last_update": "2026-03-26T07:46:08.731851"
   }
 }
