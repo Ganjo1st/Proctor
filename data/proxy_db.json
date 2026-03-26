@@ -731,10 +731,70 @@
       "country": "United States",
       "country_code": "US",
       "region": "global"
+    },
+    "187.49.176.141:8080": {
+      "first_seen": "2026-03-26T22:18:34.360848",
+      "last_seen": "2026-03-26T22:18:34.360848",
+      "working": true,
+      "latency": 944.76,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "210.201.86.72:8080": {
+      "first_seen": "2026-03-26T22:18:34.362139",
+      "last_seen": "2026-03-26T22:18:34.362139",
+      "working": true,
+      "latency": 858.39,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "101.6.65.26:10808": {
+      "first_seen": "2026-03-26T22:18:34.363315",
+      "last_seen": "2026-03-26T22:18:34.363315",
+      "working": true,
+      "latency": 1371.17,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "China",
+      "country_code": "CN",
+      "region": "unknown"
+    },
+    "47.77.193.180:1080": {
+      "first_seen": "2026-03-26T22:18:34.364392",
+      "last_seen": "2026-03-26T22:18:34.364392",
+      "working": true,
+      "latency": 180.42,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "103.84.95.54:7890": {
+      "first_seen": "2026-03-26T22:18:34.365517",
+      "last_seen": "2026-03-26T22:18:34.365517",
+      "working": true,
+      "latency": 1973.32,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Hong Kong",
+      "country_code": "HK",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 275,
-    "last_update": "2026-03-26T21:51:01.217002"
+    "total_seen": 280,
+    "last_update": "2026-03-26T22:18:34.365517"
   }
 }
