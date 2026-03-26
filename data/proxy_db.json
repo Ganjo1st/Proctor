@@ -1556,10 +1556,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "158.160.215.167:8125": {
+      "first_seen": "2026-03-26T14:57:03.984102",
+      "last_seen": "2026-03-26T14:57:03.984102",
+      "working": true,
+      "latency": 2293.99,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "Russia",
+      "country_code": "RU",
+      "region": "ru"
     }
   },
   "stats": {
-    "total_seen": 236,
-    "last_update": "2026-03-26T13:56:14.179506"
+    "total_seen": 237,
+    "last_update": "2026-03-26T14:57:03.984102"
   }
 }
