@@ -875,10 +875,58 @@
       "country": "Australia",
       "country_code": "AU",
       "region": "us"
+    },
+    "203.205.49.2:10014": {
+      "first_seen": "2026-03-26T23:59:58.548417",
+      "last_seen": "2026-03-26T23:59:58.548417",
+      "working": true,
+      "latency": 2999.7,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "157.20.253.43:8989": {
+      "first_seen": "2026-03-26T23:59:58.549934",
+      "last_seen": "2026-03-26T23:59:58.549934",
+      "working": true,
+      "latency": 1909.51,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "86.53.183.16:1080": {
+      "first_seen": "2026-03-26T23:59:58.551210",
+      "last_seen": "2026-03-26T23:59:58.551210",
+      "working": true,
+      "latency": 713.54,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "United Kingdom",
+      "country_code": "GB",
+      "region": "global"
+    },
+    "137.220.150.170:6005": {
+      "first_seen": "2026-03-26T23:59:58.552534",
+      "last_seen": "2026-03-26T23:59:58.552534",
+      "working": true,
+      "latency": 2806.75,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Singapore",
+      "country_code": "SG",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 287,
-    "last_update": "2026-03-26T23:28:37.559337"
+    "total_seen": 291,
+    "last_update": "2026-03-26T23:59:58.552534"
   }
 }
