@@ -24,10 +24,12 @@
     "total_found": 1
   },
   "thespeedx_socks5": {
-    "success_rate": 1824.4263565891472,
-    "checks": 129,
-    "enabled": true,
-    "last_success": "2026-03-26T14:57:54.514770"
+    "success_rate": 0.03731343283582089,
+    "checks": 134,
+    "enabled": false,
+    "last_success": "2026-03-26T14:57:54.514770",
+    "last_seen": "2026-03-26T17:05:06.379404",
+    "total_found": 5
   },
   "jetkai_http": {
     "success_rate": 1801.0,

@@ -347,10 +347,70 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "38.145.208.209:8444": {
+      "first_seen": "2026-03-26T17:05:06.375835",
+      "last_seen": "2026-03-26T17:05:06.375835",
+      "working": true,
+      "latency": 340.45,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_socks5",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "38.34.179.27:8451": {
+      "first_seen": "2026-03-26T17:05:06.376821",
+      "last_seen": "2026-03-26T17:05:06.376821",
+      "working": true,
+      "latency": 209.66,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_socks5",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "120.92.212.16:7890": {
+      "first_seen": "2026-03-26T17:05:06.377512",
+      "last_seen": "2026-03-26T17:05:06.377512",
+      "working": true,
+      "latency": 966.12,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_socks5",
+      "country": "China",
+      "country_code": "CN",
+      "region": "unknown"
+    },
+    "38.34.179.162:8451": {
+      "first_seen": "2026-03-26T17:05:06.378177",
+      "last_seen": "2026-03-26T17:05:06.378177",
+      "working": true,
+      "latency": 999.65,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_socks5",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "163.227.149.135:8080": {
+      "first_seen": "2026-03-26T17:05:06.378832",
+      "last_seen": "2026-03-26T17:05:06.378832",
+      "working": true,
+      "latency": 2607.59,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_socks5",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 243,
-    "last_update": "2026-03-26T17:00:28.317872"
+    "total_seen": 248,
+    "last_update": "2026-03-26T17:05:06.378832"
   }
 }
