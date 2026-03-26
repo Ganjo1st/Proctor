@@ -7,6 +7,8 @@ from fake_useragent import UserAgent
 from typing import List, Set, Dict, Tuple
 from bs4 import BeautifulSoup
 from datetime import datetime
+import httpx
+import asyncio
 
 class SmartScraper:
     """Умный сбор прокси с оценкой эффективности источников"""
@@ -173,6 +175,47 @@ class SmartScraper:
         
         return proxies
     
+    async def fetch_from_api_async(self, url: str, source_name: str) -> List[str]:
+        """Асинхронная загрузка из API-источников"""
+        proxies = []
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    if 'text/plain' in response.headers.get('content-type', ''):
+                        proxies = [p.strip() for p in response.text.split('\n') if p.strip() and ':' in p]
+                    else:
+                        try:
+                            data = response.json()
+                            if 'proxies' in data:
+                                proxies = [f"{p['ip']}:{p['port']}" for p in data['proxies']]
+                        except:
+                            pass
+        except Exception:
+            pass
+        
+        return proxies
+    
+    async def get_api_proxies(self) -> List[Tuple[str, str]]:
+        """Сбор прокси из API-источников"""
+        api_sources = [
+            ('proxyscrape', 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all'),
+            ('pubproxy', 'https://pubproxy.com/api/proxy?limit=30&format=txt&http=true&https=true'),
+            ('proxyscan', 'https://www.proxyscan.io/download?type=http'),
+        ]
+        
+        all_proxies = []
+        print("\n  🌐 API-источники:")
+        
+        for name, url in api_sources:
+            print(f"    🔍 {name}...", end=' ')
+            proxies = await self.fetch_from_api_async(url, name)
+            for proxy in proxies:
+                all_proxies.append((proxy, f"api_{name}"))
+            print(f"✅ {len(proxies)}")
+        
+        return all_proxies
+    
     def get_all_proxies(self) -> List[str]:
         """Сбор всех прокси (только адреса)"""
         proxies_with_sources = self.get_all_proxies_with_sources()
@@ -185,6 +228,7 @@ class SmartScraper:
         
         all_proxies = []
         
+        # 1. Основные источники
         for name, source in self.sources.items():
             if not source['enabled']:
                 print(f"  ⏭️ {name} - ОТКЛЮЧЁН")
@@ -205,8 +249,17 @@ class SmartScraper:
             status = f"✅ {len(proxies)}" if proxies else "❌ 0"
             print(status)
         
+        # 2. API-источники (асинхронные)
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        api_proxies = loop.run_until_complete(self.get_api_proxies())
+        loop.close()
+        
+        all_proxies.extend(api_proxies)
+        
         print("─" * 60)
         print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
-        print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}\n")
+        print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}")
+        print(f"   API-источников: 3\n")
         
         return all_proxies
