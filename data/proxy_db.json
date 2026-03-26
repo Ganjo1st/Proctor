@@ -1580,10 +1580,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "161.248.117.117:8080": {
+      "first_seen": "2026-03-26T14:59:47.591824",
+      "last_seen": "2026-03-26T14:59:47.591824",
+      "working": true,
+      "latency": 1577.95,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 238,
-    "last_update": "2026-03-26T14:58:10.982818"
+    "total_seen": 239,
+    "last_update": "2026-03-26T14:59:47.591824"
   }
 }

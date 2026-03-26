@@ -6,10 +6,12 @@
     "last_success": "2026-03-26T14:57:54.419639"
   },
   "thespeedx_http": {
-    "success_rate": 2830.093023255814,
-    "checks": 129,
-    "enabled": true,
-    "last_success": "2026-03-26T14:57:54.468476"
+    "success_rate": 0.007692307692307693,
+    "checks": 130,
+    "enabled": false,
+    "last_success": "2026-03-26T14:57:54.468476",
+    "last_seen": "2026-03-26T14:59:47.593846",
+    "total_found": 1
   },
   "thespeedx_socks4": {
     "success_rate": 2478.3178294573645,
