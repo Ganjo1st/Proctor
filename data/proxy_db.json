@@ -1532,10 +1532,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "38.145.208.240:8446": {
+      "first_seen": "2026-03-26T12:08:41.564073",
+      "last_seen": "2026-03-26T12:08:41.564073",
+      "working": true,
+      "latency": 685.92,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 234,
-    "last_update": "2026-03-26T10:33:40.067238"
+    "total_seen": 235,
+    "last_update": "2026-03-26T12:08:41.564073"
   }
 }
