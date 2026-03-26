@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР С АВТООТКЛЮЧЕНИЕМ ИСТОЧНИКОВ
+# core/smart_scraper.py - УМНЫЙ СБОР БЕЗ АВТООТКЛЮЧЕНИЯ
 import requests
 import re
 import json
@@ -11,70 +11,42 @@ import httpx
 import asyncio
 
 class SmartScraper:
-    """Умный сбор прокси с оценкой эффективности источников"""
+    """Умный сбор прокси из всех источников"""
     
     def __init__(self):
         self.session = requests.Session()
         ua = UserAgent()
         self.session.headers.update({'User-Agent': ua.random})
         
-        # Источники с их эффективностью
+        # ВСЕ источники (без автоотключения)
         self.sources = {
             'proxymania': {
                 'url': 'https://proxymania.su/free-proxy',
-                'type': 'html',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'html'
             },
             'thespeedx_http': {
                 'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             },
             'thespeedx_socks4': {
                 'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             },
             'thespeedx_socks5': {
                 'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             },
             'jetkai_http': {
                 'url': 'https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             },
             'ru_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=RU',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             },
             'us_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=US',
-                'type': 'text',
-                'success_rate': 0,
-                'checks': 0,
-                'enabled': True,
-                'last_success': None
+                'type': 'text'
             }
         }
         
@@ -84,59 +56,6 @@ class SmartScraper:
             ('pubproxy', 'https://pubproxy.com/api/proxy?limit=30&format=txt&http=true&https=true'),
             ('proxyscan', 'https://www.proxyscan.io/download?type=http'),
         ]
-        
-        # Файл для сохранения статистики источников
-        self.stats_file = 'data/source_stats.json'
-        self.load_stats()
-    
-    def load_stats(self):
-        """Загрузка статистики источников"""
-        if os.path.exists(self.stats_file):
-            try:
-                with open(self.stats_file, 'r') as f:
-                    saved = json.load(f)
-                    for name, stats in saved.items():
-                        if name in self.sources:
-                            self.sources[name]['success_rate'] = stats.get('success_rate', 0)
-                            self.sources[name]['checks'] = stats.get('checks', 0)
-                            self.sources[name]['enabled'] = stats.get('enabled', True)
-            except:
-                pass
-    
-    def save_stats(self):
-        """Сохранение статистики источников"""
-        os.makedirs('data', exist_ok=True)
-        to_save = {}
-        for name, data in self.sources.items():
-            to_save[name] = {
-                'success_rate': data['success_rate'],
-                'checks': data['checks'],
-                'enabled': data['enabled'],
-                'last_success': data['last_success']
-            }
-        with open(self.stats_file, 'w') as f:
-            json.dump(to_save, f, indent=2)
-    
-    def update_source_stats(self, source_name: str, found_count: int):
-        """Обновление статистики источника"""
-        source = self.sources[source_name]
-        source['checks'] += 1
-        
-        # Обновляем успешность
-        old_rate = source['success_rate']
-        new_rate = (old_rate * (source['checks'] - 1) + found_count) / source['checks']
-        source['success_rate'] = new_rate
-        
-        if found_count > 0:
-            source['last_success'] = datetime.now().isoformat()
-        
-        # Отключаем источник, если за 5 проверок не дал >1 прокси
-        if source['checks'] >= 5 and source['success_rate'] < 1.0:
-            if source['enabled']:
-                print(f"  ⚠️ Источник {source_name} отключён (мало прокси: {source['success_rate']:.1f}/проверку)")
-                source['enabled'] = False
-        
-        self.save_stats()
     
     def fetch_from_html(self, url: str) -> Set[str]:
         """Парсинг HTML страницы (для proxymania)"""
@@ -231,18 +150,12 @@ class SmartScraper:
         
         # 1. Основные источники
         for name, source in self.sources.items():
-            if not source['enabled']:
-                print(f"  ⏭️ {name} - ОТКЛЮЧЁН")
-                continue
-            
             print(f"  🔍 {name}...", end=' ')
             
             if source['type'] == 'html':
                 proxies = self.fetch_from_html(source['url'])
             else:
                 proxies = self.fetch_from_text(source['url'])
-            
-            self.update_source_stats(name, len(proxies))
             
             for proxy in proxies:
                 all_proxies.append((proxy, name))
@@ -259,8 +172,6 @@ class SmartScraper:
         all_proxies.extend(api_proxies)
         
         print("─" * 60)
-        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
-        print(f"   Активных источников: {sum(1 for s in self.sources.values() if s['enabled'])}/{len(self.sources)}")
-        print(f"   API-источников: {len(self.api_sources)}\n")
+        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси\n")
         
         return all_proxies
