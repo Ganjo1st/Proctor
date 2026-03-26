@@ -43,10 +43,11 @@ class SourceStats:
         stats = self.stats[source_name]
         stats['last_seen'] = now
         stats['checks'] += 1
-        stats['total_found'] += found_count
+        stats['total_found'] = stats.get('total_found', 0) + found_count
         
         # Обновляем процент успеха
-        stats['success_rate'] = stats['total_found'] / stats['checks']
+        if stats['checks'] > 0:
+            stats['success_rate'] = stats['total_found'] / stats['checks']
         
         # Автоотключение: если за 5 проверок не нашли >1 прокси
         if stats['checks'] >= 5 and stats['success_rate'] < 1.0:
