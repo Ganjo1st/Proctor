@@ -299,10 +299,58 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "45.136.131.32:8445": {
+      "first_seen": "2026-03-26T17:00:28.315583",
+      "last_seen": "2026-03-26T17:00:28.315583",
+      "working": true,
+      "latency": 750.2,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "38.34.179.14:8450": {
+      "first_seen": "2026-03-26T17:00:28.316560",
+      "last_seen": "2026-03-26T17:00:28.316560",
+      "working": true,
+      "latency": 707.72,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "91.121.63.51:1080": {
+      "first_seen": "2026-03-26T17:00:28.317203",
+      "last_seen": "2026-03-26T17:00:28.317203",
+      "working": true,
+      "latency": 397.61,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "65.108.203.36:18080": {
+      "first_seen": "2026-03-26T17:00:28.317872",
+      "last_seen": "2026-03-26T17:00:28.317872",
+      "working": true,
+      "latency": 1496.94,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_socks4",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 239,
-    "last_update": "2026-03-26T15:28:17.318126"
+    "total_seen": 243,
+    "last_update": "2026-03-26T17:00:28.317872"
   }
 }
