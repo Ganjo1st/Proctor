@@ -1103,10 +1103,22 @@
       "country": "Singapore",
       "country_code": "SG",
       "region": "unknown"
+    },
+    "163.5.128.129:14270": {
+      "first_seen": "2026-03-27T09:37:29.585114",
+      "last_seen": "2026-03-27T09:37:29.585114",
+      "working": true,
+      "latency": 2272.15,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 306,
-    "last_update": "2026-03-27T08:36:11.783012"
+    "total_seen": 307,
+    "last_update": "2026-03-27T09:37:29.585114"
   }
 }
