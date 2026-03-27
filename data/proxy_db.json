@@ -1439,10 +1439,82 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "200.69.83.203:999": {
+      "first_seen": "2026-03-27T22:00:25.293438",
+      "last_seen": "2026-03-27T22:00:25.293438",
+      "working": true,
+      "latency": 1168.51,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "185.225.40.236:8080": {
+      "first_seen": "2026-03-27T22:00:25.295365",
+      "last_seen": "2026-03-27T22:00:25.295365",
+      "working": true,
+      "latency": 1032.74,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "185.76.240.150:10001": {
+      "first_seen": "2026-03-27T22:00:25.297202",
+      "last_seen": "2026-03-27T22:00:25.297202",
+      "working": true,
+      "latency": 1615.68,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "223.205.57.57:8080": {
+      "first_seen": "2026-03-27T22:00:25.298883",
+      "last_seen": "2026-03-27T22:00:25.298883",
+      "working": true,
+      "latency": 1728.81,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "122.185.198.242:7999": {
+      "first_seen": "2026-03-27T22:00:25.300685",
+      "last_seen": "2026-03-27T22:00:25.300685",
+      "working": true,
+      "latency": 2636.64,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "103.102.14.51:1111": {
+      "first_seen": "2026-03-27T22:00:25.302661",
+      "last_seen": "2026-03-27T22:00:25.302661",
+      "working": true,
+      "latency": 2687.42,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 334,
-    "last_update": "2026-03-27T21:29:12.133032"
+    "total_seen": 340,
+    "last_update": "2026-03-27T22:00:25.302661"
   }
 }
