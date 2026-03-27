@@ -1271,10 +1271,34 @@
       "country": "China",
       "country_code": "CN",
       "region": "unknown"
+    },
+    "38.145.208.189:8449": {
+      "first_seen": "2026-03-27T17:31:32.340459",
+      "last_seen": "2026-03-27T17:31:32.340459",
+      "working": true,
+      "latency": 207.75,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "38.145.220.188:8452": {
+      "first_seen": "2026-03-27T17:31:32.342241",
+      "last_seen": "2026-03-27T17:31:32.342241",
+      "working": true,
+      "latency": 1612.94,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 320,
-    "last_update": "2026-03-27T16:32:08.921490"
+    "total_seen": 322,
+    "last_update": "2026-03-27T17:31:32.342241"
   }
 }
