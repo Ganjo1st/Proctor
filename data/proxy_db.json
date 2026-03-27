@@ -923,10 +923,34 @@
       "country": "Singapore",
       "country_code": "SG",
       "region": "unknown"
+    },
+    "16.78.119.130:443": {
+      "first_seen": "2026-03-27T03:25:45.663412",
+      "last_seen": "2026-03-27T03:25:45.663412",
+      "working": true,
+      "latency": 1063.16,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Indonesia",
+      "country_code": "ID",
+      "region": "unknown"
+    },
+    "15.204.151.149:3128": {
+      "first_seen": "2026-03-27T03:25:45.664910",
+      "last_seen": "2026-03-27T03:25:45.664910",
+      "working": true,
+      "latency": 367.86,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 291,
-    "last_update": "2026-03-26T23:59:58.552534"
+    "total_seen": 293,
+    "last_update": "2026-03-27T03:25:45.664910"
   }
 }
