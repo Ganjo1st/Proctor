@@ -1115,10 +1115,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "120.92.211.211:7890": {
+      "first_seen": "2026-03-27T10:31:30.075994",
+      "last_seen": "2026-03-27T10:31:30.075994",
+      "working": true,
+      "latency": 2444.98,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 307,
-    "last_update": "2026-03-27T09:37:29.585114"
+    "total_seen": 308,
+    "last_update": "2026-03-27T10:31:30.075994"
   }
 }
