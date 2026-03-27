@@ -1427,10 +1427,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "65.21.201.149:8080": {
+      "first_seen": "2026-03-27T21:29:12.133032",
+      "last_seen": "2026-03-27T21:29:12.133032",
+      "working": true,
+      "latency": 1732.18,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 333,
-    "last_update": "2026-03-27T20:52:29.059938"
+    "total_seen": 334,
+    "last_update": "2026-03-27T21:29:12.133032"
   }
 }
