@@ -1031,10 +1031,58 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "38.34.179.161:8448": {
+      "first_seen": "2026-03-27T07:48:24.135166",
+      "last_seen": "2026-03-27T07:48:24.135166",
+      "working": true,
+      "latency": 478.19,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "global"
+    },
+    "45.149.92.147:5001": {
+      "first_seen": "2026-03-27T07:48:24.136715",
+      "last_seen": "2026-03-27T07:48:24.138075",
+      "working": true,
+      "latency": 1050.12,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Hong Kong",
+      "country_code": "HK",
+      "region": "unknown"
+    },
+    "114.130.153.46:58080": {
+      "first_seen": "2026-03-27T07:48:24.139483",
+      "last_seen": "2026-03-27T07:48:24.139483",
+      "working": true,
+      "latency": 1739.08,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "160.250.134.143:3128": {
+      "first_seen": "2026-03-27T07:48:24.140844",
+      "last_seen": "2026-03-27T07:48:24.140844",
+      "working": true,
+      "latency": 1150.45,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Vietnam",
+      "country_code": "VN",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 300,
-    "last_update": "2026-03-27T06:45:05.104088"
+    "total_seen": 304,
+    "last_update": "2026-03-27T07:48:24.140844"
   }
 }
