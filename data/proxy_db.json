@@ -1139,10 +1139,34 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "82.146.58.184:1080": {
+      "first_seen": "2026-03-27T12:05:22.338434",
+      "last_seen": "2026-03-27T12:05:22.338434",
+      "working": true,
+      "latency": 1087.01,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "Russia",
+      "country_code": "RU",
+      "region": "us"
+    },
+    "187.251.224.167:8081": {
+      "first_seen": "2026-03-27T12:05:22.340555",
+      "last_seen": "2026-03-27T12:05:22.340555",
+      "working": true,
+      "latency": 2974.85,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 309,
-    "last_update": "2026-03-27T11:26:50.407037"
+    "total_seen": 311,
+    "last_update": "2026-03-27T12:05:22.340555"
   }
 }
