@@ -1343,10 +1343,46 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "49.156.44.115:8080": {
+      "first_seen": "2026-03-27T19:59:56.953130",
+      "last_seen": "2026-03-27T19:59:56.953130",
+      "working": true,
+      "latency": 2849.97,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "203.146.80.102:8080": {
+      "first_seen": "2026-03-27T19:59:56.955037",
+      "last_seen": "2026-03-27T19:59:56.955037",
+      "working": true,
+      "latency": 1701.01,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "181.78.49.177:999": {
+      "first_seen": "2026-03-27T19:59:56.956951",
+      "last_seen": "2026-03-27T19:59:56.956951",
+      "working": true,
+      "latency": 2577.3,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 326,
-    "last_update": "2026-03-27T19:26:37.354160"
+    "total_seen": 329,
+    "last_update": "2026-03-27T19:59:56.956951"
   }
 }
