@@ -1079,10 +1079,34 @@
       "country": "Vietnam",
       "country_code": "VN",
       "region": "us"
+    },
+    "158.160.215.167:8124": {
+      "first_seen": "2026-03-27T08:36:11.781100",
+      "last_seen": "2026-03-27T08:36:11.781100",
+      "working": true,
+      "latency": 1131.85,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "137.220.150.152:6005": {
+      "first_seen": "2026-03-27T08:36:11.783012",
+      "last_seen": "2026-03-27T08:36:11.783012",
+      "working": true,
+      "latency": 2583.1,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Singapore",
+      "country_code": "SG",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 304,
-    "last_update": "2026-03-27T07:48:24.140844"
+    "total_seen": 306,
+    "last_update": "2026-03-27T08:36:11.783012"
   }
 }
