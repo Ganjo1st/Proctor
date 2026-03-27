@@ -947,10 +947,70 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "195.123.213.129:1080": {
+      "first_seen": "2026-03-27T05:23:21.642074",
+      "last_seen": "2026-03-27T05:23:21.642074",
+      "working": true,
+      "latency": 2800.34,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "Latvia",
+      "country_code": "LV",
+      "region": "us"
+    },
+    "120.92.212.16:8890": {
+      "first_seen": "2026-03-27T05:23:21.643486",
+      "last_seen": "2026-03-27T05:23:21.643486",
+      "working": true,
+      "latency": 953.05,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "China",
+      "country_code": "CN",
+      "region": "unknown"
+    },
+    "45.140.147.155:1081": {
+      "first_seen": "2026-03-27T05:23:21.645161",
+      "last_seen": "2026-03-27T05:23:21.645161",
+      "working": true,
+      "latency": 525.4,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "The Netherlands",
+      "country_code": "NL",
+      "region": "unknown"
+    },
+    "57.128.188.167:8188": {
+      "first_seen": "2026-03-27T05:23:21.646596",
+      "last_seen": "2026-03-27T05:23:21.646596",
+      "working": true,
+      "latency": 1923.01,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "161.49.90.70:1337": {
+      "first_seen": "2026-03-27T05:23:21.647781",
+      "last_seen": "2026-03-27T05:23:21.647781",
+      "working": true,
+      "latency": 2327.23,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 293,
-    "last_update": "2026-03-27T03:25:45.664910"
+    "total_seen": 298,
+    "last_update": "2026-03-27T05:23:21.647781"
   }
 }
