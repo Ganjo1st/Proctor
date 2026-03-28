@@ -407,10 +407,34 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "200.69.83.203:999": {
+      "first_seen": "2026-03-28T15:19:05.803765",
+      "last_seen": "2026-03-28T15:19:05.803765",
+      "working": true,
+      "latency": 2196.32,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "190.97.243.27:999": {
+      "first_seen": "2026-03-28T15:19:05.804743",
+      "last_seen": "2026-03-28T15:19:05.804743",
+      "working": true,
+      "latency": 2846.32,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 388,
-    "last_update": "2026-03-28T15:12:51.871419"
+    "total_seen": 390,
+    "last_update": "2026-03-28T15:19:05.804743"
   }
 }
