@@ -5,7 +5,6 @@ import sys
 import argparse
 from datetime import datetime
 
-# Добавляем core в путь
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.database import ProxyDatabase
@@ -22,10 +21,7 @@ def main():
     print(f"   {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*55)
 
-    # Загружаем базу данных
     db = ProxyDatabase(data_dir='data')
-    
-    # Получаем статистику из базы
     stats = db.get_stats()
     
     print("\n📊 Текущая статистика из базы:")
@@ -35,7 +31,6 @@ def main():
     print(f"  🇺🇸 Американских: {stats['american']}")
     print(f"  🌍 Глобальных: {stats['global']}")
 
-    # Создаём Excel-отчёт
     report = ExcelReport(db, data_dir='data')
     filename = report.create_report('reports/proxy_report.xlsx')
 
