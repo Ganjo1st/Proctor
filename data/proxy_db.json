@@ -611,10 +611,58 @@
       "country": "Dominican Republic",
       "country_code": "DO",
       "region": "us"
+    },
+    "38.145.220.13:8444": {
+      "first_seen": "2026-03-28T16:03:06.994218",
+      "last_seen": "2026-03-28T16:03:06.994218",
+      "working": true,
+      "latency": 2909.32,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "120.92.211.211:7890": {
+      "first_seen": "2026-03-28T16:03:06.995440",
+      "last_seen": "2026-03-28T16:03:06.995440",
+      "working": true,
+      "latency": 1089.35,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "45.140.147.82:1082": {
+      "first_seen": "2026-03-28T16:03:06.996520",
+      "last_seen": "2026-03-28T16:03:06.998476",
+      "working": true,
+      "latency": 525.63,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "The Netherlands",
+      "country_code": "NL",
+      "region": "global"
+    },
+    "38.34.179.192:8451": {
+      "first_seen": "2026-03-28T16:03:06.997508",
+      "last_seen": "2026-03-28T16:03:06.997508",
+      "working": true,
+      "latency": 1521.71,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 405,
-    "last_update": "2026-03-28T15:52:24.343380"
+    "total_seen": 409,
+    "last_update": "2026-03-28T16:03:06.998476"
   }
 }
