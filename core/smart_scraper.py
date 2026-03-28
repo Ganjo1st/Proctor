@@ -18,14 +18,30 @@ class SmartScraper:
         self.ua = UserAgent()
         self.working_proxies = working_proxies or []
         self.proxy_index = 0
+        self.bad_proxies = set()  # Чёрный список прокси, которые не работают для обхода
 
     def _get_next_proxy(self) -> Optional[str]:
         """Получить следующий рабочий прокси для обхода блокировок (round-robin)"""
         if not self.working_proxies:
             return None
-        proxy = self.working_proxies[self.proxy_index % len(self.working_proxies)]
-        self.proxy_index += 1
-        return proxy
+        
+        # Пропускаем прокси из чёрного списка
+        for _ in range(len(self.working_proxies) * 2):
+            proxy = self.working_proxies[self.proxy_index % len(self.working_proxies)]
+            self.proxy_index += 1
+            if proxy not in self.bad_proxies:
+                return proxy
+        
+        # Если все прокси в чёрном списке, сбрасываем и пробуем первый
+        if self.bad_proxies:
+            self.bad_proxies.clear()
+            return self.working_proxies[0]
+        
+        return None
+
+    def mark_proxy_bad(self, proxy: str):
+        """Отметить прокси как непригодный для обхода"""
+        self.bad_proxies.add(proxy)
 
     def is_valid_proxy_format(self, proxy: str) -> bool:
         """Проверка формата прокси перед добавлением в очередь"""
@@ -57,12 +73,13 @@ class SmartScraper:
         """Сбор прокси из одного источника с возможностью использования прокси"""
         proxies = set()
         proxy_url = None
+        proxy_used = None
         
         if use_proxy:
-            proxy = self._get_next_proxy()
-            if proxy:
-                proxy_url = f"http://{proxy}"
-                print(f"  🔍 {url.split('/')[-1][:20]} (через прокси {proxy})...", end=' ', flush=True)
+            proxy_used = self._get_next_proxy()
+            if proxy_used:
+                proxy_url = f"http://{proxy_used}"
+                print(f"  🔍 {url.split('/')[-1][:20]} (через прокси {proxy_used})...", end=' ', flush=True)
             else:
                 print(f"  🔍 {url.split('/')[-1][:20]} (нет прокси)...", end=' ', flush=True)
         else:
@@ -71,11 +88,14 @@ class SmartScraper:
         try:
             headers = {'User-Agent': self.ua.random}
             
-            # Используем прокси, если указано
-            async with httpx.AsyncClient(timeout=30, follow_redirects=True, proxy=proxy_url) as client:
+            # Используем прокси, если указано, с отключенной проверкой SSL
+            async with httpx.AsyncClient(timeout=60, follow_redirects=True, proxy=proxy_url, verify=False) as client:
                 response = await client.get(url, headers=headers)
                 
                 if response.status_code != 200:
+                    # Если прокси дал ошибку, помечаем его как плохой
+                    if proxy_used and response.status_code in [403, 521, 502, 503, 504]:
+                        self.mark_proxy_bad(proxy_used)
                     print(f"❌ {response.status_code}")
                     return proxies
                 
@@ -114,6 +134,9 @@ class SmartScraper:
                 return proxies
                 
         except Exception as e:
+            # Если ошибка связана с прокси, помечаем его как плохой
+            if proxy_used:
+                self.mark_proxy_bad(proxy_used)
             print(f"⚠️ {str(e)[:20]}")
             return proxies
 
@@ -123,8 +146,8 @@ class SmartScraper:
         
         # Российские источники (часто блокируют, используем прокси)
         ru_sources = [
-            ('https://spys.one/en/free-proxy-list/', 'html', True),      # требует прокси
-            ('https://openproxy.space/list/ru', 'text', True),            # может требовать прокси
+            ('https://spys.one/en/free-proxy-list/', 'html', True),
+            ('https://openproxy.space/list/ru', 'text', True),
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt', 'text', False),
         ]
         
