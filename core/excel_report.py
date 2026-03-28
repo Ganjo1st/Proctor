@@ -29,38 +29,12 @@ class ExcelReport:
         if ru and us:
             return '🌍 Глобальный'
         elif ru:
-            return '🇷🇺 Россия'
+            return '🇷🇺 Россия (только)'
         elif us:
-            return '🇺🇸 США'
+            return '🇺🇸 США (только)'
         elif country_code:
             return f'❓ {country_code}'
         return '❓ Неизвестно'
-    
-    def _should_include_in_ru(self, info) -> bool:
-        """Проверяет, должен ли прокси попасть в лист 'Российские'"""
-        ru = info.get('ru_access', False)
-        country_code = info.get('country_code', '')
-        region = info.get('region', '')
-        
-        if not ru and country_code == 'RU':
-            ru = True
-        if not ru and region == 'ru':
-            ru = True
-        
-        return ru
-    
-    def _should_include_in_us(self, info) -> bool:
-        """Проверяет, должен ли прокси попасть в лист 'Американские'"""
-        us = info.get('us_access', False)
-        country_code = info.get('country_code', '')
-        region = info.get('region', '')
-        
-        if not us and country_code == 'US':
-            us = True
-        if not us and region == 'us':
-            us = True
-        
-        return us
     
     def create_report(self, filename='reports/proxy_report.xlsx'):
         """Создание Excel-отчёта из базы данных"""
@@ -69,13 +43,14 @@ class ExcelReport:
         os.makedirs(os.path.dirname(filename) if os.path.dirname(filename) else '.', exist_ok=True)
         
         data = []
-        ru_data = []
-        us_data = []
+        ru_only_data = []
+        us_only_data = []
         global_data = []
         
         proxies_dict = self.db.db.get('proxies', {})
         
         for proxy, info in proxies_dict.items():
+            ru, us = self.db._determine_region_flags(info)
             region = self._determine_region(info)
             
             row = {
@@ -91,11 +66,11 @@ class ExcelReport:
             data.append(row)
             
             if info.get('working'):
-                if self._should_include_in_ru(info):
-                    ru_data.append({'Прокси': proxy})
-                if self._should_include_in_us(info):
-                    us_data.append({'Прокси': proxy})
-                if info.get('ru_access') and info.get('us_access'):
+                if ru and not us:
+                    ru_only_data.append({'Прокси': proxy})
+                elif us and not ru:
+                    us_only_data.append({'Прокси': proxy})
+                elif ru and us:
                     global_data.append({'Прокси': proxy})
         
         if not data:
@@ -110,15 +85,15 @@ class ExcelReport:
             df[df['Рабочий'] == '✅ Да'].to_excel(writer, sheet_name='Рабочие', index=False)
             df[df['Рабочий'] == '❌ Нет'].to_excel(writer, sheet_name='Нерабочие', index=False)
             
-            if ru_data:
-                pd.DataFrame(ru_data).to_excel(writer, sheet_name='Российские', index=False)
+            if ru_only_data:
+                pd.DataFrame(ru_only_data).to_excel(writer, sheet_name='Российские (только)', index=False)
             else:
-                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Российские', index=False)
+                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Российские (только)', index=False)
             
-            if us_data:
-                pd.DataFrame(us_data).to_excel(writer, sheet_name='Американские', index=False)
+            if us_only_data:
+                pd.DataFrame(us_only_data).to_excel(writer, sheet_name='Американские (только)', index=False)
             else:
-                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Американские', index=False)
+                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Американские (только)', index=False)
             
             if global_data:
                 pd.DataFrame(global_data).to_excel(writer, sheet_name='Глобальные', index=False)
@@ -130,9 +105,9 @@ class ExcelReport:
                 'Показатель': [
                     'Всего прокси в базе',
                     'Рабочих прокси',
-                    'Российских',
-                    'Американских',
-                    'Глобальных',
+                    'Российские (только РФ)',
+                    'Американские (только США)',
+                    'Глобальные (РФ+США)',
                     'Всего проверено за всё время',
                     'Последнее обновление'
                 ],
