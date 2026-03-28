@@ -20,6 +20,7 @@ class SmartScraper:
         
         # ВСЕ источники (без автоотключения)
         self.sources = {
+            # Основные источники
             'proxymania': {
                 'url': 'https://proxymania.su/free-proxy',
                 'type': 'html'
@@ -40,14 +41,42 @@ class SmartScraper:
                 'url': 'https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt',
                 'type': 'text'
             },
+            
+            # 🇷🇺 РОССИЙСКИЕ ИСТОЧНИКИ (НОВЫЕ!)
             'ru_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=RU',
                 'type': 'text'
             },
+            'russia_monosans': {
+                'url': 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/country/RU.txt',
+                'type': 'text'
+            },
+            'russia_rdavydov': {
+                'url': 'https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/countries/Russia.txt',
+                'type': 'text'
+            },
+            'russia_free_proxy_list': {
+                'url': 'https://free-proxy-list.net/ru-proxy.html',
+                'type': 'html'
+            },
+            'russia_proxy_list': {
+                'url': 'https://www.proxy-list.download/api/v1/get?country=RU',
+                'type': 'text'
+            },
+            'russia_ssl_proxies': {
+                'url': 'https://www.sslproxies.org/country/RU',
+                'type': 'html'
+            },
+            
+            # Американские источники
             'us_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=US',
                 'type': 'text'
-            }
+            },
+            'us_monosans': {
+                'url': 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/country/US.txt',
+                'type': 'text'
+            },
         }
         
         # API-источники
@@ -58,7 +87,7 @@ class SmartScraper:
         ]
     
     def fetch_from_html(self, url: str) -> Set[str]:
-        """Парсинг HTML страницы (для proxymania)"""
+        """Парсинг HTML страницы"""
         proxies = set()
         try:
             response = self.session.get(url, timeout=10)
@@ -66,17 +95,22 @@ class SmartScraper:
                 return proxies
             
             soup = BeautifulSoup(response.text, 'html.parser')
-            table = soup.find('table')
-            if not table:
-                return proxies
             
-            rows = table.find_all('tr')[1:]  # Пропускаем заголовок
-            for row in rows:
-                cols = row.find_all('td')
-                if len(cols) >= 2:
-                    proxy_text = cols[0].get_text(strip=True)
-                    if ':' in proxy_text:
-                        proxies.add(proxy_text)
+            # Ищем таблицу с прокси
+            table = soup.find('table')
+            if table:
+                rows = table.find_all('tr')[1:]  # Пропускаем заголовок
+                for row in rows:
+                    cols = row.find_all('td')
+                    if len(cols) >= 2:
+                        proxy_text = cols[0].get_text(strip=True)
+                        if ':' in proxy_text:
+                            proxies.add(proxy_text)
+            else:
+                # Ищем прокси в тексте
+                ip_port_pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
+                found = re.findall(ip_port_pattern, response.text)
+                proxies.update(found)
             
         except Exception:
             pass
@@ -148,7 +182,7 @@ class SmartScraper:
         
         all_proxies = []
         
-        # 1. Основные источники
+        # 1. Основные источники (включая российские)
         for name, source in self.sources.items():
             print(f"  🔍 {name}...", end=' ')
             
@@ -172,6 +206,12 @@ class SmartScraper:
         all_proxies.extend(api_proxies)
         
         print("─" * 60)
-        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси\n")
+        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
+        
+        # Выводим статистику по российским источникам
+        ru_sources = [name for name in self.sources.keys() if name.startswith('ru_') or name.startswith('russia_')]
+        ru_count = sum(1 for p, s in all_proxies if s in ru_sources)
+        print(f"   🇷🇺 Российских источников: {len(ru_sources)}")
+        print(f"   🇷🇺 Найдено российских прокси: {ru_count}\n")
         
         return all_proxies
