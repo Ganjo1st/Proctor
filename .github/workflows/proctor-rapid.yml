@@ -1,8 +1,18 @@
-  # 📊 ЕДИНЫЙ ОТЧЁТ - каждые 2 минуты
-  smart-report:
-    name: 📊 Update Report
+name: Proctor SMART - Intelligent Proxy Collector
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'       # Сбор каждые 2 минуты
+    - cron: '*/30 * * * *'      # Поиск источников каждые 30 минут
+  workflow_dispatch:            # Ручной запуск (ДОЛЖЕН РАБОТАТЬ)
+  push:                         # Запуск при пуше (для теста)
+    branches: [ main ]
+
+jobs:
+  # 🔍 СБОР ПРОКСИ И ОТЧЁТ
+  smart-collect:
+    name: 🔍 Collect & Report
     runs-on: ubuntu-latest
-    if: github.event.schedule == '*/2 * * * *' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     steps:
@@ -18,19 +28,57 @@
         pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
     - name: Create directories
       run: mkdir -p core data logs reports
+    - name: Run SMART collection
+      run: python rapid_main.py
+      continue-on-error: true
     - name: Generate Markdown report
       run: python rapid_report_md.py
       continue-on-error: true
-    - name: Commit report
+    - name: Commit results
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         git fetch origin main
         git rebase origin/main || true
-        git add reports/proxy_report.md 2>/dev/null || true
+        git add data/*.txt data/*.json reports/*.md 2>/dev/null || true
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
-          git commit -m "📊 Report update: $(date +'%H:%M')"
-          git push origin main || git push --force origin main
+          git commit -m "🔄 Proctor update: $(date +'%Y-%m-%d %H:%M UTC')"
+          git push origin main
+        fi
+
+  # 🔎 ПОИСК НОВЫХ ИСТОЧНИКОВ
+  smart-find-sources:
+    name: 🔎 Find New Sources
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install aiohttp httpx beautifulsoup4 lxml fake-useragent colorama
+    - name: Create directories
+      run: mkdir -p core data
+    - name: Find new sources
+      run: python find_sources.py
+      continue-on-error: true
+    - name: Commit sources
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git fetch origin main
+        git rebase origin/main || true
+        git add data/sources.json 2>/dev/null || true
+        if git diff --staged --quiet; then
+          echo "ℹ️ No new sources"
+        else
+          git commit -m "🔎 New sources: $(date +'%H:%M')"
+          git push origin main
         fi
