@@ -1,87 +1,90 @@
 #!/usr/bin/env python3
-# rapid_main.py - СБОР С СОХРАНЕНИЕМ ГЕО-ДАННЫХ
-
+# rapid_main.py - УМНЫЙ СБОР ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ
+import asyncio
 import sys
 import os
-import asyncio
 from datetime import datetime
 from colorama import init, Fore, Style
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Добавляем core в путь
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.smart_scraper import SmartScraper
 from core.rapid_checker import RapidChecker
 from core.database import ProxyDatabase
-from core.notifier import TelegramNotifier
-from core.source_stats import SourceStats
 
 init(autoreset=True)
 
-class RapidCollector:
-    """Умный сбор с сохранением гео-данных"""
-    
-    def __init__(self):
-        self.db = ProxyDatabase()
-        self.scraper = SmartScraper()
-        self.checker = RapidChecker()
-        self.notifier = TelegramNotifier()
-        self.source_stats = SourceStats()
-        self.BATCH_SIZE = 500
-    
-    def run(self):
-        print(f"""
+
+def print_banner():
+    """Красивый баннер"""
+    banner = f"""
 {Fore.CYAN}╔══════════════════════════════════════════════════════════╗
 ║{Fore.YELLOW}      PROCTOR SMART - УМНЫЙ СБОР (с гео-данными)        {Fore.CYAN}║
 ║{Fore.WHITE}      Сохраняем географию каждого прокси                {Fore.CYAN}║
 ║{Fore.GREEN}      {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                    {Fore.CYAN}║
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
-        """)
-        
-        # ШАГ 1: СБОР
-        raw_proxies_with_sources = self.scraper.get_all_proxies_with_sources()
-        
-        if not raw_proxies_with_sources:
-            print(f"{Fore.RED}❌ Нет прокси для проверки{Style.RESET_ALL}")
-            return
-        
-        # ШАГ 2: БЕРЁМ ТОЛЬКО НОВЫЕ
-        existing = set(self.db.db['proxies'].keys())
-        new_proxies = [(p, src) for p, src in raw_proxies_with_sources if p not in existing]
-        
-        print(f"📊 Новых прокси: {len(new_proxies)} из {len(raw_proxies_with_sources)}")
-        
-        new_working = 0
-        if new_proxies:
-            to_check = new_proxies[:self.BATCH_SIZE]
-            
-            # Проверка с гео-данными
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            results = loop.run_until_complete(self.checker.check_all([p for p, _ in to_check]))
-            loop.close()
-            
-            # Сохраняем с источником и гео
-            for result, (proxy, source) in zip(results, to_check):
-                if result['working']:
-                    result['source'] = source
-                    self.db.add_proxy(result['proxy'], result, source)
-                    self.source_stats.update(source, 1)
-                    new_working += 1
-        
-        # ⚡ ПРИНУДИТЕЛЬНЫЙ ЭКСПОРТ ВСЕГДА (ДАЖЕ ЕСЛИ НЕТ НОВЫХ)
-        stats = self.db.export_to_txt()
-        
-        # Статистика
-        new_stats = self.db.get_stats()
-        
-        print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
-        print(f"  ✨ Добавлено новых рабочих: {new_working}")
-        print(f"  📊 Всего рабочих: {stats['all']}")
-        print(f"\n{Fore.CYAN}📊 СТАТИСТИКА ПО РЕГИОНАМ:{Style.RESET_ALL}")
-        print(f"  🇷🇺 Российских: {stats['ru']}")
-        print(f"  🇺🇸 Американских: {stats['us']}")
-        print(f"  🌍 Глобальных: {stats['global']}")
+    """
+    print(banner)
+
+
+async def main():
+    print_banner()
+    
+    # Инициализация
+    scraper = SmartScraper()
+    checker = RapidChecker()
+    db = ProxyDatabase()
+    
+    # Фаза 1: Сбор прокси
+    print(f"\n{Fore.YELLOW}🧠 УМНЫЙ СБОР ПРОКСИ (с источниками){Style.RESET_ALL}")
+    print("─" * 60)
+    
+    # Сбор из всех источников
+    all_proxies = await scraper.get_all_proxies()
+    
+    if not all_proxies:
+        print(f"{Fore.RED}❌ Не удалось собрать прокси{Style.RESET_ALL}")
+        return
+    
+    # Фаза 2: Проверка (увеличено до 1500)
+    print(f"\n{Fore.YELLOW}⚡ ПРОВЕРКА 1500 ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ...{Style.RESET_ALL}")
+    
+    start_time = datetime.now()
+    validated = await checker.validate_proxies(all_proxies, max_count=1500)
+    elapsed = (datetime.now() - start_time).total_seconds()
+    
+    # Статистика проверки
+    working_count = len([v for v in validated if v.get('working')])
+    ru_count = len([v for v in validated if v.get('ru_access')])
+    us_count = len([v for v in validated if v.get('us_access')])
+    
+    print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {working_count}/1500 рабочих{Style.RESET_ALL}")
+    print(f"   🇷🇺 РФ доступ: {ru_count} | 🇺🇸 США доступ: {us_count}")
+    
+    # Фаза 3: Добавление в базу
+    new_count = 0
+    for proxy_data in validated:
+        if proxy_data.get('working'):
+            proxy = proxy_data['proxy']
+            # Добавляем в базу
+            db.add_proxy(proxy, proxy_data, source=proxy_data.get('source'))
+            new_count += 1
+    
+    # Фаза 4: Экспорт в текстовые файлы
+    print()
+    db.export_to_txt()
+    
+    # Финальная статистика
+    stats = db.get_stats()
+    print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
+    print(f"  ✨ Добавлено новых рабочих: {new_count}")
+    print(f"  📊 Всего рабочих: {stats['working_now']}")
+    print(f"\n{Fore.CYAN}📊 СТАТИСТИКА ПО РЕГИОНАМ:{Style.RESET_ALL}")
+    print(f"  🇷🇺 Российских: {stats['russian']}")
+    print(f"  🇺🇸 Американских: {stats['american']}")
+    print(f"  🌍 Глобальных: {stats['global']}")
+
 
 if __name__ == "__main__":
-    collector = RapidCollector()
-    collector.run()
+    asyncio.run(main())
