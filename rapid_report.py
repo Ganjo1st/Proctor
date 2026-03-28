@@ -25,7 +25,7 @@ def main():
     # Загружаем базу данных
     db = ProxyDatabase(data_dir='data')
     
-    # Получаем статистику из базы (актуальную)
+    # Получаем статистику из базы
     stats = db.get_stats()
     
     print("\n📊 Текущая статистика из базы:")
@@ -35,13 +35,12 @@ def main():
     print(f"  🇺🇸 Американских: {stats['american']}")
     print(f"  🌍 Глобальных: {stats['global']}")
 
-    # Создаём Excel-отчёт через штатный класс
+    # Создаём Excel-отчёт
     report = ExcelReport(db, data_dir='data')
     filename = report.create_report('reports/proxy_report.xlsx')
 
     print(f"\n✅ Отчёт обновлён: {filename}")
     print(f"   Прямая ссылка: https://github.com/Ganjo1st/Proctor/blob/main/reports/proxy_report.xlsx")
-    print("\n📊 Проверьте лист 'Российские' в отчёте — должны быть актуальные прокси")
 
 
 if __name__ == "__main__":
