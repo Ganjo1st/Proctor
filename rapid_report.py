@@ -46,7 +46,7 @@ def main():
     
     # Единый отчёт (перезаписывается)
     report = ExcelReport(db)
-    filename = "reports/proxy_report.xlsx"  # ОДИН ФАЙЛ!
+    filename = "reports/proxy_report.xlsx"
     
     report.create_report(filename)
     
