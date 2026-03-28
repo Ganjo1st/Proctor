@@ -1871,10 +1871,46 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "128.199.254.13:9090": {
+      "first_seen": "2026-03-28T11:46:50.925706",
+      "last_seen": "2026-03-28T11:46:50.925706",
+      "working": true,
+      "latency": 1356.18,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "Singapore",
+      "country_code": "SG",
+      "region": "unknown"
+    },
+    "168.63.153.150:3128": {
+      "first_seen": "2026-03-28T11:46:50.928339",
+      "last_seen": "2026-03-28T11:46:50.928339",
+      "working": true,
+      "latency": 1043.57,
+      "ru_access": false,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "Hong Kong",
+      "country_code": "HK",
+      "region": "us"
+    },
+    "190.60.40.243:999": {
+      "first_seen": "2026-03-28T11:46:50.930648",
+      "last_seen": "2026-03-28T11:46:50.930648",
+      "working": true,
+      "latency": 2638.71,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 370,
-    "last_update": "2026-03-28T11:16:32.276362"
+    "total_seen": 373,
+    "last_update": "2026-03-28T11:46:50.930648"
   }
 }
