@@ -74,14 +74,13 @@ class RapidCleaner:
         else:
             print(f"  ✅ Все прокси свежие (проверены менее {self.MAX_AGE_MINUTES} мин назад)")
         
-        # ⚡ ВАЖНО: ЭКСПОРТ ПОСЛЕ ОЧИСТКИ
-        self.db.export_to_txt()
+        # ⚡ ПРИНУДИТЕЛЬНЫЙ ЭКСПОРТ ПОСЛЕ ОЧИСТКИ
+        stats = self.db.export_to_txt()
         
-        stats = self.db.get_stats()
         print(f"\n{Fore.GREEN}✅ ОЧИСТКА ЗАВЕРШЕНА{Style.RESET_ALL}")
-        print(f"  📦 Осталось в базе: {stats['working_now']}")
-        print(f"  🇷🇺 Российских: {stats['russian']}")
-        print(f"  🇺🇸 Американских: {stats['american']}")
+        print(f"  📦 Осталось в базе: {stats['all']}")
+        print(f"  🇷🇺 Российских: {stats['ru']}")
+        print(f"  🇺🇸 Американских: {stats['us']}")
         print(f"  🌍 Глобальных: {stats['global']}")
 
 if __name__ == "__main__":
