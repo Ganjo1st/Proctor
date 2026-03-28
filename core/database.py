@@ -30,12 +30,13 @@ class ProxyDatabase:
             json.dump(self.db, f, indent=2)
     
     def _determine_region_flags(self, data: Dict) -> tuple:
-        """Единая логика определения региона"""
+        """Единая логика определения региона (синхронизирована с export_to_txt)"""
         ru = data.get('ru_access', False)
         us = data.get('us_access', False)
         country_code = data.get('country_code', '')
         region = data.get('region', '')
         
+        # Дополнительная логика
         if not ru and country_code == 'RU':
             ru = True
         if not ru and region == 'ru':
@@ -46,6 +47,18 @@ class ProxyDatabase:
             us = True
         
         return ru, us
+    
+    def _get_region_category(self, data: Dict) -> str:
+        """Возвращает категорию региона для статистики (совпадает с export_to_txt)"""
+        ru, us = self._determine_region_flags(data)
+        
+        if ru and us:
+            return 'global'
+        elif ru:
+            return 'ru'
+        elif us:
+            return 'us'
+        return 'other'
     
     def add_proxy(self, proxy: str, proxy_data: Dict, source: str = None):
         """Добавление прокси с гео-данными"""
@@ -155,7 +168,7 @@ class ProxyDatabase:
         }
     
     def get_stats(self) -> Dict:
-        """Статистика с ЕДИНОЙ логикой определения региона"""
+        """Статистика с ЕДИНОЙ логикой определения региона (синхронизирована с export_to_txt)"""
         total = len(self.db['proxies'])
         working = 0
         ru = 0
@@ -169,6 +182,7 @@ class ProxyDatabase:
             working += 1
             ru_flag, us_flag = self._determine_region_flags(data)
             
+            # ТА ЖЕ ЛОГИКА, ЧТО В export_to_txt
             if ru_flag and us_flag:
                 global_ += 1
             elif ru_flag:
