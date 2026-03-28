@@ -1,4 +1,4 @@
-# core/excel_report.py - СОЗДАНИЕ EXCEL-ОТЧЁТА
+# core/excel_report.py - СОЗДАНИЕ EXCEL-ОТЧЁТА ИЗ БАЗЫ
 import pandas as pd
 from datetime import datetime
 import os
@@ -7,7 +7,7 @@ class ExcelReport:
     """Создание подробного отчёта в формате Excel"""
     
     def __init__(self, db, data_dir='data'):
-        self.db = db
+        self.db = db          # экземпляр ProxyDatabase
         self.data_dir = data_dir
     
     def _determine_region(self, info):
@@ -38,12 +38,17 @@ class ExcelReport:
         return '❓ Неизвестно'
     
     def create_report(self, filename='proxy_report.xlsx'):
-        """Создание Excel-отчёта"""
+        """Создание Excel-отчёта из базы данных"""
         print("📊 Создаю Excel-отчёт...")
         
-        # Собираем данные
+        # Обеспечиваем существование папки reports
+        os.makedirs(os.path.dirname(filename) if os.path.dirname(filename) else '.', exist_ok=True)
+        
+        # Собираем данные из базы
         data = []
-        for proxy, info in self.db.db['proxies'].items():
+        proxies_dict = self.db.db.get('proxies', {})  # Доступ к внутреннему словарю
+        
+        for proxy, info in proxies_dict.items():
             # Определяем регион
             region = self._determine_region(info)
             
@@ -58,11 +63,18 @@ class ExcelReport:
                 'Источник': info.get('source', 'неизвестен')
             })
         
+        if not data:
+            print("⚠️ Нет данных для отчёта")
+            return None
+        
         df = pd.DataFrame(data)
+        
+        # Сортируем по работоспособности и задержке
+        df_sorted = df.sort_values(['Рабочий', 'Задержка (мс)'], ascending=[False, True])
         
         # Создаём Excel файл
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
-            df.to_excel(writer, sheet_name='Все прокси', index=False)
+            df_sorted.to_excel(writer, sheet_name='Все прокси', index=False)
             df[df['Рабочий'] == '✅ Да'].to_excel(writer, sheet_name='Рабочие', index=False)
             df[df['Рабочий'] == '❌ Нет'].to_excel(writer, sheet_name='Нерабочие', index=False)
             df[df['Регион'] == '🇷🇺 Россия'].to_excel(writer, sheet_name='Российские', index=False)
