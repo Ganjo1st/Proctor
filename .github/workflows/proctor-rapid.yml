@@ -44,8 +44,8 @@ jobs:
           echo "ℹ️ No changes"
         else
           git commit -m "🔄 Update: $(date +'%H:%M')"
-          git pull --force origin main || true
-          git push --force origin main || true
+          git pull --rebase origin main || true
+          git push origin main || true
         fi
 
   # 🧹 УДАЛЕНИЕ НЕРАБОЧИХ - каждые 2 минуты
