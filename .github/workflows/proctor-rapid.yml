@@ -3,13 +3,11 @@ name: Proctor SMART - Intelligent Proxy Collector
 on:
   schedule:
     - cron: '*/2 * * * *'       # Сбор новых прокси - каждые 2 минуты
-    - cron: '*/2 * * * *'       # Удаление нерабочих - каждые 2 минуты
     - cron: '*/30 * * * *'      # Поиск новых источников - каждые 30 минут
-    - cron: '*/2 * * * *'       # Отчёт - каждые 2 минуты (один файл)
   workflow_dispatch:
 
 jobs:
-  # 🔍 СБОР НОВЫХ ПРОКСИ - каждые 2 минуты
+  # 🔍 СБОР НОВЫХ ПРОКСИ И ОТЧЁТ (объединённый джоб)
   smart-collect:
     name: 🔍 Collect & Report
     runs-on: ubuntu-latest
@@ -39,43 +37,14 @@ jobs:
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
+        
+        # Добавляем все изменения
         git add data/*.txt data/*.json reports/*.xlsx 2>/dev/null || true
+        
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
           git commit -m "🔄 Update: $(date +'%H:%M')"
-          git pull --rebase origin main || true
-          git push origin main || true
-        fi
-
-  # 🧹 УДАЛЕНИЕ НЕРАБОЧИХ - каждые 2 минуты
-  smart-clean:
-    name: 🧹 Remove Dead Proxies
-    runs-on: ubuntu-latest
-    if: github.event.schedule == '*/2 * * * *' || github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-    - name: Install ALL dependencies
-      run: |
-        pip install --upgrade pip
-        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
-    - name: Run cleanup
-      run: python rapid_clean.py
-      continue-on-error: true
-    - name: Commit cleanup
-      run: |
-        git config user.name 'github-actions[bot]'
-        git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git add data/*.txt data/*.json 2>/dev/null || true
-        if git diff --staged --quiet; then
-          echo "ℹ️ No changes"
-        else
-          git commit -m "🧹 Cleanup: $(date +'%H:%M')"
           git pull --rebase origin main || true
           git push origin main || true
         fi
@@ -92,7 +61,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install ALL dependencies
+    - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama
@@ -112,42 +81,4 @@ jobs:
           git commit -m "🔎 New sources: $(date +'%H:%M')"
           git pull --rebase origin main || true
           git push origin main || true
-        fi
-
-   # 📊 ЕДИНЫЙ ОТЧЁТ - каждые 2 минуты
-  smart-report:
-    name: 📊 Update Excel Report
-    runs-on: ubuntu-latest
-    if: github.event.schedule == '*/2 * * * *' || github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Полная история для корректного pull
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-    - name: Install ALL dependencies
-      run: |
-        pip install --upgrade pip
-        pip install aiohttp aiohttp-socks httpx requests beautifulsoup4 lxml fake-useragent colorama pandas openpyxl
-    - name: Create directories
-      run: mkdir -p core data logs reports
-    - name: Generate single report
-      run: python rapid_report.py --single
-      continue-on-error: true
-    - name: Commit single report
-      run: |
-        git config user.name 'github-actions[bot]'
-        git config user.email 'github-actions[bot]@users.noreply.github.com'
-        # Сначала синхронизируемся с remote
-        git fetch origin main
-        git rebase origin/main || true
-        git add reports/proxy_report.xlsx 2>/dev/null || true
-        if git diff --staged --quiet; then
-          echo "ℹ️ No changes"
-        else
-          git commit -m "📊 Report update: $(date +'%H:%M')"
-          git push origin main || git push --force origin main
         fi
