@@ -1,8 +1,8 @@
 # core/database.py - УПРАВЛЕНИЕ БАЗОЙ ПРОКСИ С РАСПРЕДЕЛЕНИЕМ ПО РЕГИОНАМ
 import json
 import os
-from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from datetime import datetime
+from typing import List, Dict
 
 class ProxyDatabase:
     """Управление базой прокси с региональным распределением"""
@@ -15,7 +15,6 @@ class ProxyDatabase:
         self.db = self.load_db()
     
     def load_db(self) -> Dict:
-        """Загрузка базы"""
         if os.path.exists(self.db_file):
             try:
                 with open(self.db_file, 'r') as f:
@@ -25,18 +24,16 @@ class ProxyDatabase:
         return {'proxies': {}, 'stats': {'total_seen': 0}}
     
     def save_db(self):
-        """Сохранение базы"""
         with open(self.db_file, 'w') as f:
             json.dump(self.db, f, indent=2)
     
     def _determine_region_flags(self, data: Dict) -> tuple:
-        """Единая логика определения региона (синхронизирована с export_to_txt)"""
+        """Единая логика определения региона"""
         ru = data.get('ru_access', False)
         us = data.get('us_access', False)
         country_code = data.get('country_code', '')
         region = data.get('region', '')
         
-        # Дополнительная логика
         if not ru and country_code == 'RU':
             ru = True
         if not ru and region == 'ru':
@@ -49,7 +46,7 @@ class ProxyDatabase:
         return ru, us
     
     def add_proxy(self, proxy: str, proxy_data: Dict, source: str = None):
-        """Добавление прокси с гео-данными"""
+        """Добавление прокси"""
         now = datetime.now().isoformat()
         
         ru_access = proxy_data.get('ru_access', False)
@@ -57,7 +54,6 @@ class ProxyDatabase:
         country_code = proxy_data.get('country_code', '')
         region = proxy_data.get('region', '')
         
-        # Дополнительная логика
         if not ru_access and country_code == 'RU':
             ru_access = True
         if not ru_access and region == 'ru':
@@ -96,12 +92,9 @@ class ProxyDatabase:
         
         self.db['stats']['last_update'] = now
         self.save_db()
-        
-        if ru_access:
-            print(f"  🇷🇺 Добавлен российский прокси: {proxy} (страна: {country_code}, регион: {region})")
     
     def export_to_txt(self) -> Dict[str, List[str]]:
-        """Экспорт в текстовые файлы по регионам"""
+        """Экспорт в текстовые файлы"""
         all_proxies = []
         ru_only_proxies = []
         us_only_proxies = []
@@ -112,7 +105,6 @@ class ProxyDatabase:
                 continue
             
             all_proxies.append(proxy)
-            
             ru, us = self._determine_region_flags(data)
             
             if ru and us:
@@ -122,13 +114,8 @@ class ProxyDatabase:
             elif us:
                 us_only_proxies.append(proxy)
         
-        # Сортируем по скорости
         all_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
-        ru_only_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
-        us_only_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
-        global_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
         
-        # Сохраняем
         with open(os.path.join(self.data_dir, 'proxies_all.txt'), 'w') as f:
             f.write('\n'.join(all_proxies))
         
@@ -154,7 +141,7 @@ class ProxyDatabase:
         }
     
     def get_stats(self) -> Dict:
-        """Статистика с разделением на 'только РФ', 'только США' и 'глобальные'"""
+        """Статистика"""
         total = len(self.db['proxies'])
         working = 0
         ru_only = 0
@@ -178,13 +165,9 @@ class ProxyDatabase:
         return {
             'total_in_db': total,
             'working_now': working,
-            'russian': ru_only,      # Только РФ
-            'american': us_only,     # Только США
-            'global': global_,       # РФ + США
+            'russian': ru_only,
+            'american': us_only,
+            'global': global_,
             'last_update': self.db['stats'].get('last_update'),
             'total_seen': self.db['stats'].get('total_seen', 0)
         }
-    
-    def get_proxy_history(self, proxy: str) -> Dict:
-        """История конкретного прокси"""
-        return self.db['proxies'].get(proxy, {})
