@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР БЕЗ АВТООТКЛЮЧЕНИЯ
+# core/smart_scraper.py - УМНЫЙ СБОР С РАБОЧИМИ РОССИЙСКИМИ ИСТОЧНИКАМИ
 import requests
 import re
 import json
@@ -18,7 +18,7 @@ class SmartScraper:
         ua = UserAgent()
         self.session.headers.update({'User-Agent': ua.random})
         
-        # ВСЕ источники (без автоотключения)
+        # ВСЕ источники (только проверенные)
         self.sources = {
             # Основные источники
             'proxymania': {
@@ -42,39 +42,23 @@ class SmartScraper:
                 'type': 'text'
             },
             
-            # 🇷🇺 РОССИЙСКИЕ ИСТОЧНИКИ (НОВЫЕ!)
+            # 🇷🇺 РОССИЙСКИЕ ИСТОЧНИКИ (ПРОВЕРЕННЫЕ)
             'ru_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=RU',
                 'type': 'text'
             },
-            'russia_monosans': {
-                'url': 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/country/RU.txt',
+            'ru_proxy_list': {
+                'url': 'https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/proxy-list-http.txt',
                 'type': 'text'
             },
-            'russia_rdavydov': {
-                'url': 'https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/countries/Russia.txt',
+            'ru_openproxy': {
+                'url': 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt',
                 'type': 'text'
-            },
-            'russia_free_proxy_list': {
-                'url': 'https://free-proxy-list.net/ru-proxy.html',
-                'type': 'html'
-            },
-            'russia_proxy_list': {
-                'url': 'https://www.proxy-list.download/api/v1/get?country=RU',
-                'type': 'text'
-            },
-            'russia_ssl_proxies': {
-                'url': 'https://www.sslproxies.org/country/RU',
-                'type': 'html'
             },
             
             # Американские источники
             'us_scrape': {
                 'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=US',
-                'type': 'text'
-            },
-            'us_monosans': {
-                'url': 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/country/US.txt',
                 'type': 'text'
             },
         }
@@ -99,7 +83,7 @@ class SmartScraper:
             # Ищем таблицу с прокси
             table = soup.find('table')
             if table:
-                rows = table.find_all('tr')[1:]  # Пропускаем заголовок
+                rows = table.find_all('tr')[1:]
                 for row in rows:
                     cols = row.find_all('td')
                     if len(cols) >= 2:
@@ -182,7 +166,7 @@ class SmartScraper:
         
         all_proxies = []
         
-        # 1. Основные источники (включая российские)
+        # 1. Основные источники
         for name, source in self.sources.items():
             print(f"  🔍 {name}...", end=' ')
             
@@ -209,7 +193,7 @@ class SmartScraper:
         print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
         
         # Выводим статистику по российским источникам
-        ru_sources = [name for name in self.sources.keys() if name.startswith('ru_') or name.startswith('russia_')]
+        ru_sources = [name for name in self.sources.keys() if name.startswith('ru_')]
         ru_count = sum(1 for p, s in all_proxies if s in ru_sources)
         print(f"   🇷🇺 Российских источников: {len(ru_sources)}")
         print(f"   🇷🇺 Найдено российских прокси: {ru_count}\n")
