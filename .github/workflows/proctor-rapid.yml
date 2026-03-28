@@ -41,9 +41,8 @@ jobs:
           echo "ℹ️ No changes"
         else
           git commit -m "🔍 Collect: $(date +'%H:%M')"
-          git fetch origin main
-          git rebase origin/main
-          git push origin main
+          git pull --rebase origin main || true
+          git push origin main || true
         fi
 
   # 🧹 УДАЛЕНИЕ НЕРАБОЧИХ - каждые 2 минуты
@@ -74,9 +73,8 @@ jobs:
           echo "ℹ️ No changes"
         else
           git commit -m "🧹 Cleanup: $(date +'%H:%M')"
-          git fetch origin main
-          git rebase origin/main
-          git push origin main
+          git pull --rebase origin main || true
+          git push origin main || true
         fi
 
   # 🔎 ПОИСК НОВЫХ ИСТОЧНИКОВ - каждые 30 минут
@@ -109,12 +107,11 @@ jobs:
           echo "ℹ️ No new sources"
         else
           git commit -m "🔎 New sources: $(date +'%H:%M')"
-          git fetch origin main
-          git rebase origin/main
-          git push origin main
+          git pull --rebase origin main || true
+          git push origin main || true
         fi
 
-  # 📊 ЕДИНЫЙ ОТЧЁТ - каждые 2 минуты (перезаписывается)
+  # 📊 ЕДИНЫЙ ОТЧЁТ - каждые 2 минуты
   smart-report:
     name: 📊 Update Excel Report
     runs-on: ubuntu-latest
@@ -144,7 +141,6 @@ jobs:
           echo "ℹ️ No changes"
         else
           git commit -m "📊 Report update: $(date +'%H:%M')"
-          git fetch origin main
-          git rebase origin/main
-          git push origin main
+          git pull --rebase origin main || true
+          git push origin main || true
         fi
