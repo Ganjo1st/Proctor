@@ -28,11 +28,25 @@ def print_banner():
     print(banner)
 
 
+def get_working_proxies_from_db() -> list:
+    """Получает список рабочих прокси из базы для использования в сборщике"""
+    db = ProxyDatabase()
+    working = []
+    for proxy, data in db.db.get('proxies', {}).items():
+        if data.get('working'):
+            working.append(proxy)
+    return working
+
+
 async def main():
     print_banner()
     
-    # Инициализация
-    scraper = SmartScraper()
+    # Получаем рабочие прокси из базы для обхода блокировок
+    working_proxies = get_working_proxies_from_db()
+    print(f"📡 Загружено {len(working_proxies)} рабочих прокси для обхода блокировок")
+    
+    # Инициализация с передачей рабочих прокси
+    scraper = SmartScraper(working_proxies=working_proxies)
     checker = RapidChecker()
     db = ProxyDatabase()
     
@@ -47,26 +61,25 @@ async def main():
         print(f"{Fore.RED}❌ Не удалось собрать прокси{Style.RESET_ALL}")
         return
     
-    # Фаза 2: Проверка (используем check_all, а не validate_proxies)
-    print(f"\n{Fore.YELLOW}⚡ ПРОВЕРКА 1500 ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ...{Style.RESET_ALL}")
+    # Фаза 2: Проверка (проверяем 3000 прокси для большего охвата)
+    print(f"\n{Fore.YELLOW}⚡ ПРОВЕРКА 3000 ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ...{Style.RESET_ALL}")
     
     start_time = datetime.now()
-    # Берём первые 1500 прокси для проверки
     proxies_to_check = all_proxies[:3000]
     results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
     # Фильтруем рабочие
-    working_proxies = [r for r in results if r.get('working')]
-    ru_count = len([r for r in working_proxies if r.get('ru_access')])
-    us_count = len([r for r in working_proxies if r.get('us_access')])
+    working_proxies_new = [r for r in results if r.get('working')]
+    ru_count = len([r for r in working_proxies_new if r.get('ru_access')])
+    us_count = len([r for r in working_proxies_new if r.get('us_access')])
     
-    print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {len(working_proxies)}/{len(proxies_to_check)} рабочих{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {len(working_proxies_new)}/{len(proxies_to_check)} рабочих{Style.RESET_ALL}")
     print(f"   🇷🇺 РФ доступ: {ru_count} | 🇺🇸 США доступ: {us_count}")
     
     # Фаза 3: Добавление в базу
     new_count = 0
-    for proxy_data in working_proxies:
+    for proxy_data in working_proxies_new:
         proxy = proxy_data['proxy']
         # Добавляем в базу
         db.add_proxy(proxy, proxy_data, source=proxy_data.get('source', 'rapid_check'))
