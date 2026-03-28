@@ -95,13 +95,24 @@ class RapidChecker:
                     result['region'] = 'us'
                 elif result['country_code'] == 'RU':
                     result['region'] = 'ru'
+                    # Если страна RU, но доступ к сайтам не проверен, считаем ru_access = True
+                    result['ru_access'] = True
                 elif result['country_code'] == 'US':
                     result['region'] = 'us'
+                    result['us_access'] = True
                 elif result['country_code'] in ['GB', 'DE', 'FR', 'IT', 'ES']:
                     result['region'] = 'eu'
                         
         except Exception:
             pass
+        
+        # ВАЖНО: ДОПОЛНИТЕЛЬНАЯ ЛОГИКА ДЛЯ РОССИЙСКИХ ПРОКСИ
+        # Если страна определена как RU, принудительно устанавливаем ru_access = True
+        if result['country_code'] == 'RU':
+            result['ru_access'] = True
+        # Если регион определён как ru, также устанавливаем
+        if result['region'] == 'ru':
+            result['ru_access'] = True
         
         return result
     
