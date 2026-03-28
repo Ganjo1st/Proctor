@@ -48,18 +48,6 @@ class ProxyDatabase:
         
         return ru, us
     
-    def _get_region_category(self, data: Dict) -> str:
-        """Возвращает категорию региона для статистики (совпадает с export_to_txt)"""
-        ru, us = self._determine_region_flags(data)
-        
-        if ru and us:
-            return 'global'
-        elif ru:
-            return 'ru'
-        elif us:
-            return 'us'
-        return 'other'
-    
     def add_proxy(self, proxy: str, proxy_data: Dict, source: str = None):
         """Добавление прокси с гео-данными"""
         now = datetime.now().isoformat()
@@ -115,8 +103,8 @@ class ProxyDatabase:
     def export_to_txt(self) -> Dict[str, List[str]]:
         """Экспорт в текстовые файлы по регионам"""
         all_proxies = []
-        ru_proxies = []
-        us_proxies = []
+        ru_only_proxies = []
+        us_only_proxies = []
         global_proxies = []
         
         for proxy, data in self.db['proxies'].items():
@@ -129,17 +117,15 @@ class ProxyDatabase:
             
             if ru and us:
                 global_proxies.append(proxy)
-                ru_proxies.append(proxy)
-                us_proxies.append(proxy)
             elif ru:
-                ru_proxies.append(proxy)
+                ru_only_proxies.append(proxy)
             elif us:
-                us_proxies.append(proxy)
+                us_only_proxies.append(proxy)
         
         # Сортируем по скорости
         all_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
-        ru_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
-        us_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        ru_only_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
+        us_only_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
         global_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
         
         # Сохраняем
@@ -147,10 +133,10 @@ class ProxyDatabase:
             f.write('\n'.join(all_proxies))
         
         with open(os.path.join(self.data_dir, 'proxies_russia.txt'), 'w') as f:
-            f.write('\n'.join(ru_proxies))
+            f.write('\n'.join(ru_only_proxies))
         
         with open(os.path.join(self.data_dir, 'proxies_usa.txt'), 'w') as f:
-            f.write('\n'.join(us_proxies))
+            f.write('\n'.join(us_only_proxies))
         
         with open(os.path.join(self.data_dir, 'proxies_global.txt'), 'w') as f:
             f.write('\n'.join(global_proxies))
@@ -158,21 +144,21 @@ class ProxyDatabase:
         with open(os.path.join(self.data_dir, 'proxies_fast.txt'), 'w') as f:
             f.write('\n'.join(all_proxies[:20]))
         
-        print(f"  📁 Экспортировано: РФ={len(ru_proxies)}, США={len(us_proxies)}, Глобальных={len(global_proxies)}")
+        print(f"  📁 Экспортировано: РФ (только)={len(ru_only_proxies)}, США (только)={len(us_only_proxies)}, Глобальных={len(global_proxies)}")
         
         return {
             'all': len(all_proxies),
-            'ru': len(ru_proxies),
-            'us': len(us_proxies),
+            'ru_only': len(ru_only_proxies),
+            'us_only': len(us_only_proxies),
             'global': len(global_proxies)
         }
     
     def get_stats(self) -> Dict:
-        """Статистика с ЕДИНОЙ логикой определения региона (синхронизирована с export_to_txt)"""
+        """Статистика с разделением на 'только РФ', 'только США' и 'глобальные'"""
         total = len(self.db['proxies'])
         working = 0
-        ru = 0
-        us = 0
+        ru_only = 0
+        us_only = 0
         global_ = 0
         
         for proxy, data in self.db['proxies'].items():
@@ -182,20 +168,19 @@ class ProxyDatabase:
             working += 1
             ru_flag, us_flag = self._determine_region_flags(data)
             
-            # ТА ЖЕ ЛОГИКА, ЧТО В export_to_txt
             if ru_flag and us_flag:
                 global_ += 1
-            if ru_flag:  # Считаем все прокси с ru_access=True
-                ru += 1
+            elif ru_flag:
+                ru_only += 1
             elif us_flag:
-                us += 1
+                us_only += 1
         
         return {
             'total_in_db': total,
             'working_now': working,
-            'russian': ru,
-            'american': us,
-            'global': global_,
+            'russian': ru_only,      # Только РФ
+            'american': us_only,     # Только США
+            'global': global_,       # РФ + США
             'last_update': self.db['stats'].get('last_update'),
             'total_seen': self.db['stats'].get('total_seen', 0)
         }
