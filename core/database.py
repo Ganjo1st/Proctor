@@ -33,17 +33,33 @@ class ProxyDatabase:
         """Добавление прокси с гео-данными"""
         now = datetime.now().isoformat()
         
+        # Извлекаем гео-данные из результата проверки
+        ru_access = proxy_data.get('ru_access', False)
+        us_access = proxy_data.get('us_access', False)
+        country_code = proxy_data.get('country_code', '')
+        region = proxy_data.get('region', '')
+        
+        # Дополнительная логика определения региона
+        if not ru_access and country_code == 'RU':
+            ru_access = True
+        if not us_access and country_code == 'US':
+            us_access = True
+        if not ru_access and region == 'ru':
+            ru_access = True
+        if not us_access and region == 'us':
+            us_access = True
+        
         if proxy in self.db['proxies']:
             self.db['proxies'][proxy].update({
                 'last_seen': now,
                 'working': proxy_data.get('working', False),
                 'latency': proxy_data.get('latency', 9999),
-                'ru_access': proxy_data.get('ru_access', False),
-                'us_access': proxy_data.get('us_access', False),
+                'ru_access': ru_access,
+                'us_access': us_access,
                 'source': source or self.db['proxies'][proxy].get('source', 'неизвестен'),
                 'country': proxy_data.get('country'),
-                'country_code': proxy_data.get('country_code'),
-                'region': proxy_data.get('region')
+                'country_code': country_code,
+                'region': region
             })
         else:
             self.db['proxies'][proxy] = {
@@ -51,12 +67,12 @@ class ProxyDatabase:
                 'last_seen': now,
                 'working': proxy_data.get('working', False),
                 'latency': proxy_data.get('latency', 9999),
-                'ru_access': proxy_data.get('ru_access', False),
-                'us_access': proxy_data.get('us_access', False),
+                'ru_access': ru_access,
+                'us_access': us_access,
                 'source': source or 'неизвестен',
                 'country': proxy_data.get('country'),
-                'country_code': proxy_data.get('country_code'),
-                'region': proxy_data.get('region')
+                'country_code': country_code,
+                'region': region
             }
             self.db['stats']['total_seen'] += 1
         
@@ -64,7 +80,7 @@ class ProxyDatabase:
         self.save_db()
     
     def export_to_txt(self) -> Dict[str, List[str]]:
-        """Экспорт в текстовые файлы по регионам (ИСПРАВЛЕННЫЙ)"""
+        """Экспорт в текстовые файлы по регионам"""
         all_proxies = []
         ru_proxies = []
         us_proxies = []
@@ -76,19 +92,17 @@ class ProxyDatabase:
             
             all_proxies.append(proxy)
             
-            # Определяем регион по стране, если ru_access не установлен
+            # Определяем регион с учётом всех источников данных
             ru = data.get('ru_access', False)
             us = data.get('us_access', False)
             country_code = data.get('country_code', '')
             region = data.get('region', '')
             
-            # Если ru_access не установлен, но страна RU — считаем российским
+            # Расширенная логика определения
             if not ru and country_code == 'RU':
                 ru = True
             if not ru and region == 'ru':
                 ru = True
-            
-            # Если us_access не установлен, но страна US — считаем американским
             if not us and country_code == 'US':
                 us = True
             if not us and region == 'us':
@@ -96,6 +110,9 @@ class ProxyDatabase:
             
             if ru and us:
                 global_proxies.append(proxy)
+                # Глобальные также добавляем в оба региональных списка?
+                ru_proxies.append(proxy)  # Добавляем глобальные и в РФ
+                us_proxies.append(proxy)  # и в США
             elif ru:
                 ru_proxies.append(proxy)
             elif us:
@@ -123,7 +140,6 @@ class ProxyDatabase:
         with open(os.path.join(self.data_dir, 'proxies_fast.txt'), 'w') as f:
             f.write('\n'.join(all_proxies[:20]))
         
-        # Выводим для отладки
         print(f"  📁 Экспортировано: РФ={len(ru_proxies)}, США={len(us_proxies)}, Глобальных={len(global_proxies)}")
         
         return {
@@ -134,11 +150,9 @@ class ProxyDatabase:
         }
     
     def get_stats(self) -> Dict:
-        """Статистика"""
+        """Статистика с подробным определением региона"""
         total = len(self.db['proxies'])
-        working = sum(1 for p in self.db['proxies'].values() if p['working'])
-        
-        # Используем ту же логику, что и в export_to_txt
+        working = 0
         ru = 0
         us = 0
         global_ = 0
@@ -146,6 +160,8 @@ class ProxyDatabase:
         for proxy, data in self.db['proxies'].items():
             if not data['working']:
                 continue
+            
+            working += 1
             
             ru_flag = data.get('ru_access', False)
             us_flag = data.get('us_access', False)
@@ -156,7 +172,6 @@ class ProxyDatabase:
                 ru_flag = True
             if not ru_flag and region == 'ru':
                 ru_flag = True
-            
             if not us_flag and country_code == 'US':
                 us_flag = True
             if not us_flag and region == 'us':
