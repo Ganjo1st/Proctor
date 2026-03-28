@@ -26,7 +26,7 @@ class RapidCollector:
         self.checker = RapidChecker()
         self.notifier = TelegramNotifier()
         self.source_stats = SourceStats()
-        self.BATCH_SIZE = 300
+        self.BATCH_SIZE = 500  # Увеличено с 300 до 500 для большего охвата
     
     def run(self):
         print(f"""
