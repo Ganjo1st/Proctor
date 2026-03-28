@@ -185,7 +185,7 @@ class ProxyDatabase:
             # ТА ЖЕ ЛОГИКА, ЧТО В export_to_txt
             if ru_flag and us_flag:
                 global_ += 1
-            elif ru_flag:
+            if ru_flag:  # Считаем все прокси с ru_access=True
                 ru += 1
             elif us_flag:
                 us += 1
