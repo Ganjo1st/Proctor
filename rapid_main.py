@@ -68,18 +68,18 @@ class RapidCollector:
                     self.source_stats.update(source, 1)
                     new_working += 1
         
-        # ⚡ ВАЖНО: ЭКСПОРТ ВСЕГДА!
-        self.db.export_to_txt()
+        # ⚡ ПРИНУДИТЕЛЬНЫЙ ЭКСПОРТ ВСЕГДА (ДАЖЕ ЕСЛИ НЕТ НОВЫХ)
+        stats = self.db.export_to_txt()
         
-        # ШАГ 3: СТАТИСТИКА
-        stats = self.db.get_stats()
+        # Статистика
+        new_stats = self.db.get_stats()
         
         print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
         print(f"  ✨ Добавлено новых рабочих: {new_working}")
-        print(f"  📊 Всего рабочих: {stats['working_now']}")
+        print(f"  📊 Всего рабочих: {stats['all']}")
         print(f"\n{Fore.CYAN}📊 СТАТИСТИКА ПО РЕГИОНАМ:{Style.RESET_ALL}")
-        print(f"  🇷🇺 Российских: {stats['russian']}")
-        print(f"  🇺🇸 Американских: {stats['american']}")
+        print(f"  🇷🇺 Российских: {stats['ru']}")
+        print(f"  🇺🇸 Американских: {stats['us']}")
         print(f"  🌍 Глобальных: {stats['global']}")
 
 if __name__ == "__main__":
