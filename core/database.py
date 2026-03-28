@@ -64,22 +64,42 @@ class ProxyDatabase:
         self.save_db()
     
     def export_to_txt(self) -> Dict[str, List[str]]:
-        """Экспорт в текстовые файлы по регионам"""
+        """Экспорт в текстовые файлы по регионам (ИСПРАВЛЕННЫЙ)"""
         all_proxies = []
         ru_proxies = []
         us_proxies = []
         global_proxies = []
         
         for proxy, data in self.db['proxies'].items():
-            if data['working']:
-                all_proxies.append(proxy)
-                
-                if data.get('ru_access') and data.get('us_access'):
-                    global_proxies.append(proxy)
-                elif data.get('ru_access'):
-                    ru_proxies.append(proxy)
-                elif data.get('us_access'):
-                    us_proxies.append(proxy)
+            if not data['working']:
+                continue
+            
+            all_proxies.append(proxy)
+            
+            # Определяем регион по стране, если ru_access не установлен
+            ru = data.get('ru_access', False)
+            us = data.get('us_access', False)
+            country_code = data.get('country_code', '')
+            region = data.get('region', '')
+            
+            # Если ru_access не установлен, но страна RU — считаем российским
+            if not ru and country_code == 'RU':
+                ru = True
+            if not ru and region == 'ru':
+                ru = True
+            
+            # Если us_access не установлен, но страна US — считаем американским
+            if not us and country_code == 'US':
+                us = True
+            if not us and region == 'us':
+                us = True
+            
+            if ru and us:
+                global_proxies.append(proxy)
+            elif ru:
+                ru_proxies.append(proxy)
+            elif us:
+                us_proxies.append(proxy)
         
         # Сортируем по скорости
         all_proxies.sort(key=lambda p: self.db['proxies'][p].get('latency', 9999))
@@ -117,9 +137,37 @@ class ProxyDatabase:
         """Статистика"""
         total = len(self.db['proxies'])
         working = sum(1 for p in self.db['proxies'].values() if p['working'])
-        ru = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('ru_access'))
-        us = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('us_access'))
-        global_ = sum(1 for p in self.db['proxies'].values() if p['working'] and p.get('ru_access') and p.get('us_access'))
+        
+        # Используем ту же логику, что и в export_to_txt
+        ru = 0
+        us = 0
+        global_ = 0
+        
+        for proxy, data in self.db['proxies'].items():
+            if not data['working']:
+                continue
+            
+            ru_flag = data.get('ru_access', False)
+            us_flag = data.get('us_access', False)
+            country_code = data.get('country_code', '')
+            region = data.get('region', '')
+            
+            if not ru_flag and country_code == 'RU':
+                ru_flag = True
+            if not ru_flag and region == 'ru':
+                ru_flag = True
+            
+            if not us_flag and country_code == 'US':
+                us_flag = True
+            if not us_flag and region == 'us':
+                us_flag = True
+            
+            if ru_flag and us_flag:
+                global_ += 1
+            elif ru_flag:
+                ru += 1
+            elif us_flag:
+                us += 1
         
         return {
             'total_in_db': total,
