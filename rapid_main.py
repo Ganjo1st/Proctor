@@ -52,7 +52,7 @@ async def main():
     
     start_time = datetime.now()
     # Берём первые 1500 прокси для проверки
-    proxies_to_check = all_proxies[:1500]
+    proxies_to_check = all_proxies[:3000]
     results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
