@@ -1799,10 +1799,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "64.181.240.152:3128": {
+      "first_seen": "2026-03-28T07:57:19.689070",
+      "last_seen": "2026-03-28T07:57:19.689070",
+      "working": true,
+      "latency": 234.81,
+      "ru_access": false,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 364,
-    "last_update": "2026-03-28T07:16:51.137157"
+    "total_seen": 365,
+    "last_update": "2026-03-28T07:57:19.689070"
   }
 }
