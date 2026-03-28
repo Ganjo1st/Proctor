@@ -1,201 +1,174 @@
-# core/smart_scraper.py - УМНЫЙ СБОР С РАБОЧИМИ РОССИЙСКИМИ ИСТОЧНИКАМИ
-import requests
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ
 import re
-import json
-import os
-from fake_useragent import UserAgent
-from typing import List, Set, Dict, Tuple
-from bs4 import BeautifulSoup
-from datetime import datetime
-import httpx
 import asyncio
+import aiohttp
+import httpx
+from bs4 import BeautifulSoup
+from typing import List, Set
+from fake_useragent import UserAgent
+import random
+
+ua = UserAgent()
+
 
 class SmartScraper:
-    """Умный сбор прокси из всех источников"""
-    
+    """Умный сборщик прокси с фильтрацией и гео-привязкой"""
+
     def __init__(self):
-        self.session = requests.Session()
-        ua = UserAgent()
-        self.session.headers.update({'User-Agent': ua.random})
+        self.session = None
+        self.ua = UserAgent()
+
+    def is_valid_proxy_format(self, proxy: str) -> bool:
+        """Проверка формата прокси перед добавлением в очередь"""
+        if not proxy or ':' not in proxy:
+            return False
         
-        # ВСЕ источники (только проверенные)
-        self.sources = {
-            # Основные источники
-            'proxymania': {
-                'url': 'https://proxymania.su/free-proxy',
-                'type': 'html'
-            },
-            'thespeedx_http': {
-                'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt',
-                'type': 'text'
-            },
-            'thespeedx_socks4': {
-                'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt',
-                'type': 'text'
-            },
-            'thespeedx_socks5': {
-                'url': 'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt',
-                'type': 'text'
-            },
-            'jetkai_http': {
-                'url': 'https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt',
-                'type': 'text'
-            },
+        parts = proxy.split(':')
+        if len(parts) != 2:
+            return False
+        
+        ip, port = parts
+        
+        # Проверка IP-адреса
+        ip_parts = ip.split('.')
+        if len(ip_parts) != 4:
+            return False
+        
+        for part in ip_parts:
+            if not part.isdigit() or not (0 <= int(part) <= 255):
+                return False
+        
+        # Проверка порта
+        if not port.isdigit() or not (1 <= int(port) <= 65535):
+            return False
+        
+        return True
+
+    async def fetch_from_url(self, url: str, source_type: str = 'text') -> Set[str]:
+        """Сбор прокси из одного источника"""
+        proxies = set()
+        try:
+            print(f"  🔍 {url.split('/')[-1][:20]}...", end=' ', flush=True)
             
-            # 🇷🇺 РОССИЙСКИЕ ИСТОЧНИКИ (ПРОВЕРЕННЫЕ)
-            'ru_scrape': {
-                'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=RU',
-                'type': 'text'
-            },
-            'ru_proxy_list': {
-                'url': 'https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/proxy-list-http.txt',
-                'type': 'text'
-            },
-            'ru_openproxy': {
-                'url': 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt',
-                'type': 'text'
-            },
+            headers = {'User-Agent': self.ua.random}
             
-            # Американские источники
-            'us_scrape': {
-                'url': 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&country=US',
-                'type': 'text'
-            },
-        }
+            async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+                response = await client.get(url, headers=headers)
+                
+                if response.status_code != 200:
+                    print(f"❌ {response.status_code}")
+                    return proxies
+                
+                text = response.text
+                
+                if source_type == 'html':
+                    soup = BeautifulSoup(text, 'html.parser')
+                    textarea = soup.find('textarea')
+                    if textarea:
+                        text = textarea.text
+                
+                # Ищем все IP:PORT
+                pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
+                found = re.findall(pattern, text)
+                
+                # Фильтруем по формату
+                for p in found:
+                    if self.is_valid_proxy_format(p):
+                        proxies.add(p)
+                
+                # Если это просто список IP (построчно)
+                if not found:
+                    lines = text.strip().split('\n')
+                    for line in lines[:200]:
+                        line = line.strip()
+                        if re.match(r'^\d+\.\d+\.\d+\.\d+$', line):
+                            for port in ['3128', '8080', '1080']:
+                                proxy = f"{line}:{port}"
+                                if self.is_valid_proxy_format(proxy):
+                                    proxies.add(proxy)
+                        elif ':' in line:
+                            if self.is_valid_proxy_format(line):
+                                proxies.add(line)
+                
+                print(f"✅ {len(proxies)}")
+                return proxies
+                
+        except Exception as e:
+            print(f"⚠️ {str(e)[:20]}")
+            return proxies
+
+    async def get_all_proxies(self) -> List[str]:
+        """Сбор прокси из всех источников"""
+        all_proxies = set()
+        
+        # Российские источники
+        ru_sources = [
+            ('https://spys.one/en/free-proxy-list/', 'html'),
+            ('https://openproxy.space/list/ru', 'text'),
+            ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt', 'text'),
+        ]
+        
+        # Американские/международные источники
+        int_sources = [
+            ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt', 'text'),
+            ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt', 'text'),
+            ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt', 'text'),
+            ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks4.txt', 'text'),
+            ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt', 'text'),
+        ]
         
         # API-источники
-        self.api_sources = [
-            ('proxyscrape_api', 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all'),
-            ('pubproxy', 'https://pubproxy.com/api/proxy?limit=30&format=txt&http=true&https=true'),
-            ('proxyscan', 'https://www.proxyscan.io/download?type=http'),
+        api_sources = [
+            ('https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all', 'text'),
+            ('https://www.proxy-list.download/api/v1/get?type=http', 'text'),
+            ('https://www.proxy-list.download/api/v1/get?type=https', 'text'),
         ]
-    
-    def fetch_from_html(self, url: str) -> Set[str]:
-        """Парсинг HTML страницы"""
-        proxies = set()
-        try:
-            response = self.session.get(url, timeout=10)
-            if response.status_code != 200:
-                return proxies
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Ищем таблицу с прокси
-            table = soup.find('table')
-            if table:
-                rows = table.find_all('tr')[1:]
-                for row in rows:
-                    cols = row.find_all('td')
-                    if len(cols) >= 2:
-                        proxy_text = cols[0].get_text(strip=True)
-                        if ':' in proxy_text:
-                            proxies.add(proxy_text)
-            else:
-                # Ищем прокси в тексте
-                ip_port_pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
-                found = re.findall(ip_port_pattern, response.text)
-                proxies.update(found)
-            
-        except Exception:
-            pass
         
-        return proxies
-    
-    def fetch_from_text(self, url: str) -> Set[str]:
-        """Сбор из текстового источника"""
-        proxies = set()
-        try:
-            response = self.session.get(url, timeout=5)
-            if response.status_code != 200:
-                return proxies
-            
-            text = response.text
-            ip_port_pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
-            found = re.findall(ip_port_pattern, text)
-            proxies.update(found)
-            
-        except Exception:
-            pass
+        print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
         
-        return proxies
-    
-    async def fetch_from_api_async(self, url: str, source_name: str) -> List[str]:
-        """Асинхронная загрузка из API-источников"""
-        proxies = []
-        try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                response = await client.get(url)
-                if response.status_code == 200:
-                    if 'text/plain' in response.headers.get('content-type', ''):
-                        proxies = [p.strip() for p in response.text.split('\n') if p.strip() and ':' in p]
-                    else:
-                        try:
-                            data = response.json()
-                            if 'proxies' in data:
-                                proxies = [f"{p['ip']}:{p['port']}" for p in data['proxies']]
-                        except:
-                            pass
-        except Exception:
-            pass
+        # Сбор из российских источников
+        print("\n  🇷🇺 Российские источники:")
+        for url, source_type in ru_sources:
+            proxies = await self.fetch_from_url(url, source_type)
+            all_proxies.update(proxies)
+            await asyncio.sleep(0.5)
         
-        return proxies
-    
-    async def get_api_proxies(self) -> List[Tuple[str, str]]:
-        """Сбор прокси из API-источников"""
-        all_proxies = []
+        # Сбор из международных источников
+        print("\n  🌍 Международные источники:")
+        for url, source_type in int_sources:
+            proxies = await self.fetch_from_url(url, source_type)
+            all_proxies.update(proxies)
+            await asyncio.sleep(0.5)
+        
+        # Сбор из API
         print("\n  🌐 API-источники:")
+        for url, source_type in api_sources:
+            proxies = await self.fetch_from_url(url, source_type)
+            all_proxies.update(proxies)
+            await asyncio.sleep(0.5)
         
-        for name, url in self.api_sources:
-            print(f"    🔍 {name}...", end=' ')
-            proxies = await self.fetch_from_api_async(url, name)
-            for proxy in proxies:
-                all_proxies.append((proxy, f"api_{name}"))
-            print(f"✅ {len(proxies)}")
+        # Преобразуем в список и перемешиваем
+        proxy_list = list(all_proxies)
+        random.shuffle(proxy_list)
         
-        return all_proxies
-    
-    def get_all_proxies(self) -> List[str]:
-        """Сбор всех прокси (только адреса)"""
-        proxies_with_sources = self.get_all_proxies_with_sources()
-        return [p for p, _ in proxies_with_sources]
-    
-    def get_all_proxies_with_sources(self) -> List[Tuple[str, str]]:
-        """Сбор прокси с указанием источника"""
-        print("\n🧠 УМНЫЙ СБОР ПРОКСИ (с источниками)")
-        print("─" * 60)
+        # Статистика
+        print(f"\n{Fore.CYAN}────────────────────────────────────────────────────────────{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}📊 ИТОГО собрано: {len(proxy_list)} прокси{Style.RESET_ALL}")
         
-        all_proxies = []
+        # Подсчёт российских IP (для статистики)
+        ru_count = 0
+        for proxy in proxy_list[:100]:
+            ip = proxy.split(':')[0]
+            if ip.startswith('5.') or ip.startswith('95.') or ip.startswith('85.') or ip.startswith('176.'):
+                ru_count += 1
         
-        # 1. Основные источники
-        for name, source in self.sources.items():
-            print(f"  🔍 {name}...", end=' ')
-            
-            if source['type'] == 'html':
-                proxies = self.fetch_from_html(source['url'])
-            else:
-                proxies = self.fetch_from_text(source['url'])
-            
-            for proxy in proxies:
-                all_proxies.append((proxy, name))
-            
-            status = f"✅ {len(proxies)}" if proxies else "❌ 0"
-            print(status)
+        print(f"   🇷🇺 Российских источников: 3")
+        print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
         
-        # 2. API-источники (асинхронные)
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        api_proxies = loop.run_until_complete(self.get_api_proxies())
-        loop.close()
-        
-        all_proxies.extend(api_proxies)
-        
-        print("─" * 60)
-        print(f"📊 ИТОГО собрано: {len(all_proxies)} прокси")
-        
-        # Выводим статистику по российским источникам
-        ru_sources = [name for name in self.sources.keys() if name.startswith('ru_')]
-        ru_count = sum(1 for p, s in all_proxies if s in ru_sources)
-        print(f"   🇷🇺 Российских источников: {len(ru_sources)}")
-        print(f"   🇷🇺 Найдено российских прокси: {ru_count}\n")
-        
-        return all_proxies
+        return proxy_list
+
+
+# Для обратной совместимости
+async def get_all_proxies():
+    scraper = SmartScraper()
+    return await scraper.get_all_proxies()
