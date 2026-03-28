@@ -1967,10 +1967,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "180.250.219.58:53281": {
+      "first_seen": "2026-03-28T14:31:30.012447",
+      "last_seen": "2026-03-28T14:31:30.012447",
+      "working": true,
+      "latency": 1318.51,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "Indonesia",
+      "country_code": "ID",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 378,
-    "last_update": "2026-03-28T14:06:59.478933"
+    "total_seen": 379,
+    "last_update": "2026-03-28T14:31:30.012447"
   }
 }
