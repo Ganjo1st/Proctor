@@ -47,29 +47,30 @@ async def main():
         print(f"{Fore.RED}❌ Не удалось собрать прокси{Style.RESET_ALL}")
         return
     
-    # Фаза 2: Проверка (увеличено до 1500)
+    # Фаза 2: Проверка (используем check_all, а не validate_proxies)
     print(f"\n{Fore.YELLOW}⚡ ПРОВЕРКА 1500 ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ...{Style.RESET_ALL}")
     
     start_time = datetime.now()
-    validated = await checker.validate_proxies(all_proxies, max_count=1500)
+    # Берём первые 1500 прокси для проверки
+    proxies_to_check = all_proxies[:1500]
+    results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
-    # Статистика проверки
-    working_count = len([v for v in validated if v.get('working')])
-    ru_count = len([v for v in validated if v.get('ru_access')])
-    us_count = len([v for v in validated if v.get('us_access')])
+    # Фильтруем рабочие
+    working_proxies = [r for r in results if r.get('working')]
+    ru_count = len([r for r in working_proxies if r.get('ru_access')])
+    us_count = len([r for r in working_proxies if r.get('us_access')])
     
-    print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {working_count}/1500 рабочих{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {len(working_proxies)}/{len(proxies_to_check)} рабочих{Style.RESET_ALL}")
     print(f"   🇷🇺 РФ доступ: {ru_count} | 🇺🇸 США доступ: {us_count}")
     
     # Фаза 3: Добавление в базу
     new_count = 0
-    for proxy_data in validated:
-        if proxy_data.get('working'):
-            proxy = proxy_data['proxy']
-            # Добавляем в базу
-            db.add_proxy(proxy, proxy_data, source=proxy_data.get('source'))
-            new_count += 1
+    for proxy_data in working_proxies:
+        proxy = proxy_data['proxy']
+        # Добавляем в базу
+        db.add_proxy(proxy, proxy_data, source=proxy_data.get('source', 'rapid_check'))
+        new_count += 1
     
     # Фаза 4: Экспорт в текстовые файлы
     print()
