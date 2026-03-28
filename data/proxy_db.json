@@ -527,10 +527,58 @@
       "country": "United Kingdom",
       "country_code": "GB",
       "region": "global"
+    },
+    "113.11.97.193:30226": {
+      "first_seen": "2026-03-28T15:41:05.223982",
+      "last_seen": "2026-03-28T15:41:05.223982",
+      "working": true,
+      "latency": 1211.5,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "45.136.131.41:8451": {
+      "first_seen": "2026-03-28T15:41:05.225127",
+      "last_seen": "2026-03-28T15:41:05.225127",
+      "working": true,
+      "latency": 2205.66,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "5.104.87.17:8051": {
+      "first_seen": "2026-03-28T15:41:05.226201",
+      "last_seen": "2026-03-28T15:41:05.226201",
+      "working": true,
+      "latency": 1879.61,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": "Japan",
+      "country_code": "JP",
+      "region": "unknown"
+    },
+    "45.140.147.82:1081": {
+      "first_seen": "2026-03-28T15:41:05.227134",
+      "last_seen": "2026-03-28T15:41:05.227134",
+      "working": true,
+      "latency": 554.2,
+      "ru_access": true,
+      "us_access": true,
+      "source": "thespeedx_http",
+      "country": "The Netherlands",
+      "country_code": "NL",
+      "region": "global"
     }
   },
   "stats": {
-    "total_seen": 398,
-    "last_update": "2026-03-28T15:28:28.062662"
+    "total_seen": 402,
+    "last_update": "2026-03-28T15:41:05.227134"
   }
 }
