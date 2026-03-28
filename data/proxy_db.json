@@ -1907,10 +1907,22 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "103.124.136.251:8080": {
+      "first_seen": "2026-03-28T12:23:58.221391",
+      "last_seen": "2026-03-28T12:23:58.221391",
+      "working": true,
+      "latency": 2921.96,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 373,
-    "last_update": "2026-03-28T11:46:50.930648"
+    "total_seen": 374,
+    "last_update": "2026-03-28T12:23:58.221391"
   }
 }
