@@ -1,59 +1,48 @@
 #!/usr/bin/env python3
-# rapid_report.py - ЕДИНЫЙ ОТЧЁТ (перезаписывается)
-
-import sys
+# rapid_report.py - ЕДИНЫЙ ОТЧЁТ ИЗ БАЗЫ PROXY_DB.JSON
 import os
+import sys
 import argparse
 from datetime import datetime
-from colorama import init, Fore, Style
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Добавляем core в путь
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.database import ProxyDatabase
 from core.excel_report import ExcelReport
 
-init(autoreset=True)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--single', action='store_true', help='Создать единый отчёт (перезапись)')
+    parser.add_argument('--single', action='store_true', help='Создать один Excel-отчёт')
     args = parser.parse_args()
+
+    print("\n" + "="*55)
+    print("📊 PROCTOR SMART - ЕДИНЫЙ ОТЧЁТ")
+    print(f"   {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("="*55)
+
+    # Загружаем базу данных
+    db = ProxyDatabase(data_dir='data')
     
-    print(f"""
-{Fore.CYAN}╔══════════════════════════════════════════════════════════╗
-║{Fore.YELLOW}         PROCTOR SMART - ЕДИНЫЙ ОТЧЁТ                   {Fore.CYAN}║
-║{Fore.WHITE}         Обновление каждые 2 минуты                     {Fore.CYAN}║
-║{Fore.GREEN}         {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                    {Fore.CYAN}║
-╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
-    """)
-    
-    # Принудительно перезагружаем базу
-    db = ProxyDatabase()
+    # Получаем статистику из базы (актуальную)
     stats = db.get_stats()
     
-    print(f"📊 Текущая статистика из базы:")
+    print("\n📊 Текущая статистика из базы:")
     print(f"  📦 Всего в базе: {stats['total_in_db']}")
     print(f"  ✅ Рабочих: {stats['working_now']}")
     print(f"  🇷🇺 Российских: {stats['russian']}")
     print(f"  🇺🇸 Американских: {stats['american']}")
     print(f"  🌍 Глобальных: {stats['global']}")
-    
-    if stats['working_now'] == 0:
-        print(f"\n{Fore.YELLOW}⚠️ Нет рабочих прокси для отчёта{Style.RESET_ALL}")
-        return
-    
-    # Создаём папку для отчётов
-    os.makedirs('reports', exist_ok=True)
-    
-    # Единый отчёт (перезаписывается)
-    report = ExcelReport(db)
-    filename = "reports/proxy_report.xlsx"
-    
-    report.create_report(filename)
-    
-    print(f"\n{Fore.GREEN}✅ Отчёт обновлён: {filename}{Style.RESET_ALL}")
-    print(f"   Прямая ссылка: https://github.com/Ganjo1st/Proctor/blob/main/{filename}")
-    print(f"\n{Fore.CYAN}📊 Проверьте лист 'Российские' в отчёте — должно быть {stats['russian']} прокси{Style.RESET_ALL}")
+
+    # Создаём Excel-отчёт через штатный класс
+    report = ExcelReport(db, data_dir='data')
+    filename = report.create_report('reports/proxy_report.xlsx')
+
+    print(f"\n✅ Отчёт обновлён: {filename}")
+    print(f"   Прямая ссылка: https://github.com/Ganjo1st/Proctor/blob/main/reports/proxy_report.xlsx")
+    print("\n📊 Проверьте лист 'Российские' в отчёте — должны быть актуальные прокси")
+
 
 if __name__ == "__main__":
     main()
