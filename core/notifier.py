@@ -2,6 +2,11 @@
 import requests
 import os
 from datetime import datetime
+from core.notifier import TelegramNotifier
+
+# После добавления прокси
+notifier = TelegramNotifier()
+await notifier.send_message(f"✅ Найдено {new_count} новых прокси!")
 
 class TelegramNotifier:
     """Отправка уведомлений в Telegram"""
