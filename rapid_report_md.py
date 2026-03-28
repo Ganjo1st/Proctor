@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# rapid_report_md.py - ГЕНЕРАЦИЯ ПРОСТОГО ТЕКСТОВОГО ОТЧЁТА В MARKDOWN
+# rapid_report_md.py - ПРОСТОЙ ТЕКСТОВЫЙ ОТЧЁТ В MARKDOWN
 import os
 import sys
 from datetime import datetime
@@ -16,12 +16,10 @@ def get_country_name(code):
         'RU': '🇷🇺 Россия', 'US': '🇺🇸 США', 'GB': '🇬🇧 Великобритания',
         'DE': '🇩🇪 Германия', 'FR': '🇫🇷 Франция', 'NL': '🇳🇱 Нидерланды',
         'CA': '🇨🇦 Канада', 'AU': '🇦🇺 Австралия', 'JP': '🇯🇵 Япония',
-        'CN': '🇨🇳 Китай', 'SG': '🇸🇬 Сингапур', 'IN': '🇮🇳 Индия',
-        'BR': '🇧🇷 Бразилия', 'KR': '🇰🇷 Корея', 'HK': '🇭🇰 Гонконг',
-        'VN': '🇻🇳 Вьетнам', 'ID': '🇮🇩 Индонезия', 'PH': '🇵🇭 Филиппины',
-        'EC': '🇪🇨 Эквадор', 'CO': '🇨🇴 Колумбия', 'DO': '🇩🇴 Доминикана',
-        'BG': '🇧🇬 Болгария', 'CZ': '🇨🇿 Чехия', 'PL': '🇵🇱 Польша',
-        'UA': '🇺🇦 Украина', 'KZ': '🇰🇿 Казахстан', 'BY': '🇧🇾 Беларусь'
+        'SG': '🇸🇬 Сингапур', 'IN': '🇮🇳 Индия', 'BR': '🇧🇷 Бразилия',
+        'KR': '🇰🇷 Корея', 'HK': '🇭🇰 Гонконг', 'VN': '🇻🇳 Вьетнам',
+        'ID': '🇮🇩 Индонезия', 'PH': '🇵🇭 Филиппины', 'EC': '🇪🇨 Эквадор',
+        'CO': '🇨🇴 Колумбия', 'DO': '🇩🇴 Доминикана'
     }
     return countries.get(code, code)
 
@@ -31,10 +29,10 @@ def generate_report():
     db = ProxyDatabase()
     stats = db.get_stats()
     
-    # Собираем данные для статистики по странам
+    # Собираем статистику по странам
     countries = Counter()
-    ru_only_proxies = []
-    us_only_proxies = []
+    ru_only = []
+    us_only = []
     global_proxies = []
     
     for proxy, data in db.db.get('proxies', {}).items():
@@ -42,25 +40,22 @@ def generate_report():
             continue
         
         ru, us = db._determine_region_flags(data)
-        country_code = data.get('country_code', '')
-        
-        if country_code:
-            countries[country_code] += 1
         
         if ru and us:
             global_proxies.append(proxy)
         elif ru:
-            ru_only_proxies.append(proxy)
+            ru_only.append(proxy)
         elif us:
-            us_only_proxies.append(proxy)
+            us_only.append(proxy)
         else:
-            if country_code:
-                countries[country_code] += 1
+            country = data.get('country_code', '')
+            if country:
+                countries[country] += 1
     
     # Формируем отчёт
-    report = f"""# 📊 Proctor SMART - Ежеминутный отчёт
+    report = f"""# 📊 Proctor SMART - Автоматический отчёт
 
-**Последнее обновление:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+**Обновлено:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ---
 
@@ -89,15 +84,14 @@ def generate_report():
 
 """
     
-    # Сортируем страны по количеству
     if countries:
         for country_code, count in sorted(countries.items(), key=lambda x: -x[1]):
-            country_name = get_country_name(country_code)
-            report += f"| {country_name} | {count} |\n"
+            report += f"| {get_country_name(country_code)} | {count} |\n"
     else:
         report += "| Нет данных | 0 |\n"
     
     report += f"""
+
 ---
 
 ## 📋 Список рабочих прокси
@@ -106,34 +100,34 @@ def generate_report():
 """
     
     if global_proxies:
-        for proxy in global_proxies[:20]:  # Показываем первые 20
+        for proxy in global_proxies[:15]:
             report += f"- `{proxy}`\n"
-        if len(global_proxies) > 20:
-            report += f"\n*... и ещё {len(global_proxies) - 20} прокси*\n"
+        if len(global_proxies) > 15:
+            report += f"\n*... и ещё {len(global_proxies) - 15}*\n"
     else:
         report += "*Нет глобальных прокси*\n"
     
     report += f"""
-### 🇷🇺 Российские (только РФ) — {len(ru_only_proxies)} шт.
+### 🇷🇺 Российские (только РФ) — {len(ru_only)} шт.
 """
     
-    if ru_only_proxies:
-        for proxy in ru_only_proxies[:20]:
+    if ru_only:
+        for proxy in ru_only[:15]:
             report += f"- `{proxy}`\n"
-        if len(ru_only_proxies) > 20:
-            report += f"\n*... и ещё {len(ru_only_proxies) - 20} прокси*\n"
+        if len(ru_only) > 15:
+            report += f"\n*... и ещё {len(ru_only) - 15}*\n"
     else:
         report += "*Нет российских прокси*\n"
     
     report += f"""
-### 🇺🇸 Американские (только США) — {len(us_only_proxies)} шт.
+### 🇺🇸 Американские (только США) — {len(us_only)} шт.
 """
     
-    if us_only_proxies:
-        for proxy in us_only_proxies[:20]:
+    if us_only:
+        for proxy in us_only[:15]:
             report += f"- `{proxy}`\n"
-        if len(us_only_proxies) > 20:
-            report += f"\n*... и ещё {len(us_only_proxies) - 20} прокси*\n"
+        if len(us_only) > 15:
+            report += f"\n*... и ещё {len(us_only) - 15}*\n"
     else:
         report += "*Нет американских прокси*\n"
     
