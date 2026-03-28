@@ -1811,10 +1811,22 @@
       "country": "United States",
       "country_code": "US",
       "region": "us"
+    },
+    "45.144.28.81:10808": {
+      "first_seen": "2026-03-28T08:52:54.439285",
+      "last_seen": "2026-03-28T08:52:54.439285",
+      "working": true,
+      "latency": 1608.33,
+      "ru_access": false,
+      "us_access": false,
+      "source": "proxymania",
+      "country": "The Netherlands",
+      "country_code": "NL",
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 365,
-    "last_update": "2026-03-28T07:57:19.689070"
+    "total_seen": 366,
+    "last_update": "2026-03-28T08:52:54.439285"
   }
 }
