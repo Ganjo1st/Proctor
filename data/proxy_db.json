@@ -431,10 +431,34 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "45.140.147.155:1081": {
+      "first_seen": "2026-03-28T15:21:23.635333",
+      "last_seen": "2026-03-28T15:21:23.635333",
+      "working": true,
+      "latency": 452.31,
+      "ru_access": true,
+      "us_access": true,
+      "source": "proxymania",
+      "country": "The Netherlands",
+      "country_code": "NL",
+      "region": "global"
+    },
+    "221.202.27.194:10810": {
+      "first_seen": "2026-03-28T15:21:23.636589",
+      "last_seen": "2026-03-28T15:21:23.636589",
+      "working": true,
+      "latency": 1206.72,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 390,
-    "last_update": "2026-03-28T15:19:05.804743"
+    "total_seen": 392,
+    "last_update": "2026-03-28T15:21:23.636589"
   }
 }
