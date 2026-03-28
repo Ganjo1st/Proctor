@@ -1,8 +1,10 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ПОДДЕРЖКОЙ ПРОКСИ ДЛЯ ЗАПРОСОВ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ
 import re
 import asyncio
 import httpx
 import random
+import json
+import os
 from bs4 import BeautifulSoup
 from typing import List, Set, Optional
 from fake_useragent import UserAgent
@@ -18,21 +20,20 @@ class SmartScraper:
         self.ua = UserAgent()
         self.working_proxies = working_proxies or []
         self.proxy_index = 0
-        self.bad_proxies = set()  # Чёрный список прокси, которые не работают для обхода
+        self.bad_proxies = set()
+        self.sources_file = os.path.join('data', 'sources.json')
 
     def _get_next_proxy(self) -> Optional[str]:
         """Получить следующий рабочий прокси для обхода блокировок (round-robin)"""
         if not self.working_proxies:
             return None
         
-        # Пропускаем прокси из чёрного списка
         for _ in range(len(self.working_proxies) * 2):
             proxy = self.working_proxies[self.proxy_index % len(self.working_proxies)]
             self.proxy_index += 1
             if proxy not in self.bad_proxies:
                 return proxy
         
-        # Если все прокси в чёрном списке, сбрасываем и пробуем первый
         if self.bad_proxies:
             self.bad_proxies.clear()
             return self.working_proxies[0]
@@ -44,7 +45,7 @@ class SmartScraper:
         self.bad_proxies.add(proxy)
 
     def is_valid_proxy_format(self, proxy: str) -> bool:
-        """Проверка формата прокси перед добавлением в очередь"""
+        """Проверка формата прокси"""
         if not proxy or ':' not in proxy:
             return False
         
@@ -54,7 +55,6 @@ class SmartScraper:
         
         ip, port = parts
         
-        # Проверка IP-адреса
         ip_parts = ip.split('.')
         if len(ip_parts) != 4:
             return False
@@ -63,11 +63,24 @@ class SmartScraper:
             if not part.isdigit() or not (0 <= int(part) <= 255):
                 return False
         
-        # Проверка порта
         if not port.isdigit() or not (1 <= int(port) <= 65535):
             return False
         
         return True
+
+    def load_dynamic_sources(self) -> List[tuple]:
+        """Загрузка динамических источников из sources.json"""
+        sources = []
+        if os.path.exists(self.sources_file):
+            try:
+                with open(self.sources_file, 'r') as f:
+                    data = json.load(f)
+                    for s in data:
+                        if s.get('status') == 'active':
+                            sources.append((s['url'], s.get('type', 'text'), True))
+            except:
+                pass
+        return sources
 
     async def fetch_from_url(self, url: str, source_type: str = 'text', use_proxy: bool = False) -> Set[str]:
         """Сбор прокси из одного источника с возможностью использования прокси"""
@@ -86,14 +99,17 @@ class SmartScraper:
             print(f"  🔍 {url.split('/')[-1][:20]}...", end=' ', flush=True)
         
         try:
-            headers = {'User-Agent': self.ua.random}
+            headers = {
+                'User-Agent': self.ua.random,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+                'Connection': 'keep-alive',
+            }
             
-            # Используем прокси, если указано, с отключенной проверкой SSL
-            async with httpx.AsyncClient(timeout=60, follow_redirects=True, proxy=proxy_url, verify=False) as client:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True, proxy=proxy_url, verify=False) as client:
                 response = await client.get(url, headers=headers)
                 
                 if response.status_code != 200:
-                    # Если прокси дал ошибку, помечаем его как плохой
                     if proxy_used and response.status_code in [403, 521, 502, 503, 504]:
                         self.mark_proxy_bad(proxy_used)
                     print(f"❌ {response.status_code}")
@@ -106,17 +122,18 @@ class SmartScraper:
                     textarea = soup.find('textarea')
                     if textarea:
                         text = textarea.text
+                    else:
+                        pre = soup.find('pre')
+                        if pre:
+                            text = pre.text
                 
-                # Ищем все IP:PORT
                 pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
                 found = re.findall(pattern, text)
                 
-                # Фильтруем по формату
                 for p in found:
                     if self.is_valid_proxy_format(p):
                         proxies.add(p)
                 
-                # Если это просто список IP (построчно)
                 if not found:
                     lines = text.strip().split('\n')
                     for line in lines[:200]:
@@ -134,7 +151,6 @@ class SmartScraper:
                 return proxies
                 
         except Exception as e:
-            # Если ошибка связана с прокси, помечаем его как плохой
             if proxy_used:
                 self.mark_proxy_bad(proxy_used)
             print(f"⚠️ {str(e)[:20]}")
@@ -144,15 +160,9 @@ class SmartScraper:
         """Сбор прокси из всех источников"""
         all_proxies = set()
         
-        # Российские источники (часто блокируют, используем прокси)
-        ru_sources = [
-            ('https://spys.one/en/free-proxy-list/', 'html', True),
-            ('https://openproxy.space/list/ru', 'text', True),
+        # ОСНОВНЫЕ НАДЁЖНЫЕ ИСТОЧНИКИ
+        reliable_sources = [
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt', 'text', False),
-        ]
-        
-        # Американские/международные источники
-        int_sources = [
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt', 'text', False),
             ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt', 'text', False),
@@ -160,14 +170,30 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt', 'text', False),
         ]
         
-        # API-источники (проблемные, используем прокси)
-        api_sources = [
-            ('https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=5000&country=all', 'text', True),
-            ('https://www.proxy-list.download/api/v1/get?type=http', 'text', True),
-            ('https://www.proxy-list.download/api/v1/get?type=https', 'text', True),
+        # FALLBACK ИСТОЧНИКИ (если основных мало)
+        fallback_sources = [
+            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt', 'text', False),
+            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks4.txt', 'text', False),
+            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
         ]
         
+        # РОССИЙСКИЕ ИСТОЧНИКИ (могут требовать прокси)
+        ru_sources = [
+            ('https://spys.one/en/free-proxy-list/', 'html', True),
+            ('https://openproxy.space/list/ru', 'text', True),
+        ]
+        
+        # API-ИСТОЧНИКИ ВРЕМЕННО ОТКЛЮЧЕНЫ (403/521 ошибки)
+        # api_sources = []
+        
         print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
+        
+        # Сбор из основных источников
+        print("\n  📡 Основные источники:")
+        for url, source_type, use_proxy in reliable_sources:
+            proxies = await self.fetch_from_url(url, source_type, use_proxy)
+            all_proxies.update(proxies)
+            await asyncio.sleep(0.3)
         
         # Сбор из российских источников
         print("\n  🇷🇺 Российские источники:")
@@ -176,42 +202,41 @@ class SmartScraper:
             all_proxies.update(proxies)
             await asyncio.sleep(0.5)
         
-        # Сбор из международных источников
-        print("\n  🌍 Международные источники:")
-        for url, source_type, use_proxy in int_sources:
-            proxies = await self.fetch_from_url(url, source_type, use_proxy)
-            all_proxies.update(proxies)
-            await asyncio.sleep(0.5)
+        # Если собрали мало, подключаем fallback
+        if len(all_proxies) < 1000:
+            print("\n  🔄 Fallback источники:")
+            for url, source_type, use_proxy in fallback_sources:
+                proxies = await self.fetch_from_url(url, source_type, use_proxy)
+                all_proxies.update(proxies)
+                await asyncio.sleep(0.3)
         
-        # Сбор из API
-        print("\n  🌐 API-источники:")
-        for url, source_type, use_proxy in api_sources:
-            proxies = await self.fetch_from_url(url, source_type, use_proxy)
-            all_proxies.update(proxies)
-            await asyncio.sleep(0.5)
+        # Загружаем динамические источники из sources.json
+        dynamic_sources = self.load_dynamic_sources()
+        if dynamic_sources:
+            print("\n  🔍 Динамические источники:")
+            for url, source_type, use_proxy in dynamic_sources:
+                proxies = await self.fetch_from_url(url, source_type, use_proxy)
+                all_proxies.update(proxies)
+                await asyncio.sleep(0.5)
         
-        # Преобразуем в список и перемешиваем
         proxy_list = list(all_proxies)
         random.shuffle(proxy_list)
         
-        # Статистика
         print(f"\n{Fore.CYAN}────────────────────────────────────────────────────────────{Style.RESET_ALL}")
         print(f"{Fore.GREEN}📊 ИТОГО собрано: {len(proxy_list)} прокси{Style.RESET_ALL}")
         
-        # Подсчёт российских IP (для статистики)
+        # Подсчёт российских IP
         ru_count = 0
         for proxy in proxy_list[:100]:
             ip = proxy.split(':')[0]
             if ip.startswith('5.') or ip.startswith('95.') or ip.startswith('85.') or ip.startswith('176.'):
                 ru_count += 1
         
-        print(f"   🇷🇺 Российских источников: 3")
         print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
         
         return proxy_list
 
 
-# Для обратной совместимости
 async def get_all_proxies():
     scraper = SmartScraper()
     return await scraper.get_all_proxies()
