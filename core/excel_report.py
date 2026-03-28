@@ -11,7 +11,7 @@ class ExcelReport:
         self.data_dir = data_dir
     
     def _determine_region(self, info):
-        """Определение региона с учётом всех данных"""
+        """Определение региона с учётом всех данных (синхронизировано с export_to_txt)"""
         ru = info.get('ru_access', False)
         us = info.get('us_access', False)
         country_code = info.get('country_code', '')
@@ -27,6 +27,8 @@ class ExcelReport:
         if not us and region == 'us':
             us = True
         
+        # Возвращаем категорию ТАКУЮ ЖЕ, как в export_to_txt для распределения по листам
+        # Глобальные прокси будут отображаться на ВСЕХ региональных листах
         if ru and us:
             return '🌍 Глобальный'
         elif ru:
@@ -37,7 +39,36 @@ class ExcelReport:
             return f'❓ {country_code}'
         return '❓ Неизвестно'
     
-    def create_report(self, filename='proxy_report.xlsx'):
+    def _should_include_in_ru(self, info) -> bool:
+        """Проверяет, должен ли прокси попасть в лист 'Российские' (как в export_to_txt)"""
+        ru = info.get('ru_access', False)
+        us = info.get('us_access', False)
+        country_code = info.get('country_code', '')
+        region = info.get('region', '')
+        
+        if not ru and country_code == 'RU':
+            ru = True
+        if not ru and region == 'ru':
+            ru = True
+        
+        # Глобальные (ru and us) также попадают в РФ лист
+        return ru
+    
+    def _should_include_in_us(self, info) -> bool:
+        """Проверяет, должен ли прокси попасть в лист 'Американские' (как в export_to_txt)"""
+        us = info.get('us_access', False)
+        country_code = info.get('country_code', '')
+        region = info.get('region', '')
+        
+        if not us and country_code == 'US':
+            us = True
+        if not us and region == 'us':
+            us = True
+        
+        # Глобальные (ru and us) также попадают в США лист
+        return us
+    
+    def create_report(self, filename='reports/proxy_report.xlsx'):
         """Создание Excel-отчёта из базы данных"""
         print("📊 Создаю Excel-отчёт...")
         
@@ -46,13 +77,17 @@ class ExcelReport:
         
         # Собираем данные из базы
         data = []
-        proxies_dict = self.db.db.get('proxies', {})  # Доступ к внутреннему словарю
+        ru_data = []      # для листа "Российские"
+        us_data = []      # для листа "Американские"
+        global_data = []  # для листа "Глобальные"
+        
+        proxies_dict = self.db.db.get('proxies', {})
         
         for proxy, info in proxies_dict.items():
-            # Определяем регион
+            # Определяем регион для отображения
             region = self._determine_region(info)
             
-            data.append({
+            row = {
                 'Прокси': proxy,
                 'Рабочий': '✅ Да' if info.get('working') else '❌ Нет',
                 'Регион': region,
@@ -61,15 +96,23 @@ class ExcelReport:
                 'Дата добавления': self._format_date(info.get('first_seen')),
                 'Последняя проверка': self._format_date(info.get('last_seen')),
                 'Источник': info.get('source', 'неизвестен')
-            })
+            }
+            data.append(row)
+            
+            # Для отдельных листов используем логику export_to_txt
+            if info.get('working'):
+                if self._should_include_in_ru(info):
+                    ru_data.append({'Прокси': proxy})
+                if self._should_include_in_us(info):
+                    us_data.append({'Прокси': proxy})
+                if info.get('ru_access') and info.get('us_access'):
+                    global_data.append({'Прокси': proxy})
         
         if not data:
             print("⚠️ Нет данных для отчёта")
             return None
         
         df = pd.DataFrame(data)
-        
-        # Сортируем по работоспособности и задержке
         df_sorted = df.sort_values(['Рабочий', 'Задержка (мс)'], ascending=[False, True])
         
         # Создаём Excel файл
@@ -77,9 +120,22 @@ class ExcelReport:
             df_sorted.to_excel(writer, sheet_name='Все прокси', index=False)
             df[df['Рабочий'] == '✅ Да'].to_excel(writer, sheet_name='Рабочие', index=False)
             df[df['Рабочий'] == '❌ Нет'].to_excel(writer, sheet_name='Нерабочие', index=False)
-            df[df['Регион'] == '🇷🇺 Россия'].to_excel(writer, sheet_name='Российские', index=False)
-            df[df['Регион'] == '🇺🇸 США'].to_excel(writer, sheet_name='Американские', index=False)
-            df[df['Регион'] == '🌍 Глобальный'].to_excel(writer, sheet_name='Глобальные', index=False)
+            
+            # Листы с региональными прокси (теперь синхронизированы с export_to_txt)
+            if ru_data:
+                pd.DataFrame(ru_data).to_excel(writer, sheet_name='Российские', index=False)
+            else:
+                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Российские', index=False)
+            
+            if us_data:
+                pd.DataFrame(us_data).to_excel(writer, sheet_name='Американские', index=False)
+            else:
+                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Американские', index=False)
+            
+            if global_data:
+                pd.DataFrame(global_data).to_excel(writer, sheet_name='Глобальные', index=False)
+            else:
+                pd.DataFrame({'Прокси': ['Нет прокси']}).to_excel(writer, sheet_name='Глобальные', index=False)
             
             # Лист "Статистика"
             stats = self.db.get_stats()
