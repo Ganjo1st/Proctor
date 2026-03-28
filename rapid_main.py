@@ -26,7 +26,7 @@ class RapidCollector:
         self.checker = RapidChecker()
         self.notifier = TelegramNotifier()
         self.source_stats = SourceStats()
-        self.BATCH_SIZE = 500  # Увеличено с 300 до 500 для большего охвата
+        self.BATCH_SIZE = 500
     
     def run(self):
         print(f"""
@@ -67,20 +67,19 @@ class RapidCollector:
                     self.db.add_proxy(result['proxy'], result, source)
                     self.source_stats.update(source, 1)
                     new_working += 1
-            
-            # ЭКСПОРТ В ТЕКСТОВЫЕ ФАЙЛЫ
-            self.db.export_to_txt()
+        
+        # ⚡ ВАЖНО: ЭКСПОРТ ВСЕГДА!
+        self.db.export_to_txt()
         
         # ШАГ 3: СТАТИСТИКА
-        stats = self.db.export_to_txt()
-        new_stats = self.db.get_stats()
+        stats = self.db.get_stats()
         
         print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
         print(f"  ✨ Добавлено новых рабочих: {new_working}")
-        print(f"  📊 Всего рабочих: {stats['all']}")
+        print(f"  📊 Всего рабочих: {stats['working_now']}")
         print(f"\n{Fore.CYAN}📊 СТАТИСТИКА ПО РЕГИОНАМ:{Style.RESET_ALL}")
-        print(f"  🇷🇺 Российских: {stats['ru']}")
-        print(f"  🇺🇸 Американских: {stats['us']}")
+        print(f"  🇷🇺 Российских: {stats['russian']}")
+        print(f"  🇺🇸 Американских: {stats['american']}")
         print(f"  🌍 Глобальных: {stats['global']}")
 
 if __name__ == "__main__":
