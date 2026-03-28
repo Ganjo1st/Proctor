@@ -1,12 +1,12 @@
 # core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ
 import re
 import asyncio
-import aiohttp
 import httpx
 from bs4 import BeautifulSoup
 from typing import List, Set
 from fake_useragent import UserAgent
 import random
+from colorama import Fore, Style  # <--- ДОБАВЛЕН ИМПОРТ
 
 ua = UserAgent()
 
@@ -15,7 +15,6 @@ class SmartScraper:
     """Умный сборщик прокси с фильтрацией и гео-привязкой"""
 
     def __init__(self):
-        self.session = None
         self.ua = UserAgent()
 
     def is_valid_proxy_format(self, proxy: str) -> bool:
