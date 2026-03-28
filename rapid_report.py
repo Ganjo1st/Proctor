@@ -27,10 +27,11 @@ def main():
 ╚══════════════════════════════════════════════════════════╝{Style.RESET_ALL}
     """)
     
+    # Принудительно перезагружаем базу
     db = ProxyDatabase()
     stats = db.get_stats()
     
-    print(f"📊 Текущая статистика:")
+    print(f"📊 Текущая статистика из базы:")
     print(f"  📦 Всего в базе: {stats['total_in_db']}")
     print(f"  ✅ Рабочих: {stats['working_now']}")
     print(f"  🇷🇺 Российских: {stats['russian']}")
@@ -52,6 +53,7 @@ def main():
     
     print(f"\n{Fore.GREEN}✅ Отчёт обновлён: {filename}{Style.RESET_ALL}")
     print(f"   Прямая ссылка: https://github.com/Ganjo1st/Proctor/blob/main/{filename}")
+    print(f"\n{Fore.CYAN}📊 Проверьте лист 'Российские' в отчёте — должно быть {stats['russian']} прокси{Style.RESET_ALL}")
 
 if __name__ == "__main__":
     main()
