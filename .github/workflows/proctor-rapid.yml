@@ -11,7 +11,7 @@ on:
 jobs:
   # 🔍 СБОР НОВЫХ ПРОКСИ - каждые 2 минуты
   smart-collect:
-    name: 🔍 Collect New Proxies
+    name: 🔍 Collect & Report
     runs-on: ubuntu-latest
     if: github.event.schedule == '*/2 * * * *' || github.event_name == 'workflow_dispatch'
     permissions:
@@ -32,15 +32,18 @@ jobs:
     - name: Run SMART collection
       run: python rapid_main.py
       continue-on-error: true
+    - name: Generate Excel report
+      run: python rapid_report.py --single
+      continue-on-error: true
     - name: Commit results
       run: |
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git add data/*.txt data/*.json 2>/dev/null || true
+        git add data/*.txt data/*.json reports/*.xlsx 2>/dev/null || true
         if git diff --staged --quiet; then
           echo "ℹ️ No changes"
         else
-          git commit -m "🔍 Collect: $(date +'%H:%M')"
+          git commit -m "🔄 Update: $(date +'%H:%M')"
           git pull --force origin main || true
           git push --force origin main || true
         fi
