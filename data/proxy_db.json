@@ -1763,10 +1763,34 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "180.191.23.26:8081": {
+      "first_seen": "2026-03-28T06:13:39.590321",
+      "last_seen": "2026-03-28T06:13:39.590321",
+      "working": true,
+      "latency": 2539.0,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "27.147.137.234:9108": {
+      "first_seen": "2026-03-28T06:13:39.592780",
+      "last_seen": "2026-03-28T06:13:39.592780",
+      "working": true,
+      "latency": 2505.02,
+      "ru_access": false,
+      "us_access": false,
+      "source": "thespeedx_http",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 361,
-    "last_update": "2026-03-28T05:14:59.644042"
+    "total_seen": 363,
+    "last_update": "2026-03-28T06:13:39.592780"
   }
 }
