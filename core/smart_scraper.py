@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И РОССИЙСКИМИ ИСТОЧНИКАМИ
 import re
 import asyncio
 import httpx
@@ -170,11 +170,33 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt', 'text', False),
         ]
         
-        # FALLBACK ИСТОЧНИКИ (если основных мало)
+        # FALLBACK ИСТОЧНИКИ
         fallback_sources = [
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
+        ]
+        
+        # ===== НОВЫЕ РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ =====
+        ru_specialized_sources = [
+            # fresh-proxy-list - свежие прокси с фильтрацией по странам
+            ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
+            ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_Russia.txt', 'text', False),
+            
+            # telegram-proxy-collector - лучший для РФ
+            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
+            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_russia.txt', 'text', False),
+            
+            # russiavpn репозиторий
+            ('https://raw.githubusercontent.com/russiavpn/russiavpn.github.io/main/free-proxy-for-russia', 'text', False),
+            
+            # API с гео-фильтром по России
+            ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
+            ('https://api.openproxylist.xyz/ru.txt', 'text', False),
+            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
+            ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
+            ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
+            ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
         ]
         
         # РОССИЙСКИЕ ИСТОЧНИКИ (могут требовать прокси)
@@ -182,9 +204,6 @@ class SmartScraper:
             ('https://spys.one/en/free-proxy-list/', 'html', True),
             ('https://openproxy.space/list/ru', 'text', True),
         ]
-        
-        # API-ИСТОЧНИКИ ВРЕМЕННО ОТКЛЮЧЕНЫ (403/521 ошибки)
-        # api_sources = []
         
         print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
         
@@ -195,8 +214,15 @@ class SmartScraper:
             all_proxies.update(proxies)
             await asyncio.sleep(0.3)
         
-        # Сбор из российских источников
-        print("\n  🇷🇺 Российские источники:")
+        # ===== СБОР ИЗ РОССИЙСКИХ СПЕЦИАЛИЗИРОВАННЫХ ИСТОЧНИКОВ =====
+        print("\n  🇷🇺 Российские специализированные источники:")
+        for url, source_type, use_proxy in ru_specialized_sources:
+            proxies = await self.fetch_from_url(url, source_type, use_proxy)
+            all_proxies.update(proxies)
+            await asyncio.sleep(0.3)
+        
+        # Сбор из российских источников (с прокси)
+        print("\n  🇷🇺 Российские источники (с прокси):")
         for url, source_type, use_proxy in ru_sources:
             proxies = await self.fetch_from_url(url, source_type, use_proxy)
             all_proxies.update(proxies)
@@ -225,11 +251,11 @@ class SmartScraper:
         print(f"\n{Fore.CYAN}────────────────────────────────────────────────────────────{Style.RESET_ALL}")
         print(f"{Fore.GREEN}📊 ИТОГО собрано: {len(proxy_list)} прокси{Style.RESET_ALL}")
         
-        # Подсчёт российских IP
+        # Подсчёт российских IP (для статистики)
         ru_count = 0
         for proxy in proxy_list[:100]:
             ip = proxy.split(':')[0]
-            if ip.startswith('5.') or ip.startswith('95.') or ip.startswith('85.') or ip.startswith('176.'):
+            if ip.startswith('5.') or ip.startswith('95.') or ip.startswith('85.') or ip.startswith('176.') or ip.startswith('188.') or ip.startswith('31.'):
                 ru_count += 1
         
         print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
