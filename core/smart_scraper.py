@@ -126,6 +126,19 @@ class SmartScraper:
                         pre = soup.find('pre')
                         if pre:
                             text = pre.text
+                    # Для 2ip.ru и подобных сайтов
+                    table = soup.find('table')
+                    if table:
+                        rows = table.find_all('tr')
+                        for row in rows:
+                            cells = row.find_all('td')
+                            if len(cells) >= 2:
+                                ip_cell = cells[0].text.strip()
+                                port_cell = cells[1].text.strip()
+                                if ip_cell and port_cell:
+                                    proxy = f"{ip_cell}:{port_cell}"
+                                    if self.is_valid_proxy_format(proxy):
+                                        proxies.add(proxy)
                 
                 pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
                 found = re.findall(pattern, text)
@@ -177,29 +190,28 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
         ]
         
-        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ (РАБОЧИЕ) =====
+        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ =====
         ru_specialized_sources = [
             # fresh-proxy-list
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
-            ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_Russia.txt', 'text', False),
-            # ShiftyTR - хороший источник
+            # ShiftyTR
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
             # API с гео-фильтром
             ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
-            ('https://api.openproxylist.xyz/ru.txt', 'text', False),
-            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
             # telegram-proxy-collector
             ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
             # Найденные поиском источники
             ('https://proxymania.su/free-proxy', 'html', False),
+            ('https://free-proxy-list.net/ru/', 'html', False),
+            ('https://redscrape.com/free-proxy-list', 'text', False),
         ]
         
         # РОССИЙСКИЕ ИСТОЧНИКИ (могут требовать прокси)
         ru_sources = [
+            ('https://2ip.ru/proxy/', 'html', True),
             ('https://spys.one/en/free-proxy-list/', 'html', True),
-            ('https://openproxy.space/list/ru', 'text', True),
         ]
         
         print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
