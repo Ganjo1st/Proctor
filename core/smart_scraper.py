@@ -177,26 +177,23 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
         ]
         
-        # ===== НОВЫЕ РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ =====
+        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ (РАБОЧИЕ) =====
         ru_specialized_sources = [
-            # fresh-proxy-list - свежие прокси с фильтрацией по странам
+            # fresh-proxy-list
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_Russia.txt', 'text', False),
-            
-            # telegram-proxy-collector - лучший для РФ
-            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
-            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_russia.txt', 'text', False),
-            
-            # russiavpn репозиторий
-            ('https://raw.githubusercontent.com/russiavpn/russiavpn.github.io/main/free-proxy-for-russia', 'text', False),
-            
-            # API с гео-фильтром по России
-            ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
-            ('https://api.openproxylist.xyz/ru.txt', 'text', False),
-            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
+            # ShiftyTR - хороший источник
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
+            # API с гео-фильтром
+            ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
+            ('https://api.openproxylist.xyz/ru.txt', 'text', False),
+            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
+            # telegram-proxy-collector
+            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
+            # Найденные поиском источники
+            ('https://proxymania.su/free-proxy', 'html', False),
         ]
         
         # РОССИЙСКИЕ ИСТОЧНИКИ (могут требовать прокси)
