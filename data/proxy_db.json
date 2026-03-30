@@ -14,9 +14,9 @@
     },
     "45.167.124.52:8080": {
       "first_seen": "2026-03-21T16:37:57.266005",
-      "last_seen": "2026-03-29T23:58:37.959955",
+      "last_seen": "2026-03-30T12:13:55.663862",
       "working": true,
-      "latency": 880.58,
+      "latency": 1464.58,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -134,9 +134,9 @@
     },
     "167.103.115.102:8800": {
       "first_seen": "2026-03-24T17:37:29.763003",
-      "last_seen": "2026-03-30T11:23:14.653485",
+      "last_seen": "2026-03-30T12:13:55.680021",
       "working": true,
-      "latency": 1696.87,
+      "latency": 1629.06,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -182,27 +182,27 @@
     },
     "43.99.54.236:5555": {
       "first_seen": "2026-03-26T20:03:49.305094",
-      "last_seen": "2026-03-30T11:23:14.662522",
+      "last_seen": "2026-03-30T12:13:55.683550",
       "working": true,
-      "latency": 1648.88,
+      "latency": 1986.91,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
-      "country": null,
-      "country_code": null,
+      "country": "Hong Kong",
+      "country_code": "HK",
       "region": "us"
     },
     "103.84.95.54:7890": {
       "first_seen": "2026-03-26T22:18:34.365517",
-      "last_seen": "2026-03-29T23:58:37.943117",
+      "last_seen": "2026-03-30T12:13:55.673688",
       "working": true,
-      "latency": 1569.39,
+      "latency": 1725.72,
       "ru_access": false,
-      "us_access": false,
+      "us_access": true,
       "source": "rapid_check",
       "country": "Hong Kong",
       "country_code": "HK",
-      "region": "unknown"
+      "region": "us"
     },
     "167.103.144.127:8800": {
       "first_seen": "2026-03-26T23:28:37.559337",
@@ -302,9 +302,9 @@
     },
     "180.250.219.58:53281": {
       "first_seen": "2026-03-28T14:31:30.012447",
-      "last_seen": "2026-03-30T08:52:18.788084",
+      "last_seen": "2026-03-30T12:13:55.666984",
       "working": true,
-      "latency": 2179.43,
+      "latency": 2017.35,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -1418,15 +1418,15 @@
     },
     "39.185.46.193:5911": {
       "first_seen": "2026-03-28T23:47:51.248314",
-      "last_seen": "2026-03-30T11:23:14.650517",
+      "last_seen": "2026-03-30T12:13:55.670190",
       "working": true,
-      "latency": 1775.04,
+      "latency": 2043.32,
       "ru_access": false,
-      "us_access": true,
+      "us_access": false,
       "source": "rapid_check",
       "country": null,
       "country_code": null,
-      "region": "us"
+      "region": "unknown"
     },
     "150.31.45.65:8118": {
       "first_seen": "2026-03-29T01:06:53.584701",
@@ -2783,10 +2783,46 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "94.72.57.157:8080": {
+      "first_seen": "2026-03-30T12:13:55.657117",
+      "last_seen": "2026-03-30T12:13:55.657117",
+      "working": true,
+      "latency": 2740.1,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "188.132.221.27:8080": {
+      "first_seen": "2026-03-30T12:13:55.660338",
+      "last_seen": "2026-03-30T12:13:55.660338",
+      "working": true,
+      "latency": 2662.02,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "181.143.181.35:8080": {
+      "first_seen": "2026-03-30T12:13:55.676860",
+      "last_seen": "2026-03-30T12:13:55.676860",
+      "working": true,
+      "latency": 2311.17,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 602,
-    "last_update": "2026-03-30T11:23:14.665497"
+    "total_seen": 605,
+    "last_update": "2026-03-30T12:13:55.683550"
   }
 }
