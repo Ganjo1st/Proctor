@@ -26,9 +26,9 @@
     },
     "147.161.210.140:8800": {
       "first_seen": "2026-03-21T17:43:11.407285",
-      "last_seen": "2026-04-01T07:10:59.273122",
+      "last_seen": "2026-04-01T10:49:29.827071",
       "working": true,
-      "latency": 1566.2,
+      "latency": 1669.07,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -74,9 +74,9 @@
     },
     "167.103.31.122:8800": {
       "first_seen": "2026-03-22T00:00:11.474055",
-      "last_seen": "2026-04-01T08:29:28.825895",
+      "last_seen": "2026-04-01T10:49:29.855896",
       "working": true,
-      "latency": 1768.37,
+      "latency": 2062.16,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -122,9 +122,9 @@
     },
     "1.231.81.166:3128": {
       "first_seen": "2026-03-24T16:40:38.749635",
-      "last_seen": "2026-04-01T03:32:52.749350",
+      "last_seen": "2026-04-01T10:49:29.880249",
       "working": true,
-      "latency": 1779.8,
+      "latency": 1708.34,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -470,9 +470,9 @@
     },
     "120.92.212.16:8890": {
       "first_seen": "2026-03-28T16:06:43.858901",
-      "last_seen": "2026-03-31T23:24:53.509426",
+      "last_seen": "2026-04-01T10:49:29.832678",
       "working": true,
-      "latency": 2137.86,
+      "latency": 2859.4,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -974,14 +974,14 @@
     },
     "47.238.203.170:50000": {
       "first_seen": "2026-03-28T18:52:53.496666",
-      "last_seen": "2026-04-01T08:29:28.830547",
+      "last_seen": "2026-04-01T10:49:29.874473",
       "working": true,
-      "latency": 2727.57,
+      "latency": 2432.85,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
-      "country": null,
-      "country_code": null,
+      "country": "Hong Kong",
+      "country_code": "HK",
       "region": "unknown"
     },
     "38.49.133.178:999": {
@@ -1334,9 +1334,9 @@
     },
     "116.171.106.15:3443": {
       "first_seen": "2026-03-28T22:01:04.632923",
-      "last_seen": "2026-03-31T19:48:59.603263",
+      "last_seen": "2026-04-01T10:49:29.844620",
       "working": true,
-      "latency": 2813.39,
+      "latency": 2293.45,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -4487,10 +4487,58 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "187.111.144.102:8080": {
+      "first_seen": "2026-04-01T10:49:29.838706",
+      "last_seen": "2026-04-01T10:49:29.838706",
+      "working": true,
+      "latency": 2436.03,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": "Brazil",
+      "country_code": "BR",
+      "region": "unknown"
+    },
+    "103.169.254.105:8080": {
+      "first_seen": "2026-04-01T10:49:29.850309",
+      "last_seen": "2026-04-01T10:49:29.850309",
+      "working": true,
+      "latency": 1707.76,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "71.14.23.121:8080": {
+      "first_seen": "2026-04-01T10:49:29.861564",
+      "last_seen": "2026-04-01T10:49:29.861564",
+      "working": true,
+      "latency": 1722.56,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "163.5.128.87:14270": {
+      "first_seen": "2026-04-01T10:49:29.867246",
+      "last_seen": "2026-04-01T10:49:29.867246",
+      "working": true,
+      "latency": 2782.34,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 744,
-    "last_update": "2026-04-01T09:49:47.507782"
+    "total_seen": 748,
+    "last_update": "2026-04-01T10:49:29.880249"
   }
 }
