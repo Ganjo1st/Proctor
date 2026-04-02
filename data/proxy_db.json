@@ -38,9 +38,9 @@
     },
     "20.24.43.214:80": {
       "first_seen": "2026-03-21T18:39:26.925708",
-      "last_seen": "2026-04-02T11:19:23.112310",
+      "last_seen": "2026-04-02T12:07:12.545708",
       "working": true,
-      "latency": 2146.39,
+      "latency": 2528.95,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -74,9 +74,9 @@
     },
     "167.103.31.122:8800": {
       "first_seen": "2026-03-22T00:00:11.474055",
-      "last_seen": "2026-04-02T11:19:23.144840",
+      "last_seen": "2026-04-02T12:07:12.566881",
       "working": true,
-      "latency": 2011.15,
+      "latency": 1624.84,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -86,9 +86,9 @@
     },
     "113.160.132.26:8080": {
       "first_seen": "2026-03-22T07:23:44.112346",
-      "last_seen": "2026-04-02T06:58:28.870961",
+      "last_seen": "2026-04-02T12:07:12.561549",
       "working": true,
-      "latency": 1951.69,
+      "latency": 1863.92,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -1058,14 +1058,14 @@
     },
     "222.184.48.242:22222": {
       "first_seen": "2026-03-28T19:22:40.149627",
-      "last_seen": "2026-03-31T22:50:46.311421",
+      "last_seen": "2026-04-02T12:07:12.556413",
       "working": true,
-      "latency": 2162.08,
+      "latency": 2182.22,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
-      "country": "China",
-      "country_code": "CN",
+      "country": null,
+      "country_code": null,
       "region": "unknown"
     },
     "113.11.36.205:30226": {
@@ -2414,9 +2414,9 @@
     },
     "186.248.239.154:3128": {
       "first_seen": "2026-03-29T21:40:13.773234",
-      "last_seen": "2026-03-31T01:07:22.712204",
+      "last_seen": "2026-04-02T12:07:12.551079",
       "working": true,
-      "latency": 2269.0,
+      "latency": 2512.4,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -4946,9 +4946,9 @@
     },
     "45.167.125.21:999": {
       "first_seen": "2026-04-02T03:59:13.977585",
-      "last_seen": "2026-04-02T06:58:28.839252",
+      "last_seen": "2026-04-02T12:07:12.572124",
       "working": true,
-      "latency": 1467.31,
+      "latency": 1114.63,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -5111,10 +5111,58 @@
       "country": "Azerbaijan",
       "country_code": "AZ",
       "region": "unknown"
+    },
+    "143.255.147.242:8080": {
+      "first_seen": "2026-04-02T12:07:12.540588",
+      "last_seen": "2026-04-02T12:07:12.540588",
+      "working": true,
+      "latency": 2888.94,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "45.229.17.161:999": {
+      "first_seen": "2026-04-02T12:07:12.577393",
+      "last_seen": "2026-04-02T12:07:12.577393",
+      "working": true,
+      "latency": 2449.83,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "177.10.118.108:8089": {
+      "first_seen": "2026-04-02T12:07:12.582854",
+      "last_seen": "2026-04-02T12:07:12.582854",
+      "working": true,
+      "latency": 2773.39,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "159.223.71.162:443": {
+      "first_seen": "2026-04-02T12:07:12.588003",
+      "last_seen": "2026-04-02T12:07:12.588003",
+      "working": true,
+      "latency": 1691.98,
+      "ru_access": false,
+      "us_access": true,
+      "source": "rapid_check",
+      "country": "Singapore",
+      "country_code": "SG",
+      "region": "us"
     }
   },
   "stats": {
-    "total_seen": 796,
-    "last_update": "2026-04-02T11:19:23.172906"
+    "total_seen": 800,
+    "last_update": "2026-04-02T12:07:12.588003"
   }
 }
