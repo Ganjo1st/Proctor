@@ -122,9 +122,9 @@
     },
     "1.231.81.166:3128": {
       "first_seen": "2026-03-24T16:40:38.749635",
-      "last_seen": "2026-04-02T20:04:55.088744",
+      "last_seen": "2026-04-02T22:55:47.911506",
       "working": true,
-      "latency": 1729.71,
+      "latency": 1929.02,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -146,9 +146,9 @@
     },
     "120.92.212.16:7890": {
       "first_seen": "2026-03-26T17:05:06.377512",
-      "last_seen": "2026-04-02T21:31:39.897282",
+      "last_seen": "2026-04-02T22:55:47.945156",
       "working": true,
-      "latency": 2033.36,
+      "latency": 1843.62,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -182,9 +182,9 @@
     },
     "43.99.54.236:5555": {
       "first_seen": "2026-03-26T20:03:49.305094",
-      "last_seen": "2026-04-01T23:02:30.920116",
+      "last_seen": "2026-04-02T22:55:47.922709",
       "working": true,
-      "latency": 1910.72,
+      "latency": 2187.54,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -206,9 +206,9 @@
     },
     "167.103.144.127:8800": {
       "first_seen": "2026-03-26T23:28:37.559337",
-      "last_seen": "2026-04-02T22:08:37.437081",
+      "last_seen": "2026-04-02T22:55:47.973202",
       "working": true,
-      "latency": 1694.97,
+      "latency": 1730.77,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -2474,9 +2474,9 @@
     },
     "221.202.27.194:10809": {
       "first_seen": "2026-03-29T22:52:57.736263",
-      "last_seen": "2026-03-29T22:52:57.736263",
+      "last_seen": "2026-04-02T22:55:47.939576",
       "working": true,
-      "latency": 2637.79,
+      "latency": 1866.96,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -2594,9 +2594,9 @@
     },
     "203.196.8.6:3128": {
       "first_seen": "2026-03-29T23:58:37.954219",
-      "last_seen": "2026-04-02T09:20:46.444533",
+      "last_seen": "2026-04-02T22:55:47.905795",
       "working": true,
-      "latency": 2866.91,
+      "latency": 2899.86,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -2846,15 +2846,15 @@
     },
     "31.192.106.135:8010": {
       "first_seen": "2026-03-30T15:27:52.176340",
-      "last_seen": "2026-04-02T20:04:55.094392",
+      "last_seen": "2026-04-02T22:55:47.950727",
       "working": true,
-      "latency": 2278.11,
-      "ru_access": true,
-      "us_access": true,
+      "latency": 2020.13,
+      "ru_access": false,
+      "us_access": false,
       "source": "rapid_check",
-      "country": "Russia",
-      "country_code": "RU",
-      "region": "us"
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     },
     "103.87.202.19:8181": {
       "first_seen": "2026-03-30T15:27:52.179483",
@@ -3806,9 +3806,9 @@
     },
     "38.34.183.13:8449": {
       "first_seen": "2026-03-31T10:46:07.562454",
-      "last_seen": "2026-04-02T01:08:06.989926",
+      "last_seen": "2026-04-02T22:55:47.967536",
       "working": true,
-      "latency": 2294.9,
+      "latency": 1250.34,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -4298,9 +4298,9 @@
     },
     "82.114.228.67:1080": {
       "first_seen": "2026-04-01T03:32:52.716848",
-      "last_seen": "2026-04-01T08:29:28.815759",
+      "last_seen": "2026-04-02T22:55:47.956325",
       "working": true,
-      "latency": 2524.67,
+      "latency": 1575.02,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -4322,14 +4322,14 @@
     },
     "38.34.183.130:8452": {
       "first_seen": "2026-04-01T03:32:52.740072",
-      "last_seen": "2026-04-01T03:32:52.740072",
+      "last_seen": "2026-04-02T22:55:47.961935",
       "working": true,
-      "latency": 1680.24,
+      "latency": 1123.28,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
-      "country": null,
-      "country_code": null,
+      "country": "United States",
+      "country_code": "US",
       "region": "us"
     },
     "38.145.208.213:8450": {
@@ -4778,14 +4778,14 @@
     },
     "8.209.255.13:3128": {
       "first_seen": "2026-04-01T20:36:44.569358",
-      "last_seen": "2026-04-02T09:20:46.449679",
+      "last_seen": "2026-04-02T22:55:47.917245",
       "working": true,
-      "latency": 1785.72,
+      "latency": 1681.1,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
-      "country": "Japan",
-      "country_code": "JP",
+      "country": null,
+      "country_code": null,
       "region": "unknown"
     },
     "36.95.27.225:8080": {
@@ -5495,10 +5495,34 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "168.197.182.222:8080": {
+      "first_seen": "2026-04-02T22:55:47.928394",
+      "last_seen": "2026-04-02T22:55:47.928394",
+      "working": true,
+      "latency": 2864.6,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "103.245.109.57:39355": {
+      "first_seen": "2026-04-02T22:55:47.933972",
+      "last_seen": "2026-04-02T22:55:47.933972",
+      "working": true,
+      "latency": 2845.98,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 828,
-    "last_update": "2026-04-02T22:08:37.509876"
+    "total_seen": 830,
+    "last_update": "2026-04-02T22:55:47.973202"
   }
 }
