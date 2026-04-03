@@ -60,7 +60,7 @@ async def main():
     print(f"\n{Fore.YELLOW}⚡ ФАЗА 2: Проверка 3000 новых прокси...{Style.RESET_ALL}")
     
     start_time = datetime.now()
-    proxies_to_check = all_proxies[:3000]
+    proxies_to_check = all_proxies[:8000]
     results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
