@@ -463,5 +463,37 @@
     "status": "active",
     "source_query": "free proxy list site:github.com",
     "source_engine": "github"
+  },
+  {
+    "url": "https://groups.google.com/g/csmysore/c/thEace8swdA",
+    "type": "text",
+    "added": "2026-04-03T16:49:52.524112",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://github.com/jiujiu532/easy_proxies/compare/jiujiu532:ace347a...jiujiu532:7d8f67c.diff",
+    "type": "text",
+    "added": "2026-04-03T16:49:55.102904",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://proxypool.link/clash/proxies",
+    "type": "text",
+    "added": "2026-04-03T16:49:55.102943",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks5/data.csv",
+    "type": "text",
+    "added": "2026-04-03T16:50:02.075518",
+    "status": "active",
+    "source_query": "\"socks5\" filetype:txt",
+    "source_engine": "duckduckgo.com"
   }
 ]
