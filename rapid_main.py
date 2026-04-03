@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from colorama import init, Fore, Style
 
+# Добавляем core в путь
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.smart_scraper import SmartScraper
@@ -17,6 +18,7 @@ init(autoreset=True)
 
 
 def print_banner():
+    """Красивый баннер"""
     banner = f"""
 {Fore.CYAN}╔══════════════════════════════════════════════════════════╗
 ║{Fore.YELLOW}      PROCTOR SMART - УМНЫЙ СБОР (с гео-данными)        {Fore.CYAN}║
@@ -30,7 +32,7 @@ def print_banner():
 async def main():
     print_banner()
     
-    # Инициализация
+    # ========== ИНИЦИАЛИЗАЦИЯ ==========
     db = ProxyDatabase()
     checker = RapidChecker()
     health_checker = HealthChecker(db)
@@ -60,10 +62,11 @@ async def main():
     print(f"\n{Fore.YELLOW}⚡ ФАЗА 2: Проверка 3000 новых прокси...{Style.RESET_ALL}")
     
     start_time = datetime.now()
-    proxies_to_check = all_proxies[:8000]
+    proxies_to_check = all_proxies[:3000]
     results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
+    # Фильтруем рабочие прокси
     working_proxies_new = [r for r in results if r.get('working')]
     ru_count = len([r for r in working_proxies_new if r.get('ru_access')])
     us_count = len([r for r in working_proxies_new if r.get('us_access')])
@@ -79,15 +82,16 @@ async def main():
         db.add_proxy(proxy, proxy_data, source=proxy_data.get('source', 'rapid_check'))
         new_count += 1
     
-    # ========== ФАЗА 4: ЭКСПОРТ ==========
+    # ========== ФАЗА 4: ЭКСПОРТ В ТЕКСТОВЫЕ ФАЙЛЫ ==========
     print(f"\n{Fore.YELLOW}📁 ФАЗА 4: Экспорт в текстовые файлы...{Style.RESET_ALL}")
-    db.export_to_txt()
+    export_stats = db.export_to_txt()
     
     # ========== ФИНАЛЬНАЯ СТАТИСТИКА ==========
     stats = db.get_stats()
     
     # Получаем список глобальных прокси для обхода
     global_proxies = await health_checker.get_global_proxies()
+    best_global = await health_checker.get_best_proxy()
     
     print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
     print(f"  ✨ Добавлено новых рабочих: {new_count}")
@@ -98,9 +102,19 @@ async def main():
     print(f"  🌍 Глобальных (РФ+США): {stats['global']}")
     print(f"\n{Fore.CYAN}🌐 ГЛОБАЛЬНЫЕ ПРОКСИ ДЛЯ ОБХОДА:{Style.RESET_ALL}")
     print(f"  Доступно: {len(global_proxies)}")
-    if global_proxies:
-        best = await health_checker.get_best_proxy()
-        print(f"  Лучший (самый быстрый): {best}")
+    if best_global:
+        print(f"  Лучший (самый быстрый): {best_global}")
+    
+    # ========== ОПЦИОНАЛЬНО: TELEGRAM УВЕДОМЛЕНИЯ ==========
+    # Раскомментируйте для отправки уведомлений
+    # try:
+    #     from core.notifier import TelegramNotifier
+    #     notifier = TelegramNotifier()
+    #     if new_count > 0:
+    #         await notifier.send_new_proxies(new_count, ru_count, us_count)
+    #     await notifier.send_proxy_stats(stats)
+    # except:
+    #     pass
 
 
 if __name__ == "__main__":
