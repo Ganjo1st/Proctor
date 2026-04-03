@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И ПОДДЕРЖКОЙ ПРОКСИ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ИСПОЛЬЗОВАНИЕМ ГЛОБАЛЬНЫХ ПРОКСИ
 import re
 import asyncio
 import httpx
@@ -9,44 +9,35 @@ from bs4 import BeautifulSoup
 from typing import List, Set, Optional
 from fake_useragent import UserAgent
 from colorama import Fore, Style
+from core.health_checker import HealthChecker
 
 ua = UserAgent()
 
 
 class SmartScraper:
-    """Умный сборщик прокси с фильтрацией и поддержкой прокси для запросов"""
+    """Умный сборщик прокси с использованием глобальных прокси для обхода"""
 
-    def __init__(self, working_proxies: Optional[List[str]] = None):
+    def __init__(self, db=None):
         self.ua = UserAgent()
-        self.working_proxies = working_proxies or []
-        self.proxy_index = 0
-        self.bad_proxies = set()
+        self.db = db
         self.sources_file = os.path.join('data', 'sources.json')
-        self.used_proxies = {}  # Словарь для отслеживания использования прокси
+        self.current_proxy = None
+        self.bad_proxies = set()
+        self.health_checker = HealthChecker(db) if db else None
 
-    def _get_next_proxy(self) -> Optional[str]:
-        """Получить следующий рабочий прокси для обхода блокировок (round-robin)"""
-        if not self.working_proxies:
+    async def get_best_global_proxy(self) -> Optional[str]:
+        """Получить лучший глобальный прокси из базы"""
+        if not self.health_checker:
             return None
         
-        # Пропускаем прокси из чёрного списка
-        for _ in range(len(self.working_proxies) * 2):
-            proxy = self.working_proxies[self.proxy_index % len(self.working_proxies)]
-            self.proxy_index += 1
-            if proxy not in self.bad_proxies:
-                return proxy
-        
-        # Если все прокси в чёрном списке, сбрасываем и пробуем первый
-        if self.bad_proxies:
-            self.bad_proxies.clear()
-            return self.working_proxies[0]
-        
+        proxy = await self.health_checker.get_best_proxy()
+        if proxy and proxy not in self.bad_proxies:
+            return proxy
         return None
 
     def mark_proxy_bad(self, proxy: str):
-        """Отметить прокси как непригодный для обхода"""
+        """Отметить прокси как плохой для текущей сессии"""
         self.bad_proxies.add(proxy)
-        print(f"    ⚠️ Прокси {proxy} помечен как плохой")
 
     def is_valid_proxy_format(self, proxy: str) -> bool:
         """Проверка формата прокси"""
@@ -93,7 +84,8 @@ class SmartScraper:
         proxy_used = None
         
         if use_proxy:
-            proxy_used = self._get_next_proxy()
+            # Берём лучший глобальный прокси из базы
+            proxy_used = await self.get_best_global_proxy()
             if proxy_used:
                 proxy_url = f"http://{proxy_used}"
                 print(f"  🔍 {url.split('/')[-1][:20]} (через прокси {proxy_used})...", end=' ', flush=True)
@@ -114,7 +106,7 @@ class SmartScraper:
                 response = await client.get(url, headers=headers)
                 
                 if response.status_code != 200:
-                    if proxy_used and response.status_code in [403, 521, 502, 503, 504]:
+                    if proxy_used:
                         self.mark_proxy_bad(proxy_used)
                     print(f"❌ {response.status_code}")
                     return proxies
@@ -211,7 +203,7 @@ class SmartScraper:
             ('https://hidemium.io/free-proxy/', 'text', False),
         ]
         
-        # РОССИЙСКИЕ ИСТОЧНИКИ (с прокси)
+        # РОССИЙСКИЕ ИСТОЧНИКИ (требуют прокси)
         ru_sources = [
             ('https://2ip.ru/proxy/', 'html', True),
             ('https://spys.one/en/free-proxy-list/', 'html', True),
@@ -277,8 +269,3 @@ class SmartScraper:
         print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
         
         return proxy_list
-
-
-async def get_all_proxies():
-    scraper = SmartScraper()
-    return await scraper.get_all_proxies()
