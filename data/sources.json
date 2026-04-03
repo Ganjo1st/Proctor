@@ -159,5 +159,285 @@
     "added": "2026-03-29T09:59:47.819681",
     "status": "active",
     "source_query": "proxy list txt"
+  },
+  {
+    "url": "https://support.google.com/websearch",
+    "type": "text",
+    "added": "2026-04-03T16:29:48.321149",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "www.google.com"
+  },
+  {
+    "url": "https://support.microsoft.com/topic/how-bing-delivers-search-results-d18fc815-ac37-4723-bc67-9229ce3eb6a3",
+    "type": "text",
+    "added": "2026-04-03T16:29:50.456837",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://github.com/proxifly/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:29:53.371905",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://hide.mn/en/proxy-list/",
+    "type": "text",
+    "added": "2026-04-03T16:29:53.371937",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://sockslist.us/",
+    "type": "text",
+    "added": "2026-04-03T16:30:00.489629",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"socks\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://databay.com/free-proxy-list/http",
+    "type": "text",
+    "added": "2026-04-03T16:30:11.961837",
+    "status": "active",
+    "source_query": "\"free proxy list\" filetype:txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://proxypool.link/clash/config",
+    "type": "text",
+    "added": "2026-04-03T16:30:28.466501",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://browser-use.com/posts/bitter-lesson-agent-frameworks",
+    "type": "text",
+    "added": "2026-04-03T16:30:28.466553",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://anaer.github.io/Sub/clash.yaml",
+    "type": "text",
+    "added": "2026-04-03T16:30:28.466585",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks5/data.json",
+    "type": "text",
+    "added": "2026-04-03T16:30:35.299451",
+    "status": "active",
+    "source_query": "\"socks5\" filetype:txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/topics/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.218952",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/TheSpeedX/PROXY-List",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219004",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/vakhov/fresh-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219015",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/proxifly/free-proxy-list/blob/main/README.md",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219025",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/dpangestuw/Free-Proxy",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219043",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/iplocate/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219052",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/gfpcom/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219062",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/dinoz0rg/proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.219071",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.521891",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.521940",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.521953",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/https.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713475",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/proxylist.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713526",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/proxylist.json",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713543",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/proxylist.csv",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713559",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/socks5.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713577",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/socks4.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713592",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/proxylist.phps",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713608",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/proxylist.xml",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713628",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/http.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.713638",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dpangestuw/Free-Proxy/main/socks5_proxies.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.848356",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dpangestuw/Free-Proxy/main/All_proxies.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.848407",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dpangestuw/Free-Proxy/main/http_proxies.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.848423",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dpangestuw/Free-Proxy/main/socks4_proxies.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.848437",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/iplocate/free-proxy-list/main/all-proxies.txt",
+    "type": "text",
+    "added": "2026-04-03T16:30:42.970986",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
   }
 ]
