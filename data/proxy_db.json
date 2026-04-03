@@ -26,9 +26,9 @@
     },
     "147.161.210.140:8800": {
       "first_seen": "2026-03-21T17:43:11.407285",
-      "last_seen": "2026-04-03T12:06:58.449958",
+      "last_seen": "2026-04-03T13:42:44.393746",
       "working": true,
-      "latency": 1360.05,
+      "latency": 1711.94,
       "ru_access": false,
       "us_access": true,
       "source": "rapid_check",
@@ -38,9 +38,9 @@
     },
     "20.24.43.214:80": {
       "first_seen": "2026-03-21T18:39:26.925708",
-      "last_seen": "2026-04-03T12:06:58.424542",
+      "last_seen": "2026-04-03T13:42:44.380905",
       "working": true,
-      "latency": 1846.95,
+      "latency": 2333.67,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -62,9 +62,9 @@
     },
     "13.230.49.39:8080": {
       "first_seen": "2026-03-21T21:12:45.346251",
-      "last_seen": "2026-04-03T09:46:38.531119",
+      "last_seen": "2026-04-03T13:42:44.387269",
       "working": true,
-      "latency": 1679.06,
+      "latency": 1595.91,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -86,9 +86,9 @@
     },
     "113.160.132.26:8080": {
       "first_seen": "2026-03-22T07:23:44.112346",
-      "last_seen": "2026-04-03T12:06:58.430860",
+      "last_seen": "2026-04-03T13:42:44.399859",
       "working": true,
-      "latency": 1886.0,
+      "latency": 2449.71,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -6263,10 +6263,22 @@
       "country": "Ecuador",
       "country_code": "EC",
       "region": "unknown"
+    },
+    "193.181.35.163:8118": {
+      "first_seen": "2026-04-03T13:42:44.405932",
+      "last_seen": "2026-04-03T13:42:44.405932",
+      "working": true,
+      "latency": 1579.98,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 892,
-    "last_update": "2026-04-03T12:06:58.462768"
+    "total_seen": 893,
+    "last_update": "2026-04-03T13:42:44.405932"
   }
 }
