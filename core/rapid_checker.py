@@ -1,4 +1,4 @@
-# core/rapid_checker.py - ПРОВЕРКА С ГЕО-ОПРЕДЕЛЕНИЕМ
+# core/rapid_checker.py - ПРОВЕРКА ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ
 import aiohttp
 import asyncio
 from aiohttp_socks import ProxyConnector, ProxyType
@@ -6,18 +6,19 @@ from typing import List, Dict
 import time
 from colorama import Fore, Style
 
+
 class RapidChecker:
     """Проверка прокси с точным гео-определением"""
-    
+
     def __init__(self):
         self.test_urls = ['http://httpbin.org/ip']
-        self.timeout = aiohttp.ClientTimeout(total=3)
-        self.max_concurrent = 500
-        
+        self.timeout = aiohttp.ClientTimeout(total=8)
+        self.max_concurrent = 200  # Одновременных проверок
+
         # Сайты для проверки доступности
         self.ru_sites = ['https://yandex.ru', 'https://vk.com', 'https://mail.ru']
         self.us_sites = ['https://www.google.com', 'https://www.github.com', 'https://www.microsoft.com']
-    
+
     async def check_one(self, proxy: str) -> Dict:
         """Проверка с определением страны и региона"""
         result = {
@@ -31,9 +32,15 @@ class RapidChecker:
             'ru_access': False,
             'us_access': False
         }
-        
+
+        # Проверка формата
+        if ':' not in proxy:
+            return result
+
         ip, port = proxy.split(':')
-        
+        if not port.isdigit():
+            return result
+
         try:
             start = time.time()
             connector = ProxyConnector(
@@ -43,7 +50,7 @@ class RapidChecker:
                 rdns=True,
                 force_close=True
             )
-            
+
             async with aiohttp.ClientSession(connector=connector, timeout=self.timeout) as session:
                 # Базовая проверка работоспособности
                 try:
@@ -52,10 +59,10 @@ class RapidChecker:
                             return result
                         result['working'] = True
                         result['latency'] = round((time.time() - start) * 1000, 2)
-                except:
+                except Exception as e:
                     return result
-                
-                # Определение страны через IP-API
+
+                # Определение страны через IP-API (быстро, не блокирует)
                 try:
                     async with session.get(f'http://ip-api.com/json/{ip}', timeout=2) as resp:
                         if resp.status == 200:
@@ -65,27 +72,27 @@ class RapidChecker:
                                 result['country_code'] = data.get('countryCode')
                 except:
                     pass
-                
+
                 # Проверка доступа к российским сайтам
                 for site in self.ru_sites:
                     try:
-                        async with session.get(site, timeout=2) as resp:
+                        async with session.get(site, timeout=3) as resp:
                             if resp.status == 200:
                                 result['ru_access'] = True
                                 break
                     except:
                         continue
-                
+
                 # Проверка доступа к американским сайтам
                 for site in self.us_sites:
                     try:
-                        async with session.get(site, timeout=2) as resp:
+                        async with session.get(site, timeout=3) as resp:
                             if resp.status == 200:
                                 result['us_access'] = True
                                 break
                     except:
                         continue
-                
+
                 # Определяем регион
                 if result['ru_access'] and result['us_access']:
                     result['region'] = 'global'
@@ -95,46 +102,53 @@ class RapidChecker:
                     result['region'] = 'us'
                 elif result['country_code'] == 'RU':
                     result['region'] = 'ru'
-                    # Если страна RU, но доступ к сайтам не проверен, считаем ru_access = True
                     result['ru_access'] = True
                 elif result['country_code'] == 'US':
                     result['region'] = 'us'
                     result['us_access'] = True
                 elif result['country_code'] in ['GB', 'DE', 'FR', 'IT', 'ES']:
                     result['region'] = 'eu'
-                        
-        except Exception:
+
+        except Exception as e:
             pass
-        
-        # ВАЖНО: ДОПОЛНИТЕЛЬНАЯ ЛОГИКА ДЛЯ РОССИЙСКИХ ПРОКСИ
-        # Если страна определена как RU, принудительно устанавливаем ru_access = True
-        if result['country_code'] == 'RU':
-            result['ru_access'] = True
-        # Если регион определён как ru, также устанавливаем
-        if result['region'] == 'ru':
-            result['ru_access'] = True
-        
+
         return result
-    
+
     async def check_all(self, proxy_list: List[str]) -> List[Dict]:
-        """Массовая параллельная проверка"""
+        """Массовая параллельная проверка с ограничением"""
         if not proxy_list:
             return []
-        
+
         print(f"\n⚡ ПРОВЕРКА {len(proxy_list)} ПРОКСИ С ГЕО-ОПРЕДЕЛЕНИЕМ...")
         start = time.time()
+
+        # Используем семафор для ограничения количества одновременных проверок
+        semaphore = asyncio.Semaphore(self.max_concurrent)
+
+        async def check_with_semaphore(proxy):
+            async with semaphore:
+                return await self.check_one(proxy)
+
+        # Создаём задачи
+        tasks = [check_with_semaphore(proxy) for proxy in proxy_list]
         
-        tasks = [self.check_one(proxy) for proxy in proxy_list]
-        results = await asyncio.gather(*tasks)
-        
+        # Запускаем все задачи и собираем результаты
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Фильтруем возможные исключения
+        valid_results = []
+        for r in results:
+            if isinstance(r, Exception):
+                continue
+            valid_results.append(r)
+
         elapsed = time.time() - start
-        working = [r for r in results if r['working']]
-        
-        # Статистика по регионам
-        ru = sum(1 for r in working if r['ru_access'])
-        us = sum(1 for r in working if r['us_access'])
-        
+        working = [r for r in valid_results if r.get('working')]
+
+        ru = len([r for r in working if r.get('ru_access')])
+        us = len([r for r in working if r.get('us_access')])
+
         print(f"✅ ЗА {elapsed:.1f} СЕК: {len(working)}/{len(proxy_list)} рабочих")
         print(f"   🇷🇺 РФ доступ: {ru} | 🇺🇸 США доступ: {us}\n")
-        
-        return results
+
+        return valid_results
