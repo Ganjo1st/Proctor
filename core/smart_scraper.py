@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И РОССИЙСКИМИ ИСТОЧНИКАМИ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И ПОДДЕРЖКОЙ ПРОКСИ
 import re
 import asyncio
 import httpx
@@ -22,18 +22,21 @@ class SmartScraper:
         self.proxy_index = 0
         self.bad_proxies = set()
         self.sources_file = os.path.join('data', 'sources.json')
+        self.used_proxies = {}  # Словарь для отслеживания использования прокси
 
     def _get_next_proxy(self) -> Optional[str]:
         """Получить следующий рабочий прокси для обхода блокировок (round-robin)"""
         if not self.working_proxies:
             return None
         
+        # Пропускаем прокси из чёрного списка
         for _ in range(len(self.working_proxies) * 2):
             proxy = self.working_proxies[self.proxy_index % len(self.working_proxies)]
             self.proxy_index += 1
             if proxy not in self.bad_proxies:
                 return proxy
         
+        # Если все прокси в чёрном списке, сбрасываем и пробуем первый
         if self.bad_proxies:
             self.bad_proxies.clear()
             return self.working_proxies[0]
@@ -43,6 +46,7 @@ class SmartScraper:
     def mark_proxy_bad(self, proxy: str):
         """Отметить прокси как непригодный для обхода"""
         self.bad_proxies.add(proxy)
+        print(f"    ⚠️ Прокси {proxy} помечен как плохой")
 
     def is_valid_proxy_format(self, proxy: str) -> bool:
         """Проверка формата прокси"""
@@ -126,7 +130,7 @@ class SmartScraper:
                         pre = soup.find('pre')
                         if pre:
                             text = pre.text
-                    # Для 2ip.ru и подобных сайтов
+                    # Для табличных сайтов
                     table = soup.find('table')
                     if table:
                         rows = table.find_all('tr')
@@ -190,25 +194,24 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
         ]
         
-        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ =====
+        # РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ
         ru_specialized_sources = [
-            # fresh-proxy-list
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
-            # ShiftyTR
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
-            # API с гео-фильтром
             ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
-            # telegram-proxy-collector
             ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
-            # Найденные поиском источники
             ('https://proxymania.su/free-proxy', 'html', False),
             ('https://free-proxy-list.net/ru/', 'html', False),
             ('https://redscrape.com/free-proxy-list', 'text', False),
+            ('https://flamingoproxies.com/free-proxies', 'text', False),
+            ('https://free-proxy-list.net/', 'text', False),
+            ('https://htmlweb.ru/analiz/proxy_list.php', 'html', False),
+            ('https://hidemium.io/free-proxy/', 'text', False),
         ]
         
-        # РОССИЙСКИЕ ИСТОЧНИКИ (могут требовать прокси)
+        # РОССИЙСКИЕ ИСТОЧНИКИ (с прокси)
         ru_sources = [
             ('https://2ip.ru/proxy/', 'html', True),
             ('https://spys.one/en/free-proxy-list/', 'html', True),
@@ -223,7 +226,7 @@ class SmartScraper:
             all_proxies.update(proxies)
             await asyncio.sleep(0.3)
         
-        # ===== СБОР ИЗ РОССИЙСКИХ СПЕЦИАЛИЗИРОВАННЫХ ИСТОЧНИКОВ =====
+        # Сбор из российских специализированных источников
         print("\n  🇷🇺 Российские специализированные источники:")
         for url, source_type, use_proxy in ru_specialized_sources:
             proxies = await self.fetch_from_url(url, source_type, use_proxy)
@@ -260,12 +263,16 @@ class SmartScraper:
         print(f"\n{Fore.CYAN}────────────────────────────────────────────────────────────{Style.RESET_ALL}")
         print(f"{Fore.GREEN}📊 ИТОГО собрано: {len(proxy_list)} прокси{Style.RESET_ALL}")
         
-        # Подсчёт российских IP (для статистики)
+        # Подсчёт российских IP
         ru_count = 0
+        ru_ranges = ['5.', '31.', '37.', '46.', '62.', '77.', '78.', '79.', '80.', '81.', '82.', '83.', '84.', '85.', '86.', '87.', '88.', '89.', '90.', '91.', '92.', '93.', '94.', '95.', '109.', '128.', '129.', '130.', '131.', '132.', '133.', '134.', '135.', '136.', '137.', '138.', '139.', '140.', '141.', '142.', '143.', '144.', '145.', '146.', '147.', '148.', '149.', '150.', '151.', '152.', '153.', '154.', '155.', '156.', '157.', '158.', '159.', '160.', '161.', '162.', '163.', '164.', '165.', '166.', '167.', '168.', '169.', '170.', '171.', '172.', '173.', '174.', '175.', '176.', '178.', '185.', '188.', '193.', '194.', '195.', '212.', '213.', '217.']
+        
         for proxy in proxy_list[:100]:
             ip = proxy.split(':')[0]
-            if ip.startswith('5.') or ip.startswith('95.') or ip.startswith('85.') or ip.startswith('176.') or ip.startswith('188.') or ip.startswith('31.'):
-                ru_count += 1
+            for prefix in ru_ranges:
+                if ip.startswith(prefix):
+                    ru_count += 1
+                    break
         
         print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
         
