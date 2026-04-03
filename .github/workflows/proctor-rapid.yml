@@ -6,7 +6,6 @@ on:
   workflow_dispatch:            # Ручной запуск
 
 jobs:
-  # ЕДИНЫЙ ДЖОБ: сбор + поиск источников + отчёт
   proctor-run:
     name: 🔍 Proctor - Full Pipeline
     runs-on: ubuntu-latest
@@ -50,10 +49,8 @@ jobs:
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Добавляем все изменения
         git add data/ reports/ *.txt 2>/dev/null || true
         
-        # Проверяем, есть ли изменения
         if git diff --staged --quiet; then
           echo "ℹ️ No changes to commit"
         else
