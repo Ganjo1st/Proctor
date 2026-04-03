@@ -6,6 +6,7 @@ import re
 import json
 import os
 from datetime import datetime
+from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from colorama import init, Fore, Style
@@ -13,16 +14,35 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 SOURCES_FILE = 'data/sources.json'
+# Список доверенных доменов, где часто публикуют списки прокси
+TRUSTED_DOMAINS = [
+    'raw.githubusercontent.com',
+    'github.com',
+    'gitlab.com',
+    'bitbucket.org',
+    'pastebin.com',
+    'textbin.net',
+    'ghostbin.com',
+    'controlc.com',
+]
+
+# Расширенные поисковые запросы для поиска прямых ссылок
 SEARCH_QUERIES = [
-    'free proxy list',
-    'public proxy servers',
-    'socks5 proxy list',
-    'http proxy list',
-    'бесплатные прокси список',
-    'прокси сервера список',
-    'proxy list txt',
-    'proxies list',
-    'fresh proxy list',
+    # Поиск файлов с прокси
+    'intitle:"index of" "proxy" txt',
+    'intitle:"index of" "socks" txt',
+    'intitle:"index of" "http" txt',
+    '"free proxy list" filetype:txt',
+    '"free proxy list" filetype:csv',
+    '"proxies" filetype:txt',
+    '"socks5" filetype:txt',
+    # Поиск по репозиториям
+    'free proxy list site:github.com',
+    'proxies list site:github.com',
+    'socks5 proxy list site:github.com',
+    # Поиск по сайтам с прокси
+    'free proxy list site:pastebin.com',
+    'proxy list site:controlc.com',
 ]
 
 SEARCH_ENGINES = [
@@ -50,20 +70,47 @@ def save_sources(sources):
         json.dump(sources, f, indent=2, ensure_ascii=False)
 
 
-def is_proxy_source_url(url: str) -> bool:
-    """Проверка, является ли URL источником прокси"""
-    proxy_patterns = [
-        r'proxy', r'proxies', r'free-proxy', r'proxylist',
-        r'socks', r'http.*proxy', r'proxy-list'
-    ]
+def is_valid_source_url(url: str) -> bool:
+    """Проверка, является ли URL источником прокси (прямая ссылка)"""
     url_lower = url.lower()
-    return any(re.search(p, url_lower) for p in proxy_patterns)
+    
+    # Исключаем поисковые системы и мусор
+    exclude_patterns = [
+        'google.com/search', 'bing.com/search', 'duckduckgo.com',
+        'yandex.ru/search', 'yahoo.com/search',
+        '?', '&', '#', 'javascript:', 'mailto:',
+        'login', 'signup', 'register', 'account',
+        'facebook.com', 'twitter.com', 'instagram.com',
+    ]
+    for pattern in exclude_patterns:
+        if pattern in url_lower:
+            return False
+    
+    # Проверяем расширения файлов
+    file_extensions = ['.txt', '.csv', '.json', '.xml', '.lst']
+    for ext in file_extensions:
+        if url_lower.endswith(ext):
+            return True
+    
+    # Проверяем наличие ключевых слов в URL
+    keywords = ['proxy', 'proxies', 'proxylist', 'proxy-list', 'socks', 'http', 'https']
+    for keyword in keywords:
+        if keyword in url_lower:
+            return True
+    
+    # Проверяем доверенные домены
+    parsed = urlparse(url)
+    for domain in TRUSTED_DOMAINS:
+        if domain in parsed.netloc:
+            return True
+    
+    return False
 
 
 async def fetch_url(session, url, headers):
     """Загрузка URL"""
     try:
-        async with session.get(url, headers=headers, timeout=10, ssl=False) as response:
+        async with session.get(url, headers=headers, timeout=15, ssl=False) as response:
             if response.status == 200:
                 return await response.text()
     except:
@@ -71,31 +118,80 @@ async def fetch_url(session, url, headers):
     return None
 
 
-async def extract_links_from_page(html, base_url):
-    """Извлечение ссылок из HTML"""
+async def extract_links_from_github(session, url, headers):
+    """Специальная обработка GitHub для поиска файлов"""
+    links = set()
+    
+    # Преобразуем URL репозитория в API URL для получения содержимого
+    if 'github.com' in url and '/blob/' not in url:
+        # Если это корень репозитория, ищем файлы с прокси
+        api_url = url.replace('github.com', 'api.github.com/repos')
+        if not api_url.endswith('/contents'):
+            api_url += '/contents'
+        
+        try:
+            async with session.get(api_url, headers=headers, timeout=15) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    for item in data:
+                        if item.get('type') == 'file':
+                            name = item.get('name', '').lower()
+                            if any(ext in name for ext in ['proxy', 'socks', 'http', '.txt']):
+                                links.add((item.get('download_url'), 'text'))
+        except:
+            pass
+    
+    return links
+
+
+async def extract_links_from_page(session, html, base_url, headers):
+    """Извлечение ссылок из HTML страницы"""
     links = set()
     try:
         soup = BeautifulSoup(html, 'html.parser')
+        
+        # Ищем прямые ссылки на файлы
         for a in soup.find_all('a', href=True):
             href = a['href']
-            if href.startswith('/'):
-                href = base_url.rstrip('/') + href
-            elif href.startswith('http'):
-                pass
-            else:
+            # Пропускаем пустые и якорные ссылки
+            if not href or href.startswith('#') or href.startswith('javascript:'):
                 continue
             
-            if is_proxy_source_url(href):
+            # Формируем полный URL
+            full_url = urljoin(base_url, href)
+            
+            # Проверяем, является ли ссылка источником прокси
+            if is_valid_source_url(full_url):
                 # Определяем тип источника
                 source_type = 'text'
-                if 'html' in href or '/page/' in href:
+                if full_url.endswith('.html') or full_url.endswith('.htm') or 'html' in full_url:
                     source_type = 'html'
-                elif 'api' in href:
+                elif 'api' in full_url.lower():
                     source_type = 'api'
                 
-                links.add((href, source_type))
-    except:
+                links.add((full_url, source_type))
+            
+            # Дополнительно проверяем GitHub ссылки
+            elif 'github.com' in full_url and 'blob' in full_url:
+                # Преобразуем blob ссылку в raw ссылку
+                raw_url = full_url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/')
+                if is_valid_source_url(raw_url):
+                    links.add((raw_url, 'text'))
+        
+        # Ищем pre и code блоки с IP:PORT
+        for pre in soup.find_all(['pre', 'code', 'textarea']):
+            text = pre.get_text()
+            # Проверяем наличие паттерна IP:PORT
+            if re.search(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b', text):
+                # Эта страница содержит прокси, добавляем её как источник
+                if is_valid_source_url(base_url):
+                    source_type = 'html'
+                    links.add((base_url, source_type))
+                break
+                
+    except Exception as e:
         pass
+    
     return links
 
 
@@ -107,6 +203,7 @@ async def search_for_sources():
     existing_sources = load_sources()
     existing_urls = {s['url'] for s in existing_sources}
     new_sources = []
+    seen_urls = set()
     
     async with aiohttp.ClientSession() as session:
         for query in SEARCH_QUERIES:
@@ -118,19 +215,38 @@ async def search_for_sources():
                 
                 html = await fetch_url(session, url, headers)
                 if html:
-                    links = await extract_links_from_page(html, engine.split('?')[0])
+                    # Извлекаем ссылки из результатов поиска
+                    links = await extract_links_from_page(session, html, engine.split('?')[0], headers)
                     
                     for link, source_type in links:
-                        if link not in existing_urls:
+                        if link not in existing_urls and link not in seen_urls:
+                            seen_urls.add(link)
                             new_sources.append({
                                 'url': link,
                                 'type': source_type,
                                 'added': datetime.now().isoformat(),
                                 'status': 'pending',
-                                'source_query': query
+                                'source_query': query,
+                                'source_engine': engine.split('//')[1].split('/')[0]
                             })
-                            existing_urls.add(link)
-                            print(f"    ✅ Найден: {link[:60]}...")
+                            print(f"    ✅ Найден: {link[:80]}...")
+                    
+                    # Дополнительная проверка GitHub ссылок
+                    for link, source_type in links:
+                        if 'github.com' in link and link not in existing_urls:
+                            github_links = await extract_links_from_github(session, link, headers)
+                            for gh_link, gh_type in github_links:
+                                if gh_link not in existing_urls and gh_link not in seen_urls:
+                                    seen_urls.add(gh_link)
+                                    new_sources.append({
+                                        'url': gh_link,
+                                        'type': gh_type,
+                                        'added': datetime.now().isoformat(),
+                                        'status': 'pending',
+                                        'source_query': query,
+                                        'source_engine': 'github'
+                                    })
+                                    print(f"    ✅ GitHub найден: {gh_link[:80]}...")
                 
                 await asyncio.sleep(2)  # Вежливость к поисковикам
     
@@ -142,12 +258,17 @@ async def verify_source(url: str, source_type: str) -> bool:
     try:
         headers = {'User-Agent': UserAgent().random}
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers, timeout=10) as response:
+            async with session.get(url, headers=headers, timeout=15) as response:
                 if response.status == 200:
                     text = await response.text()
                     # Проверяем наличие прокси
                     pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
                     if re.search(pattern, text):
+                        return True
+                    # Проверяем наличие IP без порта
+                    ip_pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b'
+                    ips = re.findall(ip_pattern, text)
+                    if len(ips) > 5:  # Если много IP, скорее всего есть прокси
                         return True
     except:
         pass
@@ -181,7 +302,7 @@ async def main():
     verified_sources = []
     
     for src in new_sources:
-        print(f"  Проверяю {src['url'][:50]}...", end=' ')
+        print(f"  Проверяю {src['url'][:60]}...", end=' ')
         if await verify_source(src['url'], src['type']):
             src['status'] = 'active'
             verified_sources.append(src)
@@ -190,7 +311,7 @@ async def main():
             src['status'] = 'failed'
             print(f"❌ НЕ РАБОТАЕТ")
         
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
     
     # Добавляем проверенные источники
     if verified_sources:
@@ -200,7 +321,7 @@ async def main():
         print(f"\n{Fore.GREEN}✅ ДОБАВЛЕНО {len(verified_sources)} НОВЫХ ИСТОЧНИКОВ:{Style.RESET_ALL}")
         for src in verified_sources:
             print(f"  📌 {src['url']}")
-            print(f"     Тип: {src['type']}, найден по запросу: {src['source_query']}")
+            print(f"     Тип: {src['type']}, найден на: {src.get('source_engine', 'неизвестно')}")
     else:
         print(f"\n{Fore.YELLOW}⚠️ Не найдено рабочих источников{Style.RESET_ALL}")
 
