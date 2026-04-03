@@ -58,11 +58,11 @@ async def main():
         print(f"{Fore.RED}❌ Не удалось собрать прокси{Style.RESET_ALL}")
         return
     
-    # ========== ФАЗА 2: ПРОВЕРКА НОВЫХ ПРОКСИ ==========
-    print(f"\n{Fore.YELLOW}⚡ ФАЗА 2: Проверка 3000 новых прокси...{Style.RESET_ALL}")
+    # ========== ФАЗА 2: ПРОВЕРКА НОВЫХ ПРОКСИ (8000) ==========
+    print(f"\n{Fore.YELLOW}⚡ ФАЗА 2: Проверка 8000 новых прокси...{Style.RESET_ALL}")
     
     start_time = datetime.now()
-    proxies_to_check = all_proxies[:3000]
+    proxies_to_check = all_proxies[:8000]  # ← ИСПРАВЛЕНО: 8000 вместо 3000
     results = await checker.check_all(proxies_to_check)
     elapsed = (datetime.now() - start_time).total_seconds()
     
