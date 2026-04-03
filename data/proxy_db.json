@@ -1394,9 +1394,9 @@
     },
     "139.59.59.122:8118": {
       "first_seen": "2026-03-28T23:47:51.242661",
-      "last_seen": "2026-03-31T18:48:11.123267",
+      "last_seen": "2026-04-03T14:33:56.805448",
       "working": true,
-      "latency": 2858.2,
+      "latency": 2245.58,
       "ru_access": false,
       "us_access": false,
       "source": "rapid_check",
@@ -5270,15 +5270,15 @@
     },
     "159.223.71.162:8080": {
       "first_seen": "2026-04-02T17:13:58.304400",
-      "last_seen": "2026-04-03T09:46:38.570146",
+      "last_seen": "2026-04-03T14:33:56.812111",
       "working": true,
-      "latency": 2021.23,
+      "latency": 1752.61,
       "ru_access": false,
-      "us_access": false,
+      "us_access": true,
       "source": "rapid_check",
       "country": "Singapore",
       "country_code": "SG",
-      "region": "unknown"
+      "region": "us"
     },
     "188.190.179.172:8989": {
       "first_seen": "2026-04-02T18:06:23.422756",
@@ -6275,10 +6275,46 @@
       "country": null,
       "country_code": null,
       "region": "unknown"
+    },
+    "192.3.181.90:1234": {
+      "first_seen": "2026-04-03T14:33:56.785955",
+      "last_seen": "2026-04-03T14:33:56.785955",
+      "working": true,
+      "latency": 1764.67,
+      "ru_access": false,
+      "us_access": true,
+      "source": "rapid_check",
+      "country": "United States",
+      "country_code": "US",
+      "region": "us"
+    },
+    "103.48.68.138:83": {
+      "first_seen": "2026-04-03T14:33:56.792481",
+      "last_seen": "2026-04-03T14:33:56.792481",
+      "working": true,
+      "latency": 2527.72,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
+    },
+    "162.255.110.107:8080": {
+      "first_seen": "2026-04-03T14:33:56.799239",
+      "last_seen": "2026-04-03T14:33:56.799239",
+      "working": true,
+      "latency": 1822.31,
+      "ru_access": false,
+      "us_access": false,
+      "source": "rapid_check",
+      "country": null,
+      "country_code": null,
+      "region": "unknown"
     }
   },
   "stats": {
-    "total_seen": 893,
-    "last_update": "2026-04-03T13:42:44.405932"
+    "total_seen": 896,
+    "last_update": "2026-04-03T14:33:56.812111"
   }
 }
