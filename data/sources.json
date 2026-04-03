@@ -439,5 +439,29 @@
     "status": "active",
     "source_query": "free proxy list site:github.com",
     "source_engine": "github"
+  },
+  {
+    "url": "https://databay.com/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-03T16:43:25.130230",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/themiralay/Proxy-List-World",
+    "type": "text",
+    "added": "2026-04-03T16:44:13.244295",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/themiralay/Proxy-List-World/master/data.txt",
+    "type": "text",
+    "added": "2026-04-03T16:44:13.397723",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
   }
 ]
