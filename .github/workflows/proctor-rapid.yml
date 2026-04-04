@@ -42,8 +42,8 @@ jobs:
       run: python rapid_report_md.py
       continue-on-error: true
 
-    - name: Find new sources (every 30 min)
-      if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    - name: Find new sources (every 30 min, skip on schedule to avoid conflicts)
+      if: github.event_name != 'schedule' || github.event.schedule == '*/30 * * * *'
       run: python find_sources.py
       continue-on-error: true
 
