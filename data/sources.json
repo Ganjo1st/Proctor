@@ -495,5 +495,93 @@
     "status": "active",
     "source_query": "\"socks5\" filetype:txt",
     "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://developers.openai.com/codex/llms-full.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:10.439716",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"http\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/jetkai/proxy-list",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.387069",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/roosterkid/openproxylist",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.387116",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/V2RAY_RAW.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496017",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496058",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496075",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/V2RAY.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496089",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496141",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496169",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496193",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
+    "type": "text",
+    "added": "2026-04-04T11:23:43.496218",
+    "status": "active",
+    "source_query": "free proxy list site:github.com",
+    "source_engine": "github"
   }
 ]
