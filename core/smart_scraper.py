@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ИСПОЛЬЗОВАНИЕМ ГЛОБАЛЬНЫХ ПРОКСИ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И РОССИЙСКИМИ ИСТОЧНИКАМИ
 import re
 import asyncio
 import httpx
@@ -9,13 +9,12 @@ from bs4 import BeautifulSoup
 from typing import List, Set, Optional
 from fake_useragent import UserAgent
 from colorama import Fore, Style
-from core.health_checker import HealthChecker
 
 ua = UserAgent()
 
 
 class SmartScraper:
-    """Умный сборщик прокси с использованием глобальных прокси для обхода"""
+    """Умный сборщик прокси с фильтрацией и поддержкой прокси для запросов"""
 
     def __init__(self, db=None):
         self.ua = UserAgent()
@@ -23,16 +22,32 @@ class SmartScraper:
         self.sources_file = os.path.join('data', 'sources.json')
         self.current_proxy = None
         self.bad_proxies = set()
-        self.health_checker = HealthChecker(db) if db else None
 
     async def get_best_global_proxy(self) -> Optional[str]:
         """Получить лучший глобальный прокси из базы"""
-        if not self.health_checker:
+        if not self.db:
             return None
         
-        proxy = await self.health_checker.get_best_proxy()
-        if proxy and proxy not in self.bad_proxies:
-            return proxy
+        # Ищем глобальные прокси (ru_access=True and us_access=True)
+        global_proxies = []
+        for proxy, data in self.db.db.get('proxies', {}).items():
+            if data.get('working'):
+                ru = data.get('ru_access', False)
+                us = data.get('us_access', False)
+                if ru and us:
+                    global_proxies.append((proxy, data.get('latency', 9999)))
+        
+        if global_proxies:
+            global_proxies.sort(key=lambda x: x[1])
+            best = global_proxies[0][0]
+            if best not in self.bad_proxies:
+                return best
+        
+        # Если нет глобальных, берём любой рабочий
+        for proxy, data in self.db.db.get('proxies', {}).items():
+            if data.get('working') and proxy not in self.bad_proxies:
+                return proxy
+        
         return None
 
     def mark_proxy_bad(self, proxy: str):
@@ -84,7 +99,6 @@ class SmartScraper:
         proxy_used = None
         
         if use_proxy:
-            # Берём лучший глобальный прокси из базы
             proxy_used = await self.get_best_global_proxy()
             if proxy_used:
                 proxy_url = f"http://{proxy_used}"
@@ -115,14 +129,8 @@ class SmartScraper:
                 
                 if source_type == 'html':
                     soup = BeautifulSoup(text, 'html.parser')
-                    textarea = soup.find('textarea')
-                    if textarea:
-                        text = textarea.text
-                    else:
-                        pre = soup.find('pre')
-                        if pre:
-                            text = pre.text
-                    # Для табличных сайтов
+                    
+                    # Ищем таблицы с прокси
                     table = soup.find('table')
                     if table:
                         rows = table.find_all('tr')
@@ -131,11 +139,21 @@ class SmartScraper:
                             if len(cells) >= 2:
                                 ip_cell = cells[0].text.strip()
                                 port_cell = cells[1].text.strip()
-                                if ip_cell and port_cell:
+                                if ip_cell and port_cell and port_cell.isdigit():
                                     proxy = f"{ip_cell}:{port_cell}"
                                     if self.is_valid_proxy_format(proxy):
                                         proxies.add(proxy)
+                    
+                    # Ищем textarea
+                    textarea = soup.find('textarea')
+                    if textarea:
+                        text = textarea.text
+                    else:
+                        pre = soup.find('pre')
+                        if pre:
+                            text = pre.text
                 
+                # Ищем IP:PORT
                 pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
                 found = re.findall(pattern, text)
                 
@@ -143,12 +161,13 @@ class SmartScraper:
                     if self.is_valid_proxy_format(p):
                         proxies.add(p)
                 
-                if not found:
+                # Если это просто список IP
+                if not found and len(proxies) == 0:
                     lines = text.strip().split('\n')
                     for line in lines[:200]:
                         line = line.strip()
                         if re.match(r'^\d+\.\d+\.\d+\.\d+$', line):
-                            for port in ['3128', '8080', '1080']:
+                            for port in ['3128', '8080', '1080', '10800', '4145']:
                                 proxy = f"{line}:{port}"
                                 if self.is_valid_proxy_format(proxy):
                                     proxies.add(proxy)
@@ -169,7 +188,7 @@ class SmartScraper:
         """Сбор прокси из всех источников"""
         all_proxies = set()
         
-        # ОСНОВНЫЕ НАДЁЖНЫЕ ИСТОЧНИКИ
+        # ===== ОСНОВНЫЕ НАДЁЖНЫЕ ИСТОЧНИКИ =====
         reliable_sources = [
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt', 'text', False),
@@ -179,34 +198,28 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt', 'text', False),
         ]
         
-        # FALLBACK ИСТОЧНИКИ
-        fallback_sources = [
-            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt', 'text', False),
-            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks4.txt', 'text', False),
-            ('https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt', 'text', False),
-        ]
-        
-        # РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ
-        ru_specialized_sources = [
+        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ (ПРЯМЫЕ ССЫЛКИ) =====
+        ru_direct_sources = [
+            # fresh-proxy-list
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
+            # telegram-proxy-collector
+            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
+            # ShiftyTR
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
+            # API с гео-фильтром по России
             ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
-            ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
-            ('https://proxymania.su/free-proxy', 'html', False),
-            ('https://free-proxy-list.net/ru/', 'html', False),
-            ('https://redscrape.com/free-proxy-list', 'text', False),
-            ('https://flamingoproxies.com/free-proxies', 'text', False),
-            ('https://free-proxy-list.net/', 'text', False),
-            ('https://htmlweb.ru/analiz/proxy_list.php', 'html', False),
-            ('https://hidemium.io/free-proxy/', 'text', False),
+            ('https://api.openproxylist.xyz/ru.txt', 'text', False),
+            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
         ]
         
-        # РОССИЙСКИЕ ИСТОЧНИКИ (требуют прокси)
-        ru_sources = [
-            ('https://2ip.ru/proxy/', 'html', True),
-            ('https://spys.one/en/free-proxy-list/', 'html', True),
+        # ===== РОССИЙСКИЕ САЙТЫ (требуют парсинг HTML) =====
+        ru_html_sources = [
+            ('https://free-proxy-list.net/ru/', 'html', False),
+            ('https://hidemy.name/ru/proxy-list/?country=RU&type=hs', 'html', False),
+            ('https://spys.one/en/free-proxy-list/?country=RU', 'html', True),  # требует прокси
+            ('https://2ip.ru/proxy/', 'html', True),  # требует прокси
         ]
         
         print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
@@ -218,27 +231,19 @@ class SmartScraper:
             all_proxies.update(proxies)
             await asyncio.sleep(0.3)
         
-        # Сбор из российских специализированных источников
-        print("\n  🇷🇺 Российские специализированные источники:")
-        for url, source_type, use_proxy in ru_specialized_sources:
+        # Сбор из российских прямых источников
+        print("\n  🇷🇺 Российские прямые источники:")
+        for url, source_type, use_proxy in ru_direct_sources:
             proxies = await self.fetch_from_url(url, source_type, use_proxy)
             all_proxies.update(proxies)
             await asyncio.sleep(0.3)
         
-        # Сбор из российских источников (с прокси)
-        print("\n  🇷🇺 Российские источники (с прокси):")
-        for url, source_type, use_proxy in ru_sources:
+        # Сбор из российских HTML-сайтов
+        print("\n  🇷🇺 Российские HTML-источники:")
+        for url, source_type, use_proxy in ru_html_sources:
             proxies = await self.fetch_from_url(url, source_type, use_proxy)
             all_proxies.update(proxies)
             await asyncio.sleep(0.5)
-        
-        # Если собрали мало, подключаем fallback
-        if len(all_proxies) < 1000:
-            print("\n  🔄 Fallback источники:")
-            for url, source_type, use_proxy in fallback_sources:
-                proxies = await self.fetch_from_url(url, source_type, use_proxy)
-                all_proxies.update(proxies)
-                await asyncio.sleep(0.3)
         
         # Загружаем динамические источники из sources.json
         dynamic_sources = self.load_dynamic_sources()
@@ -255,7 +260,7 @@ class SmartScraper:
         print(f"\n{Fore.CYAN}────────────────────────────────────────────────────────────{Style.RESET_ALL}")
         print(f"{Fore.GREEN}📊 ИТОГО собрано: {len(proxy_list)} прокси{Style.RESET_ALL}")
         
-        # Подсчёт российских IP
+        # Подсчёт российских IP по диапазонам
         ru_count = 0
         ru_ranges = ['5.', '31.', '37.', '46.', '62.', '77.', '78.', '79.', '80.', '81.', '82.', '83.', '84.', '85.', '86.', '87.', '88.', '89.', '90.', '91.', '92.', '93.', '94.', '95.', '109.', '128.', '129.', '130.', '131.', '132.', '133.', '134.', '135.', '136.', '137.', '138.', '139.', '140.', '141.', '142.', '143.', '144.', '145.', '146.', '147.', '148.', '149.', '150.', '151.', '152.', '153.', '154.', '155.', '156.', '157.', '158.', '159.', '160.', '161.', '162.', '163.', '164.', '165.', '166.', '167.', '168.', '169.', '170.', '171.', '172.', '173.', '174.', '175.', '176.', '178.', '185.', '188.', '193.', '194.', '195.', '212.', '213.', '217.']
         
@@ -266,6 +271,11 @@ class SmartScraper:
                     ru_count += 1
                     break
         
-        print(f"   🇷🇺 Найдено российских прокси: ~{ru_count * 10}")
+        print(f"   🇷🇺 Найдено российских прокси (по IP): ~{ru_count * 10}")
         
         return proxy_list
+
+
+async def get_all_proxies(db=None):
+    scraper = SmartScraper(db=db)
+    return await scraper.get_all_proxies()
