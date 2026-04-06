@@ -583,5 +583,29 @@
     "status": "active",
     "source_query": "free proxy list site:github.com",
     "source_engine": "github"
+  },
+  {
+    "url": "https://www.proxyshare.com/free-proxy/",
+    "type": "text",
+    "added": "2026-04-06T07:25:07.350002",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://deepwiki.com/proxifly/free-proxy-list/5-all-proxies",
+    "type": "text",
+    "added": "2026-04-06T07:26:39.164054",
+    "status": "active",
+    "source_query": "proxy list txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://www.proxynova.com/proxy-server-list/",
+    "type": "text",
+    "added": "2026-04-06T07:26:46.278946",
+    "status": "active",
+    "source_query": "proxies list",
+    "source_engine": "duckduckgo.com"
   }
 ]
