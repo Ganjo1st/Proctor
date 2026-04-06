@@ -2,7 +2,7 @@
 import asyncio
 import aiohttp
 from aiohttp_socks import ProxyConnector, ProxyType
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple
 import time
 
 
@@ -13,7 +13,7 @@ class ProxyRotator:
         self.db = db
         self.max_attempts = max_attempts
         self.bad_proxies = set()
-        self.timeout = aiohttp.ClientTimeout(total=10)
+        self.timeout = aiohttp.ClientTimeout(total=15)
     
     async def get_working_proxies(self) -> List[str]:
         """Получить список рабочих прокси из базы"""
@@ -24,25 +24,26 @@ class ProxyRotator:
                 ru = data.get('ru_access', False)
                 us = data.get('us_access', False)
                 score = 2 if (ru and us) else 1
-                working.append((score, proxy, data.get('latency', 9999)))
+                latency = data.get('latency', 9999)
+                working.append((score, proxy, latency))
         
         # Сортируем по приоритету (глобальные первые) и скорости
         working.sort(key=lambda x: (-x[0], x[2]))
         return [p[1] for p in working[:20]]  # Берём топ-20
     
-    async def fetch_with_proxy_rotation(self, url: str, headers: dict) -> tuple:
+    async def fetch_with_proxy_rotation(self, url: str, headers: dict) -> Tuple[Optional[str], Optional[str]]:
         """Пытается получить URL через разные прокси, перебирая их"""
         proxies = await self.get_working_proxies()
         
+        # Если нет рабочих прокси, пробуем без прокси
         if not proxies:
-            # Если нет рабочих прокси, пробуем без прокси
             print(f"  ⚠️ Нет рабочих прокси, пробую напрямую...")
             try:
                 async with aiohttp.ClientSession(timeout=self.timeout) as session:
                     async with session.get(url, headers=headers, ssl=False) as response:
                         if response.status == 200:
                             return await response.text(), None
-            except:
+            except Exception as e:
                 pass
             return None, None
         
@@ -52,7 +53,7 @@ class ProxyRotator:
                 continue
             
             proxy_ip, proxy_port = proxy.split(':')
-            print(f"    🔄 Попытка {i+1}/{min(len(proxies), self.max_attempts)} через {proxy}...", end=' ')
+            print(f"    🔄 Попытка {i+1}/{min(len(proxies), self.max_attempts)} через {proxy}...", end=' ', flush=True)
             
             try:
                 connector = ProxyConnector(
