@@ -1,4 +1,4 @@
-# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С ФИЛЬТРАЦИЕЙ И РОССИЙСКИМИ ИСТОЧНИКАМИ
+# core/smart_scraper.py - УМНЫЙ СБОР ПРОКСИ С РОТАЦИЕЙ ДЛЯ ТРУДНОДОСТУПНЫХ ИСТОЧНИКОВ
 import re
 import asyncio
 import httpx
@@ -9,12 +9,13 @@ from bs4 import BeautifulSoup
 from typing import List, Set, Optional
 from fake_useragent import UserAgent
 from colorama import Fore, Style
+from core.proxy_rotator import ProxyRotator
 
 ua = UserAgent()
 
 
 class SmartScraper:
-    """Умный сборщик прокси с фильтрацией и поддержкой прокси для запросов"""
+    """Умный сборщик прокси с ротацией для труднодоступных источников"""
 
     def __init__(self, db=None):
         self.ua = UserAgent()
@@ -22,13 +23,13 @@ class SmartScraper:
         self.sources_file = os.path.join('data', 'sources.json')
         self.current_proxy = None
         self.bad_proxies = set()
+        self.rotator = ProxyRotator(db) if db else None
 
     async def get_best_global_proxy(self) -> Optional[str]:
         """Получить лучший глобальный прокси из базы"""
         if not self.db:
             return None
         
-        # Ищем глобальные прокси (ru_access=True and us_access=True)
         global_proxies = []
         for proxy, data in self.db.db.get('proxies', {}).items():
             if data.get('working'):
@@ -43,7 +44,6 @@ class SmartScraper:
             if best not in self.bad_proxies:
                 return best
         
-        # Если нет глобальных, берём любой рабочий
         for proxy, data in self.db.db.get('proxies', {}).items():
             if data.get('working') and proxy not in self.bad_proxies:
                 return proxy
@@ -144,7 +144,6 @@ class SmartScraper:
                                     if self.is_valid_proxy_format(proxy):
                                         proxies.add(proxy)
                     
-                    # Ищем textarea
                     textarea = soup.find('textarea')
                     if textarea:
                         text = textarea.text
@@ -153,7 +152,6 @@ class SmartScraper:
                         if pre:
                             text = pre.text
                 
-                # Ищем IP:PORT
                 pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
                 found = re.findall(pattern, text)
                 
@@ -161,7 +159,6 @@ class SmartScraper:
                     if self.is_valid_proxy_format(p):
                         proxies.add(p)
                 
-                # Если это просто список IP
                 if not found and len(proxies) == 0:
                     lines = text.strip().split('\n')
                     for line in lines[:200]:
@@ -184,6 +181,65 @@ class SmartScraper:
             print(f"⚠️ {str(e)[:20]}")
             return proxies
 
+    async def fetch_difficult_source(self, url: str, source_type: str) -> Set[str]:
+        """Сбор прокси с труднодоступных источников через ротатор прокси"""
+        proxies = set()
+        
+        if not self.rotator:
+            return proxies
+        
+        print(f"  🔍 {url.split('/')[-1][:20]} (ротация)...", end=' ', flush=True)
+        
+        headers = {
+            'User-Agent': self.ua.random,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+        }
+        
+        html, used_proxy = await self.rotator.fetch_with_proxy_rotation(url, headers)
+        
+        if html:
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            # Ищем таблицы
+            for table in soup.find_all('table'):
+                rows = table.find_all('tr')
+                for row in rows:
+                    cells = row.find_all('td')
+                    if len(cells) >= 2:
+                        ip_cell = cells[0].text.strip()
+                        port_cell = cells[1].text.strip()
+                        if ip_cell and port_cell and port_cell.isdigit():
+                            proxy = f"{ip_cell}:{port_cell}"
+                            if self.is_valid_proxy_format(proxy):
+                                proxies.add(proxy)
+            
+            # Ищем IP:PORT
+            pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}\b'
+            found = re.findall(pattern, html)
+            for p in found:
+                if self.is_valid_proxy_format(p):
+                    proxies.add(p)
+            
+            # Ищем строки с IP
+            lines = html.strip().split('\n')
+            for line in lines[:200]:
+                line = line.strip()
+                if re.match(r'^\d+\.\d+\.\d+\.\d+$', line):
+                    for port in ['3128', '8080', '1080']:
+                        proxy = f"{line}:{port}"
+                        if self.is_valid_proxy_format(proxy):
+                            proxies.add(proxy)
+                elif ':' in line:
+                    if self.is_valid_proxy_format(line):
+                        proxies.add(line)
+            
+            print(f"✅ {len(proxies)} (через {used_proxy})")
+        else:
+            print(f"❌ 0 (не удалось получить)")
+        
+        return proxies
+
     async def get_all_proxies(self) -> List[str]:
         """Сбор прокси из всех источников"""
         all_proxies = set()
@@ -198,28 +254,28 @@ class SmartScraper:
             ('https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt', 'text', False),
         ]
         
-        # ===== РОССИЙСКИЕ СПЕЦИАЛИЗИРОВАННЫЕ ИСТОЧНИКИ (ПРЯМЫЕ ССЫЛКИ) =====
+        # ===== РОССИЙСКИЕ ПРЯМЫЕ ИСТОЧНИКИ =====
         ru_direct_sources = [
-            # fresh-proxy-list
             ('https://raw.githubusercontent.com/lkxshaw1334/fresh-proxy-list/main/proxies_RU.txt', 'text', False),
-            # telegram-proxy-collector
             ('https://raw.githubusercontent.com/kort0881/telegram-proxy-collector/main/proxy_ru.txt', 'text', False),
-            # ShiftyTR
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt', 'text', False),
             ('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt', 'text', False),
-            # API с гео-фильтром по России
             ('https://api.proxyscrape.com/v2/?request=getproxies&country=RU', 'text', False),
             ('https://api.openproxylist.xyz/ru.txt', 'text', False),
-            ('https://www.proxy-list.download/api/v1/get?country=RU', 'text', False),
+            ('https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt', 'text', False),
+            ('https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt', 'text', False),
+            ('https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt', 'text', False),
         ]
         
-        # ===== РОССИЙСКИЕ САЙТЫ (требуют парсинг HTML) =====
-        ru_html_sources = [
-            ('https://free-proxy-list.net/ru/', 'html', False),
-            ('https://hidemy.name/ru/proxy-list/?country=RU&type=hs', 'html', False),
-            ('https://spys.one/en/free-proxy-list/?country=RU', 'html', True),  # требует прокси
-            ('https://2ip.ru/proxy/', 'html', True),  # требует прокси
+        # ===== ТРУДНОДОСТУПНЫЕ ИСТОЧНИКИ (требуют ротацию прокси) =====
+        difficult_sources = [
+            'https://free-proxy-list.net/ru/',
+            'https://hidemy.name/ru/proxy-list/?country=RU&type=hs',
+            'https://spys.one/en/free-proxy-list/?country=RU',
+            'https://2ip.ru/proxy/',
+            'https://proxy-list.org/russian/index.php',
+            'https://advanced.name/ru/freeproxy',
         ]
         
         print("\n🌐 СБОР ИЗ ИСТОЧНИКОВ:")
@@ -238,12 +294,13 @@ class SmartScraper:
             all_proxies.update(proxies)
             await asyncio.sleep(0.3)
         
-        # Сбор из российских HTML-сайтов
-        print("\n  🇷🇺 Российские HTML-источники:")
-        for url, source_type, use_proxy in ru_html_sources:
-            proxies = await self.fetch_from_url(url, source_type, use_proxy)
-            all_proxies.update(proxies)
-            await asyncio.sleep(0.5)
+        # Сбор из труднодоступных источников (с ротацией прокси)
+        if self.rotator:
+            print("\n  🔒 Труднодоступные источники (с ротацией прокси):")
+            for url in difficult_sources:
+                proxies = await self.fetch_difficult_source(url, 'html')
+                all_proxies.update(proxies)
+                await asyncio.sleep(0.5)
         
         # Загружаем динамические источники из sources.json
         dynamic_sources = self.load_dynamic_sources()
