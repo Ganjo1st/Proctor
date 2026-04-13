@@ -607,5 +607,53 @@
     "status": "active",
     "source_query": "proxies list",
     "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://github.com/proxifly/free-proxy-list/blob/main/proxies/all/data.txt",
+    "type": "text",
+    "added": "2026-04-13T13:10:08.031209",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://spyderproxy.com/tools/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-13T13:10:32.830315",
+    "status": "active",
+    "source_query": "\"free proxy list\" filetype:csv",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://groups.google.com/g/zaproxy-users/c/JxUJpC2wz5k",
+    "type": "text",
+    "added": "2026-04-13T13:10:40.019767",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://freeproxydb.com/freeProxy/country/us",
+    "type": "text",
+    "added": "2026-04-13T13:11:42.297318",
+    "status": "active",
+    "source_query": "proxy list txt",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://proxymist.com/proxy-basics/free-proxy-lists-that-work-on-every-device/",
+    "type": "text",
+    "added": "2026-04-13T13:11:49.675525",
+    "status": "active",
+    "source_query": "proxies list",
+    "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://pkg.go.dev/github.com/gfpcom/free-proxy-list",
+    "type": "text",
+    "added": "2026-04-13T13:11:56.815911",
+    "status": "active",
+    "source_query": "fresh proxy list",
+    "source_engine": "duckduckgo.com"
   }
 ]
