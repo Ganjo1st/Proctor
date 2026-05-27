@@ -855,5 +855,29 @@
     "status": "active",
     "source_query": "fresh proxy list",
     "source_engine": "duckduckgo.com"
+  },
+  {
+    "url": "https://index.hu/",
+    "type": "text",
+    "added": "2026-05-27T17:13:56.357125",
+    "status": "active",
+    "source_query": "intitle:\"index of\" \"proxy\" txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://aimultiple.com/us-proxies",
+    "type": "text",
+    "added": "2026-05-27T17:14:29.971121",
+    "status": "active",
+    "source_query": "\"proxies\" filetype:txt",
+    "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://databay.com/free-proxy-list/socks5",
+    "type": "text",
+    "added": "2026-05-27T17:14:36.863125",
+    "status": "active",
+    "source_query": "\"socks5\" filetype:txt",
+    "source_engine": "www.bing.com"
   }
 ]
