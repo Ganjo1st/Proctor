@@ -11,7 +11,6 @@ from core.database import ProxyDatabase
 
 
 def get_country_name(code):
-    """Преобразует код страны в название"""
     countries = {
         'RU': '🇷🇺 Россия', 'US': '🇺🇸 США', 'GB': '🇬🇧 Великобритания',
         'DE': '🇩🇪 Германия', 'FR': '🇫🇷 Франция', 'NL': '🇳🇱 Нидерланды',
@@ -19,21 +18,25 @@ def get_country_name(code):
         'SG': '🇸🇬 Сингапур', 'IN': '🇮🇳 Индия', 'BR': '🇧🇷 Бразилия',
         'KR': '🇰🇷 Корея', 'HK': '🇭🇰 Гонконг', 'VN': '🇻🇳 Вьетнам',
         'ID': '🇮🇩 Индонезия', 'PH': '🇵🇭 Филиппины', 'EC': '🇪🇨 Эквадор',
-        'CO': '🇨🇴 Колумбия', 'DO': '🇩🇴 Доминикана'
+        'CO': '🇨🇴 Колумбия', 'DO': '🇩🇴 Доминикана', 'KZ': '🇰🇿 Казахстан',
+        'UZ': '🇺🇿 Узбекистан', 'TH': '🇹🇭 Таиланд', 'FI': '🇫🇮 Финляндия',
+        'SE': '🇸🇪 Швеция', 'CN': '🇨🇳 Китай', 'HK': '🇭🇰 Гонконг',
     }
     return countries.get(code, code)
 
 
 def generate_report():
-    """Генерирует текстовый отчёт в формате Markdown"""
     db = ProxyDatabase()
     stats = db.get_stats()
     
-    # Собираем статистику по странам
-    countries = Counter()
+    # Собираем данные для разделения
     ru_only = []
     us_only = []
     global_proxies = []
+    telegram_proxies = []
+    mobile_proxies = []
+    desktop_proxies = []
+    other_countries = Counter()
     
     for proxy, data in db.db.get('proxies', {}).items():
         if not data.get('working'):
@@ -41,6 +44,17 @@ def generate_report():
         
         ru, us = db._determine_region_flags(data)
         
+        # Telegram доступ
+        if data.get('telegram_access'):
+            telegram_proxies.append(proxy)
+        
+        # Поддержка платформ
+        if data.get('mobile_supported'):
+            mobile_proxies.append(proxy)
+        if data.get('desktop_supported'):
+            desktop_proxies.append(proxy)
+        
+        # Региональная классификация
         if ru and us:
             global_proxies.append(proxy)
         elif ru:
@@ -50,7 +64,7 @@ def generate_report():
         else:
             country = data.get('country_code', '')
             if country:
-                countries[country] += 1
+                other_countries[country] += 1
     
     # Формируем отчёт
     report = f"""# 📊 Proctor SMART - Автоматический отчёт
@@ -72,26 +86,32 @@ def generate_report():
 
 ## 🌍 Географическое распределение
 
-| Регион | Количество |
-|--------|------------|
-| 🌍 Глобальные (РФ + США) | {stats['global']} |
-| 🇷🇺 Российские (только РФ) | {stats['russian']} |
-| 🇺🇸 Американские (только США) | {stats['american']} |
+| Регион | Количество | Описание |
+|--------|------------|----------|
+| 🌍 Глобальные (РФ+США) | {len(global_proxies)} | Работают и в РФ, и в США |
+| 🇷🇺 Российские (только РФ) | {len(ru_only)} | Работают только в РФ |
+| 🇺🇸 Американские (только США) | {len(us_only)} | Работают только в США |
 
 ---
 
-## 🗺️ Распределение по странам (остальные)
+## 📱 Специализированные прокси
+
+| Тип | Количество | Описание |
+|-----|------------|----------|
+| 📨 Telegram прокси | {len(telegram_proxies)} | Работают с Telegram (MTProto/HTTP) |
+| 📱 Мобильные прокси | {len(mobile_proxies)} | Поддерживают мобильные User-Agent |
+| 💻 Десктопные прокси | {len(desktop_proxies)} | Поддерживают десктопные User-Agent |
 
 """
-    
-    if countries:
-        for country_code, count in sorted(countries.items(), key=lambda x: -x[1]):
+
+    if other_countries:
+        report += "## 🗺️ Распределение по странам (остальные)\n\n"
+        report += "| Страна | Количество |\n|--------|------------|\n"
+        for country_code, count in sorted(other_countries.items(), key=lambda x: -x[1]):
             report += f"| {get_country_name(country_code)} | {count} |\n"
-    else:
-        report += "| Нет данных | 0 |\n"
+        report += "\n"
     
     report += f"""
-
 ---
 
 ## 📋 Список рабочих прокси
@@ -130,7 +150,43 @@ def generate_report():
             report += f"\n*... и ещё {len(us_only) - 15}*\n"
     else:
         report += "*Нет американских прокси*\n"
+
+    report += f"""
+### 📨 Telegram прокси — {len(telegram_proxies)} шт.
+"""
     
+    if telegram_proxies:
+        for proxy in telegram_proxies[:15]:
+            report += f"- `{proxy}`\n"
+        if len(telegram_proxies) > 15:
+            report += f"\n*... и ещё {len(telegram_proxies) - 15}*\n"
+    else:
+        report += "*Нет Telegram прокси*\n"
+    
+    report += f"""
+### 📱 Мобильные прокси — {len(mobile_proxies)} шт.
+"""
+    
+    if mobile_proxies:
+        for proxy in mobile_proxies[:15]:
+            report += f"- `{proxy}`\n"
+        if len(mobile_proxies) > 15:
+            report += f"\n*... и ещё {len(mobile_proxies) - 15}*\n"
+    else:
+        report += "*Нет мобильных прокси*\n"
+    
+    report += f"""
+### 💻 Десктопные прокси — {len(desktop_proxies)} шт.
+"""
+    
+    if desktop_proxies:
+        for proxy in desktop_proxies[:15]:
+            report += f"- `{proxy}`\n"
+        if len(desktop_proxies) > 15:
+            report += f"\n*... и ещё {len(desktop_proxies) - 15}*\n"
+    else:
+        report += "*Нет десктопных прокси*\n"
+
     report += f"""
 
 ---
@@ -159,7 +215,6 @@ def generate_report():
 *Отчёт сгенерирован автоматически. Обновляется каждые 2 минуты.*
 """
     
-    # Сохраняем отчёт
     os.makedirs('reports', exist_ok=True)
     with open('reports/proxy_report.md', 'w', encoding='utf-8') as f:
         f.write(report)
