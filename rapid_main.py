@@ -30,24 +30,20 @@ def print_banner():
 async def main():
     print_banner()
     
-    # ========== ИНИЦИАЛИЗАЦИЯ ==========
     db = ProxyDatabase()
     checker = RapidChecker()
     health_checker = HealthChecker(db)
     
-    # ========== ФАЗА 0: ФОНОВАЯ ПРОВЕРКА ВСЕХ ПРОКСИ В БАЗЕ ==========
+    # ФАЗА 0: Фоновая проверка
     print(f"\n{Fore.YELLOW}🩺 ФАЗА 0: Проверка здоровья всех прокси в базе...{Style.RESET_ALL}")
-    health_results = await health_checker.check_all_proxies()
-    
+    await health_checker.check_all_proxies()
     stats = db.get_stats()
     print(f"  📊 После проверки: {stats['working_now']} рабочих прокси")
     
-    # ========== ФАЗА 1: СБОР НОВЫХ ПРОКСИ ==========
+    # ФАЗА 1: Сбор новых прокси
     scraper = SmartScraper(db=db)
-    
-    print(f"\n{Fore.YELLOW}🧠 ФАЗА 1: Сбор новых прокси (с использованием глобальных прокси){Style.RESET_ALL}")
+    print(f"\n{Fore.YELLOW}🧠 ФАЗА 1: Сбор новых прокси{Style.RESET_ALL}")
     print("─" * 60)
-    
     all_proxies = await scraper.get_all_proxies()
     
     if not all_proxies:
@@ -56,9 +52,8 @@ async def main():
     
     print(f"  📊 Собрано сырых прокси: {len(all_proxies)}")
     
-    # ========== ФАЗА 2: ПРОВЕРКА НОВЫХ ПРОКСИ ==========
-    # Берём первые 5000 для проверки (оптимально по времени)
-    check_count = min(5000, len(all_proxies))
+    # ФАЗА 2: Проверка новых прокси (увеличено до 8000)
+    check_count = min(8000, len(all_proxies))
     print(f"\n{Fore.YELLOW}⚡ ФАЗА 2: Проверка {check_count} новых прокси...{Style.RESET_ALL}")
     
     start_time = datetime.now()
@@ -69,11 +64,15 @@ async def main():
     working_proxies_new = [r for r in results if r.get('working')]
     ru_count = len([r for r in working_proxies_new if r.get('ru_access')])
     us_count = len([r for r in working_proxies_new if r.get('us_access')])
+    tg_count = len([r for r in working_proxies_new if r.get('telegram_access')])
+    mobile_count = len([r for r in working_proxies_new if r.get('mobile_supported')])
+    desktop_count = len([r for r in working_proxies_new if r.get('desktop_supported')])
     
     print(f"{Fore.GREEN}✅ ЗА {elapsed:.1f} СЕК: {len(working_proxies_new)}/{check_count} рабочих{Style.RESET_ALL}")
     print(f"   🇷🇺 РФ доступ: {ru_count} | 🇺🇸 США доступ: {us_count}")
+    print(f"   📱 Telegram: {tg_count} | Мобильные: {mobile_count} | Десктопные: {desktop_count}")
     
-    # ========== ФАЗА 3: ДОБАВЛЕНИЕ В БАЗУ ==========
+    # ФАЗА 3: Добавление в базу
     print(f"\n{Fore.YELLOW}💾 ФАЗА 3: Добавление новых прокси в базу...{Style.RESET_ALL}")
     new_count = 0
     for proxy_data in working_proxies_new:
@@ -81,14 +80,27 @@ async def main():
         db.add_proxy(proxy, proxy_data, source=proxy_data.get('source', 'rapid_check'))
         new_count += 1
     
-    # ========== ФАЗА 4: ЭКСПОРТ В ТЕКСТОВЫЕ ФАЙЛЫ ==========
+    # ФАЗА 4: Экспорт
     print(f"\n{Fore.YELLOW}📁 ФАЗА 4: Экспорт в текстовые файлы...{Style.RESET_ALL}")
-    export_stats = db.export_to_txt()
+    db.export_to_txt()
     
-    # ========== ФИНАЛЬНАЯ СТАТИСТИКА ==========
+    # Экспорт Telegram-прокси отдельно
+    tg_proxies = [r['proxy'] for r in working_proxies_new if r.get('telegram_access')]
+    if tg_proxies:
+        with open('data/telegram_proxies.txt', 'w') as f:
+            f.write('\n'.join(tg_proxies))
+        print(f"  📱 Экспортировано Telegram прокси: {len(tg_proxies)}")
+    
+    # Экспорт мобильных прокси
+    mobile_proxies = [r['proxy'] for r in working_proxies_new if r.get('mobile_supported')]
+    if mobile_proxies:
+        with open('data/mobile_proxies.txt', 'w') as f:
+            f.write('\n'.join(mobile_proxies))
+        print(f"  📱 Экспортировано мобильных прокси: {len(mobile_proxies)}")
+    
+    # Финальная статистика
     stats = db.get_stats()
     global_proxies = await health_checker.get_global_proxies()
-    best_global = await health_checker.get_best_proxy()
     
     print(f"\n{Fore.GREEN}✅ ГОТОВО!{Style.RESET_ALL}")
     print(f"  ✨ Добавлено новых рабочих: {new_count}")
@@ -97,10 +109,10 @@ async def main():
     print(f"  🇷🇺 Российских (только РФ): {stats['russian']}")
     print(f"  🇺🇸 Американских (только США): {stats['american']}")
     print(f"  🌍 Глобальных (РФ+США): {stats['global']}")
-    print(f"\n{Fore.CYAN}🌐 ГЛОБАЛЬНЫЕ ПРОКСИ ДЛЯ ОБХОДА:{Style.RESET_ALL}")
-    print(f"  Доступно: {len(global_proxies)}")
-    if best_global:
-        print(f"  Лучший (самый быстрый): {best_global}")
+    print(f"\n{Fore.CYAN}📱 ДОПОЛНИТЕЛЬНАЯ СТАТИСТИКА:{Style.RESET_ALL}")
+    print(f"  Telegram доступ: {len(tg_proxies)}")
+    print(f"  Мобильные прокси: {len(mobile_proxies)}")
+    print(f"  Десктопные прокси: {desktop_count}")
 
 
 if __name__ == "__main__":
