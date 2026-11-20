@@ -879,5 +879,12 @@
     "status": "active",
     "source_query": "\"socks5\" filetype:txt",
     "source_engine": "www.bing.com"
+  },
+  {
+    "url": "https://rcloak.com/api/proxies/raw?protocol=all",
+    "type": "all",
+    "added": "2026-10-09T17:36:38.476079",
+    "status": "active",
+    "source_query": "manual"
   }
 ]
